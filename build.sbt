@@ -19,6 +19,7 @@ version := "1.0"
 
 
 libraryDependencies += "org.scala-lang.modules" %% "scala-parser-combinators" % "1.1.2"
+libraryDependencies += "com.lambdazen.bitsy" % "bitsy" % "3.4.2"
 libraryDependencies ++= Seq(
   "io.getquill" %% "quill-async-postgres" % "3.5.2", //A
   "org.testcontainers" % "postgresql" % "1.13.0", //B
