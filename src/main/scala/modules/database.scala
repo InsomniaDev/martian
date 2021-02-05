@@ -1,5 +1,0 @@
-package modules
-
-class PostgresDatabase {
-    
-}
