@@ -1,7 +1,6 @@
-
 // The simplest possible sbt build file is just one line:
 
-scalaVersion := "2.13.1"
+scalaVersion := "2.13.4"
 // That is, to create a valid sbt build, all you've got to do is define the
 // version of Scala you'd like your project to use.
 
@@ -17,13 +16,9 @@ name := "martian"
 organization := "ch.epfl.scala"
 version := "1.0"
 
-
 libraryDependencies += "org.scala-lang.modules" %% "scala-parser-combinators" % "1.1.2"
 libraryDependencies += "com.lambdazen.bitsy" % "bitsy" % "3.4.2"
-libraryDependencies ++= Seq(
-  "io.getquill" %% "quill-async-postgres" % "3.5.2", //A
-  "org.testcontainers" % "postgresql" % "1.13.0", //B
-  "org.postgresql" % "postgresql" % "42.2.11", //C
-  "ch.qos.logback"  %  "logback-classic" % "1.2.3" //D
+libraryDependencies ++= Seq( 
+  "org.postgresql" % "postgresql" % "42.2.8",
+  "io.getquill" %% "quill-jdbc" % "3.4.10"
 )
-

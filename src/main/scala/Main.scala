@@ -1,25 +1,20 @@
 // import java.nio.file.Path;
 // import com.lambdazen.bitsy.BitsyGraph;
+import io.getquill._
+
+case class Accounts (user_id: Int, username: String)
 
 object Main extends App {
   println("Hello, World!")
+
+  lazy val ctx = new PostgresJdbcContext(SnakeCase, "ctx")
+
+  import ctx._
+
+  val q = quote {
+    query[Accounts].map(a => a.username)
+  }
   
-  // val dbPath = Paths.get("...path to a directory...");
-
-  // // Open the database
-  // val myGraph = new BitsyGraph()
-
-  // val travGraph = myGraph.traversal()
-  // travGraph.addV("person").property("name","stephen")
-  // val returnValues = travGraph.V(1).values("name")
-
-
-  // println("print")
-  // returnValues.map(println(_))
-  // println("should have printed")
-
-  // // ... use myGraph in any number of threads
-
-  // // Close the database
-  // myGraph.shutdown();
+  val resp = ctx.run(q)
+  resp.map(println(_))
 }
