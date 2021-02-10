@@ -4,3 +4,9 @@ CREATE TABLE IF NOT EXISTS fact(
     related_facts TEXT,
     fact_data TEXT
 );
+
+CREATE TABLE IF NOT EXISTS config(
+    id SERIAL PRIMARY KEY,
+    key TEXT,
+    value TEXT
+);
