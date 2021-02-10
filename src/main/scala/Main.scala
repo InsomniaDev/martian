@@ -9,5 +9,5 @@ object Main extends App {
 
   lazy val ctx = new PostgresJdbcContext(SnakeCase, "ctx")
   
-  new Select(ctx).getAccounts().map(println(_))
+  // new FactData(ctx).(getFactData)
 }
