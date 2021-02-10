@@ -2,10 +2,10 @@ package modules.databaseQueries
 import io.getquill._
 
 case class Fact(
-    fact_id: Int,
-    related_fact_ids: String,
-    related_facts: String,
-    fact_data: String
+    id: Int,
+    related_fact_ids: Option[String],
+    related_facts: Option[String],
+    fact_data: Option[String]
 )
 
 class FactData(ctx: PostgresJdbcContext[SnakeCase.type]) {
@@ -14,7 +14,7 @@ class FactData(ctx: PostgresJdbcContext[SnakeCase.type]) {
   def getFact(factId: Int): List[Fact] = {
     val q = quote {
       query[Fact]
-        .filter(a => a.fact_id == lift(factId))
+        .filter(a => a.id == lift(factId))
     }
     val resp = ctx.run(q)
     resp
@@ -28,7 +28,7 @@ class FactData(ctx: PostgresJdbcContext[SnakeCase.type]) {
     resp
   }
 
-  def getRelatedFactIds(factName: List[String]): List[String] = {
+  def getRelatedFactIds(factName: List[String]): List[Option[String]] = {
     val q = quote {
       query[Fact]
         .filter(a => liftQuery(factName).contains(a.related_facts))
@@ -50,7 +50,7 @@ class FactData(ctx: PostgresJdbcContext[SnakeCase.type]) {
   def updateRelatedFacts(fact: Fact) = {
     val q = quote {
       query[Fact]
-        .filter(_.fact_id == lift(fact.fact_id))
+        .filter(_.id == lift(fact.id))
         .update(
           _.related_facts -> lift(fact.related_facts),
           _.related_fact_ids -> lift(fact.related_fact_ids)
@@ -63,7 +63,7 @@ class FactData(ctx: PostgresJdbcContext[SnakeCase.type]) {
   def updateFactData(fact: Fact) = {
     val q = quote {
       query[Fact]
-        .filter(_.fact_id == lift(fact.fact_id))
+        .filter(_.id == lift(fact.id))
         .update(_.fact_data -> lift(fact.fact_data))
     }
     val resp = ctx.run(q)
@@ -73,7 +73,7 @@ class FactData(ctx: PostgresJdbcContext[SnakeCase.type]) {
   def deleteFactData(fact: Fact) = {
     val q = quote {
       query[Fact]
-        .filter(_.fact_id == lift(fact.fact_id))
+        .filter(_.id == lift(fact.id))
         .delete
     }
     val resp = ctx.run(q)
