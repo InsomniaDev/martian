@@ -25,3 +25,4 @@ object Main extends App {
     println("Config updated")
   } else println("Config already set")
 }
+
