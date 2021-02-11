@@ -13,15 +13,22 @@ class FactParser(ctx: PostgresJdbcContext[SnakeCase.type])
 
   // TODO: We should look into a type of sentence parser here
 
-  // checkForFact
-  //
-  // @param value is the offered string
+/**
+  * checkForFact
+  * 
+  * This method retrieves all of the fact data for the provided fact names along with their related facts
+  *
+  * @param value is the string passed in to look at
+  */
   private def checkForFact(value: String) = {
 
     // TODO: Make this method have a List[String] param that will have a list of facts that don't include the most common words
 
     // Get all of the facts that match the provided name
     val resp = checkFactNames(value.split(" ").toList)
+
+    // TODO: We could narrow down here on what is being searched if there is a related fact that is also in the passed in values
+    // Possibly search for the ones that have the highest count of words...
 
     // Get all of the fact data from the related facts
     val relatedFacts = getRelatedFactsByIds(
