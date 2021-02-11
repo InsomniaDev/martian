@@ -16,7 +16,9 @@ class FactParser(ctx: PostgresJdbcContext[SnakeCase.type])
   // checkForFact
   //
   // @param value is the offered string
-  def checkForFact(value: String) = {
+  private def checkForFact(value: String) = {
+
+    // TODO: Make this method have a List[String] param that will have a list of facts that don't include the most common words
 
     // Get all of the facts that match the provided name
     val resp = checkFactNames(value.split(" ").toList)
