@@ -12,36 +12,30 @@ class ConfigData(ctx: PostgresJdbcContext[SnakeCase.type]) {
   import ctx._
 
   def getConfigByKey(configKey: Option[String]): List[Config] = {
-    val q = quote {
+    run {
       query[Config]
         .filter(_.key == lift(configKey))
     }
-    val resp = ctx.run(q)
-    resp
   }
 
   def getConfig(): List[Config] = {
-    val q = quote {
+    run {
       query[Config]
     }
-    val resp = ctx.run(q)
-    resp
   }
 
   def insertConfigItem(config: Config) = {
-    val q = quote {
+    run {
       query[Config]
         .insert(
           _.key -> lift(config.key),
           _.value -> lift(config.value)
         )
     }
-    val resp = ctx.run(q)
-    resp
   }
 
   def updateConfig(config: Config) = {
-    val q = quote {
+    run {
       query[Config]
         .filter(_.id == lift(config.id))
         .update(
@@ -49,17 +43,13 @@ class ConfigData(ctx: PostgresJdbcContext[SnakeCase.type]) {
           _.value -> lift(config.value)
         )
     }
-    val resp = ctx.run(q)
-    resp
   }
 
   def deleteConfig(config: Config) = {
-    val q = quote {
+    run {
       query[Config]
         .filter(_.id == lift(config.id))
         .delete
     }
-    val resp = ctx.run(q)
-    resp
   }
 }
