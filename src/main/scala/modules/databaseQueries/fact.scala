@@ -4,8 +4,9 @@ import io.getquill._
 
 case class Fact(
     id: Int,
-    related_fact_ids: Option[String],
-    related_facts: Option[String],
+    name: String,
+    related_fact_ids: String,
+    related_facts: String,
     fact_data: Option[String]
 )
 
@@ -25,11 +26,34 @@ class FactData(ctx: PostgresJdbcContext[SnakeCase.type]) {
     }
   }
 
-  def getRelatedFactIds(factName: List[String]): List[Option[String]] = {
+  def checkFactName(factName: String): List[Fact] = {
     run {
       query[Fact]
-        .filter(a => liftQuery(factName).contains(a.related_facts))
+        .filter(_.name like lift(factName))
+    }
+  }
+
+  // checkFactNames gets the fact back by the provided name
+  def checkFactNames(factName: List[String]): List[Fact] = {
+    run {
+      query[Fact]
+        .filter(a => liftQuery(factName).contains(a.name))
+    }
+  }
+
+  def getRelatedFactIds(factName: String): List[String] = {
+    run {
+      query[Fact]
+        .filter(_.related_facts like lift(factName))
         .map(a => a.related_fact_ids)
+    }
+  }
+
+  // getRelatedFactsByIds gets the facts back by the provided ids
+  def getRelatedFactsByIds(factName: List[Int]): List[Fact] = {
+    run {
+      query[Fact]
+        .filter(a => liftQuery(factName).contains(a.id))
     }
   }
 

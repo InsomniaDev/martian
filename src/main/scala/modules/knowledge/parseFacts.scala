@@ -8,6 +8,25 @@ import io.getquill._
 
 class FactParser(ctx: PostgresJdbcContext[SnakeCase.type])
     extends FactData(ctx) {
-        // TODO: Need to check for fact existence here
-        // TODO: Need to use config values in here and have a class with those values
-    }
+  // TODO: Need to check for fact existence here
+  // TODO: Need to use config values in here and have a class with those values
+
+  // TODO: We should look into a type of sentence parser here
+
+  // checkForFact
+  //
+  // @param value is the offered string
+  def checkForFact(value: String) = {
+
+    // Get all of the facts that match the provided name
+    val resp = checkFactNames(value.split(" ").toList)
+
+    // Get all of the fact data from the related facts
+    val relatedFacts = getRelatedFactsByIds(
+      resp.flatMap(a => a.related_fact_ids.split(";").map(_.toInt))
+    ).flatMap(_.fact_data)
+
+    // Take all of the returned facts and put into a single array of facts to return
+    val allFactData = resp.flatMap(_.fact_data) ++ relatedFacts
+  }
+}

@@ -7,7 +7,6 @@ case class Config(
     value: Option[String]
 )
 
-// FIXME: Need to figure out what to do with ctx => this class would be better as a trait
 class ConfigData(ctx: PostgresJdbcContext[SnakeCase.type]) {
   import ctx._
 
