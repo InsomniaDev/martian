@@ -35,10 +35,7 @@ class FactData(ctx: PostgresJdbcContext[SnakeCase.type]) {
 
   // checkFactNames gets the fact back by the provided name
   def checkFactNames(factName: List[String]): List[Fact] = {
-    run {
-      query[Fact]
-        .filter(a => liftQuery(factName).contains(a.name))
-    }
+    run(query[Fact].filter(a => liftQuery(factName).contains(a.name)))
   }
 
   def getRelatedFactIds(factName: String): List[String] = {
@@ -51,10 +48,7 @@ class FactData(ctx: PostgresJdbcContext[SnakeCase.type]) {
 
   // getRelatedFactsByIds gets the facts back by the provided ids
   def getRelatedFactsByIds(factName: List[Int]): List[Fact] = {
-    run {
-      query[Fact]
-        .filter(a => liftQuery(factName).contains(a.id))
-    }
+    run(query[Fact].filter(a => liftQuery(factName).contains(a.id)))
   }
 
   def insertFact(fact: Fact) = {

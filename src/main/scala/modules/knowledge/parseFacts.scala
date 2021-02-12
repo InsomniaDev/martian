@@ -19,16 +19,14 @@ class FactParser(ctx: PostgresJdbcContext[SnakeCase.type])
   * This method retrieves all of the fact data for the provided fact names along with their related facts
   *
   * @param value is the string passed in to look at
+  * @return a list of fact data 
   */
-  private def checkForFact(value: String) = {
+  private def checkForFact(value: List[String]): List[String] = {
 
-    // TODO: Make this method have a List[String] param that will have a list of facts that don't include the most common words
+    // Get all of the facts that match the provided list of values
+    val resp = checkFactNames(value)
 
-    // Get all of the facts that match the provided name
-    val resp = checkFactNames(value.split(" ").toList)
-
-    // TODO: We could narrow down here on what is being searched if there is a related fact that is also in the passed in values
-    // Possibly search for the ones that have the highest count of words...
+    // TODO: Possibly search for the ones that have the highest count of words...
 
     // Get all of the fact data from the related facts
     val relatedFacts = getRelatedFactsByIds(
@@ -36,6 +34,26 @@ class FactParser(ctx: PostgresJdbcContext[SnakeCase.type])
     ).flatMap(_.fact_data)
 
     // Take all of the returned facts and put into a single array of facts to return
-    val allFactData = resp.flatMap(_.fact_data) ++ relatedFacts
+    resp.flatMap(_.fact_data) ++ relatedFacts
+  }
+
+/**
+  * decipherKnowledgeString
+  * 
+  * This method will remove all of the commonly found words from the value passed in and then return the relevant fact set
+  *
+  * @param value
+  * @return the relevant fact set
+  */
+  def decipherKnowledgeString(value: String): List[String] = {
+
+    // Get all of the commonWords from the database
+    val conf = new ConfigData(ctx).getConfigByKey(Some("commonWords")).flatMap(_.value).flatMap(_.split(","))
+    println(conf)
+
+    // Get all of the values that aren't in the common words list
+    val parsedValues = value.split(" ").view.filter(!conf.contains(_)).toList
+
+    checkForFact(parsedValues)
   }
 }
