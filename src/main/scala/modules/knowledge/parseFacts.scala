@@ -9,6 +9,13 @@ import io.getquill._
 class FactParser(ctx: PostgresJdbcContext[SnakeCase.type])
     extends FactData(ctx) {
 
+
+private def getNumberOfMatches(value: List[String]): Int = {
+  println("hello")
+  
+  1
+}
+
 /**
   * checkForFact
   * 

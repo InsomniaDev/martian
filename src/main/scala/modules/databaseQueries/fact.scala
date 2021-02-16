@@ -10,6 +10,17 @@ case class Fact(
     fact_data: Option[String]
 )
 
+case class FactsToWords(
+    id: Int,
+    fact_id: Int,
+    word_id: Int
+)
+
+case class Word(
+    id: Int,
+    word: String
+)
+
 class FactData(ctx: PostgresJdbcContext[SnakeCase.type]) {
   import ctx._
 
@@ -29,7 +40,12 @@ class FactData(ctx: PostgresJdbcContext[SnakeCase.type]) {
   def checkFactName(factName: String): List[Fact] = {
     run {
       query[Fact]
-        .filter(_.name like lift(factName))
+        .join(query[FactsToWords])
+        .on(_.id == _.fact_id)
+        .join(query[Word])
+        .on({ case ((a, b), c) => b.word_id == c.id })
+        .filter(_._2.word == lift(factName))
+        .map(_._1._1)
     }
   }
 
