@@ -9,21 +9,41 @@ import io.getquill._
 class FactParser(ctx: PostgresJdbcContext[SnakeCase.type])
     extends FactData(ctx) {
 
+  private def getNumberOfMatches(value: List[String]): Int = {
+    println("hello")
 
-private def getNumberOfMatches(value: List[String]): Int = {
-  println("hello")
-  
-  1
-}
+    1
+  }
 
-/**
-  * checkForFact
+/** getMatchesForAllWords
   * 
-  * This method retrieves all of the fact data for the provided fact names along with their related facts
+  * Get all of the matches for the words that are provided and then order them by count and prevalence
+  * 
+  * Return the top three results and increment importance
   *
-  * @param value is the string passed in to look at
-  * @return a list of fact data 
+  * @param value
   */
+  private def getMatchesForAllWords(value: String) = {
+    // TODO: Need to create a unit test for this functionality
+    val words = value.split(" ").toList
+    val resp = getFactsByUsedWords(words)
+
+    // Need to group by the fact_id
+    // **IMPORTANT** This counts on a unique relationship between fact_id and word_id
+    // TODO: Add unique relationship between fact_id and word_id in the database
+    val distinctFacts = resp.groupBy(_._1.fact_id)
+
+    // Sort by the highest amount of matches
+    val highestFoundWords = distinctFacts.toSeq.sortWith(_._1 > _._1)
+  }
+
+  /** checkForFact
+    *
+    * This method retrieves all of the fact data for the provided fact names along with their related facts
+    *
+    * @param value is the string passed in to look at
+    * @return a list of fact data
+    */
   private def checkForFact(value: List[String]): List[String] = {
 
     // Get all of the facts that match the provided list of values
@@ -40,18 +60,20 @@ private def getNumberOfMatches(value: List[String]): Int = {
     resp.flatMap(_.fact_data) ++ relatedFacts
   }
 
-/**
-  * decipherKnowledgeString
-  * 
-  * This method will remove all of the commonly found words from the value passed in and then return the relevant fact set
-  *
-  * @param value
-  * @return the relevant fact set
-  */
+  /** decipherKnowledgeString
+    *
+    * This method will remove all of the commonly found words from the value passed in and then return the relevant fact set
+    *
+    * @param value
+    * @return the relevant fact set
+    */
   def decipherKnowledgeString(value: String): List[String] = {
 
     // Get all of the commonWords from the database
-    val conf = new ConfigData(ctx).getConfigByKey(Some("commonWords")).flatMap(_.value).flatMap(_.split(","))
+    val conf = new ConfigData(ctx)
+      .getConfigByKey(Some("commonWords"))
+      .flatMap(_.value)
+      .flatMap(_.split(","))
     println(conf)
 
     // Get all of the values that aren't in the common words list

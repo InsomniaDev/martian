@@ -13,7 +13,8 @@ case class Fact(
 case class FactsToWords(
     id: Int,
     fact_id: Int,
-    word_id: Int
+    word_id: Int,
+    importance: Int
 )
 
 case class Word(
@@ -52,6 +53,16 @@ class FactData(ctx: PostgresJdbcContext[SnakeCase.type]) {
   // checkFactNames gets the fact back by the provided name
   def checkFactNames(factName: List[String]): List[Fact] = {
     run(query[Fact].filter(a => liftQuery(factName).contains(a.name)))
+  }
+
+  // getFactsByUsedWords returns the list of relationships and the words used
+  def getFactsByUsedWords(words: List[String]): List[(FactsToWords, Word)] = {
+    run {
+      query[FactsToWords]
+        .join(query[Word].filter(a => liftQuery(words).contains(a.word)))
+        .on(_.word_id == _.id)
+        .filter({ case (ftw, w) => w.word == lift(words(1)) })
+    }
   }
 
   def getRelatedFactIds(factName: String): List[String] = {
