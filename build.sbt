@@ -22,3 +22,5 @@ libraryDependencies ++= Seq(
   "org.postgresql" % "postgresql" % "42.2.8",
   "io.getquill" %% "quill-jdbc" % "3.4.10"
 )
+
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.8" % Test
