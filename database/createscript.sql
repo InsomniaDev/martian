@@ -6,8 +6,15 @@ CREATE TABLE IF NOT EXISTS fact(
     fact_data TEXT
 );
 
-CREATE TABLE IF NOT EXISTS config(
+CREATE TABLE IF NOT EXISTS facts_to_words(  
     id SERIAL PRIMARY KEY,
-    key TEXT,
-    value TEXT
+    fact_id INT,
+    word_id INT,
+    importance INT,
+    UNIQUE (fact_id, word_id)
+);
+
+CREATE TABLE IF NOT EXISTS word(  
+    id SERIAL PRIMARY KEY,
+    word TEXT
 );
