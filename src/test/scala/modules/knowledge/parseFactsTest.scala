@@ -2,4 +2,7 @@ package modules.knowledge
 
 import org.scalatest.{Matchers, WordSpec}
 
-class ParseFactsTest extends WordSpec with Matchers {}
+class ParseFactsTest extends WordSpec with Matchers {
+
+    
+}
