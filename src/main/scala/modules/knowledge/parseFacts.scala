@@ -40,7 +40,7 @@ class FactParser(ctx: PostgresJdbcContext[SnakeCase.type])
   /** getFactsByFoundIds
     *
     * This will get all of the facts by the provided ids
-    * will return a sorted by importance sequence    *
+    * will return a sorted by importance sequence
     *
     * @param factIds
     * @return
