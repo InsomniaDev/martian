@@ -18,9 +18,20 @@ version := "1.0"
 
 libraryDependencies += "org.scala-lang.modules" %% "scala-parser-combinators" % "1.1.2"
 libraryDependencies += "com.lambdazen.bitsy" % "bitsy" % "3.4.2"
-libraryDependencies ++= Seq( 
+libraryDependencies ++= Seq(
   "org.postgresql" % "postgresql" % "42.2.8",
   "io.getquill" %% "quill-jdbc" % "3.4.10"
+)
+
+val akkaHttpVersion = "10.2.4"
+lazy val akkaVersion = "2.6.13"
+
+libraryDependencies ++= Seq(
+  "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
+  "com.typesafe.akka" %% "akka-http-spray-json" % akkaHttpVersion,
+  "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion,
+  "com.typesafe.akka" %% "akka-stream" % akkaVersion,
+  "ch.qos.logback" % "logback-classic" % "1.2.3"
 )
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.8" % Test
