@@ -109,16 +109,24 @@ class FactParser(ctx: PostgresJdbcContext[SnakeCase.type])
     // FIXME: Also need to check if the words inside of the new fact have a highly related content to another fact
 
     // Get all of the values that aren't in the common words list
-    val parsedValues = getNonCommonWords(value.fact_data.toString()).toList
+    // val parsedWords =
 
     // Upsert the facts into the database
-    val insertedFact = upsertFact(value) 
-    
+    val insertedFact = upsertFact(value)
+
+    // Get all of the ids for the provided words
+    val idsForParsedWords = getIdsForWords(
+      getNonCommonWords(value.fact_data.toString()).toList
+    )
+
     // Insert relationships between the words and the facts
-    batchInsertWordsToFact(parsedValues.map(new FactsToWords()))
-    
-    // TODO: Needs to return the id for the inserted fact
-    None
+    batchInsertWordsToFact(
+      idsForParsedWords.map((a) =>
+        (new FactsToWords(None, insertedFact.id.getOrElse(0), a.id, 0))
+      )
+    )
+
+    Some(insertedFact)
   }
 }
 

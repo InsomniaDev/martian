@@ -8,14 +8,14 @@ case class Fact(
     fact_data: String,
     related_fact_ids: Option[String],
     related_facts: Option[String],
-    importance: Option[Int]
+    importance: Int
 )
 
 case class FactsToWords(
     id: Option[Int],
     fact_id: Int,
     word_id: Int,
-    importance: Option[Int]
+    importance: Int
 )
 
 case class Word(
@@ -58,7 +58,7 @@ class FactData(ctx: PostgresJdbcContext[SnakeCase.type]) {
     *
     * @param id
     */
-  def incrementFactToWordImportance(id: Int) = {
+  def incrementFactToWordImportance(id: Option[Int]) = {
     run {
       query[FactsToWords]
         .filter(_.id == lift(id))
@@ -115,9 +115,9 @@ class FactData(ctx: PostgresJdbcContext[SnakeCase.type]) {
           (new Fact(
             r.id,
             r.name,
-            r.related_fact_ids,
+            r.related_fact_ids.getOrElse(""),
             r.related_facts,
-            r.fact_data,
+            Some(r.fact_data),
             r.importance
           ))
         )
@@ -145,6 +145,21 @@ class FactData(ctx: PostgresJdbcContext[SnakeCase.type]) {
     }
   }
 
+  /** getIdsForWords
+    * 
+    * SELECT a.id, a.word 
+    * FROM word a 
+    * WHERE a.word IN (?)
+    *
+    * @param words
+    */
+  def getIdsForWords(words: List[String]) = {
+    run {
+      query[Word]
+       .filter(a => liftQuery(words).contains(a.word))
+    }
+  }
+
   def updateFactData(fact: Fact) = {
     run {
       query[Fact]
@@ -153,7 +168,7 @@ class FactData(ctx: PostgresJdbcContext[SnakeCase.type]) {
     }
   }
 
-  def getFact(factId: Int): List[Fact] = {
+  def getFact(factId: Option[Int]): List[Fact] = {
     run {
       query[Fact]
         .filter(a => a.id == lift(factId))

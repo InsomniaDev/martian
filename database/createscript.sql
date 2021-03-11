@@ -3,7 +3,8 @@ CREATE TABLE IF NOT EXISTS fact(
     name TEXT,
     related_fact_ids TEXT,
     related_facts TEXT,
-    fact_data TEXT
+    fact_data TEXT,
+    importantance INT DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS facts_to_words(  
@@ -11,6 +12,7 @@ CREATE TABLE IF NOT EXISTS facts_to_words(
     fact_id INT,
     word_id INT,
     importance INT,
+    importantance INT DEFAULT 0,
     UNIQUE (fact_id, word_id)
 );
 
