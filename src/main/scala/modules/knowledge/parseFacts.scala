@@ -78,7 +78,7 @@ class FactParser(ctx: PostgresJdbcContext[SnakeCase.type])
     * @param value is the string of words to be checked against
     * @return the relevant fact set
     */
-  def decipherKnowledgeString(value: String): Option[List[Fact]] = {
+  def DecipherKnowledgeString(value: String): Option[List[Fact]] = {
 
     // Get all of the values that aren't in the common words list
     val parsedValues = getNonCommonWords(value).toList
@@ -105,7 +105,7 @@ class FactParser(ctx: PostgresJdbcContext[SnakeCase.type])
     * @param value is the Fact to be inserted into the database
     * @return the inserted entry
     */
-  def inputKnowledgeString(value: Fact): Option[Fact] = {
+  def InputKnowledgeString(value: Fact): Option[Fact] = {
     // FIXME: Also need to check if the words inside of the new fact have a highly related content to another fact
 
     // Get all of the values that aren't in the common words list
