@@ -6,6 +6,7 @@ case class Fact(
     id: Option[Int],
     name: String,
     fact_data: String,
+    common_words: String,
     related_fact_ids: Option[String],
     related_facts: Option[String],
     importance: Int
@@ -94,30 +95,42 @@ class FactData(ctx: PostgresJdbcContext[SnakeCase.type]) {
 
   /** upsertFact
     *
-    * INSERT INTO fact AS t (name,fact_data)
-    * VALUES (?, ?)
-    * ON CONFLICT DO NOTHING
-    * RETURNING id, name, related_fact_ids, related_facts, fact_data, importance
+    * INSERT INTO fact AS t (name,fact_data) 
+    * VALUES (?, ?) 
+    * ON CONFLICT (name) 
+    * DO UPDATE 
+    *   SET fact_data = EXCLUDED.fact_data, 
+    *       common_words = EXCLUDED.common_words, 
+    *       related_fact_ids = EXCLUDED.related_fact_ids, 
+    *       related_facts = EXCLUDED.related_facts, 
+    *       importance = EXCLUDED.importance 
+    * RETURNING id, name, fact_data, common_words, related_fact_ids, related_facts, importance
     *
     * @param fact
     * @return
     */
   def upsertFact(fact: Fact): Fact = {
-    // FIXME: Update this to update rather than ignore if it already exists "onConflictUpdate"
     run {
       query[Fact]
         .insert(
           _.name -> lift(fact.name),
           _.fact_data -> lift(fact.fact_data)
         )
-        .onConflictIgnore
+        .onConflictUpdate(_.name)(
+          (oldVal, newVal) => oldVal.fact_data -> newVal.fact_data,
+          (oldVal, newVal) => oldVal.common_words -> newVal.common_words,
+          (oldVal, newVal) => oldVal.related_fact_ids -> newVal.related_fact_ids,
+          (oldVal, newVal) => oldVal.related_facts -> newVal.related_facts,
+          (oldVal, newVal) => oldVal.importance -> newVal.importance
+        )
         .returning(r =>
           (new Fact(
             r.id,
             r.name,
-            r.related_fact_ids.getOrElse(""),
+            r.fact_data,
+            r.common_words,
+            r.related_fact_ids,
             r.related_facts,
-            Some(r.fact_data),
             r.importance
           ))
         )
