@@ -3,6 +3,7 @@
 import io.getquill._
 
 import modules.databaseQueries._
+import routes._
 import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
 import akka.http.scaladsl.Http
@@ -39,17 +40,16 @@ object Martian {
     // needed for the future flatMap/onComplete in the end
     implicit val executionContext = system.executionContext
 
-    val route =
-      path("hello") {
-        get {
-          complete(
-            HttpEntity(
-              ContentTypes.`text/html(UTF-8)`,
-              "<h1>Say hello to akka-http</h1>"
-            )
-          )
+    val route = {
+      get {
+        path("hello") {
+          complete("Hello To You")
+        }
+        path("mine" / Segment) { mine => 
+          complete(s"${mine} is yours")
         }
       }
+    }
 
     val bindingFuture = Http().newServerAt("localhost", 8080).bind(route)
 
