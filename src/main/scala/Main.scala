@@ -10,6 +10,8 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives._
 import scala.io.StdIn
+import modules.MongoMan
+import org.mongodb.scala.bson.collection.immutable.Document
 
 object Martian {
 
@@ -47,6 +49,11 @@ object Martian {
         }
         path("mine" / Segment) { mine => 
           complete(s"${mine} is yours")
+        }
+      } ~ post {
+        path("new" / Segment) { newData => 
+          val mc = new MongoMan().insertFactForUser("test", newData)
+          complete("done")
         }
       }
     }

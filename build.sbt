@@ -35,3 +35,4 @@ libraryDependencies ++= Seq(
 )
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.8" % Test
+libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "4.2.2"
