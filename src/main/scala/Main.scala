@@ -14,6 +14,9 @@ import modules.MongoMan
 import org.mongodb.scala.bson.collection.immutable.Document
 import modules.User
 import org.mongodb.scala.model.Filters._
+import akka.actor.Status
+import scala.util.Success
+import scala.util.Failure
 
 object Martian {
 
@@ -40,7 +43,7 @@ object Martian {
 
   // def processGet(value: String): Route = {
   //   onComplete(new MongoMan().getFactForUser("test", null)) {
-      
+
   //   }
   // }
 
@@ -56,9 +59,20 @@ object Martian {
           complete("Hello To You")
         }
         path("user" / Segment) { useruuid =>
-          new MongoMan().getFactForUser("test", "{'name':'blach'}", (a => println(s"ADAM ******************* ${a.name}")))
+          // new MongoMan().getFactForUser("test", "{'name':'blach'}", (a => println(s"ADAM ******************* ${a.name}")))
           // TODO: Need to return the found value here, currently is just returning "not found"
-          complete("not found")
+          // complete("not found")
+          new MongoMan()
+            .getFactForUser("test", "{'name':'blach'}")
+            .andThen({
+              case Success(value: String) =>
+                complete(HttpResponse(entity = value))
+              case Failure(t) => complete(HttpResponse(status = 400))
+            })
+          // resp match {
+          //   case User(id, name) => complete(HttpResponse(entity = e.name))
+          // }
+          // complete(HttpResponse(entity = resp.name))
         }
       } ~ post {
         path("new" / Segment) { newData =>
@@ -77,3 +91,6 @@ object Martian {
       .onComplete(_ => system.terminate()) // and shutdown when done
   }
 }
+
+// TODO: See if we want to do Akka Streams here
+// - https://doc.akka.io/docs/alpakka/current/mongodb.html

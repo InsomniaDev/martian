@@ -87,19 +87,14 @@ class MongoMan {
     *
     * @param userUuid that we are matching the fact for
     * @param queryString that we are searching on
-    * @param callback to execute against that data
     */
   def getFactForUser(
       userUuid: String,
-      queryString: String,
-      callback: (User) => Unit
-  ) = {
+      queryString: String
+  ): Observable[String] = {
     val db = getFactDatabase(userUuid)
     db.find(BsonDocument.parse(queryString))
-      .subscribe(
-        (doc: User) => callback(doc),
-        (e: Throwable) => println("there was an error")
-      )
+      .map(_.name)
   }
 
   /** Insert the facts for the user
