@@ -4,6 +4,9 @@ import io.getquill._
 import org.mongodb.scala._
 import scala.collection.JavaConverters._
 
+// Using case classes with MongoDB 
+// http://mongodb.github.io/mongo-java-driver/4.2/driver-scala/getting-started/quick-start-case-class/
+
 class PostgresDatabase {
 
   lazy val ctx = new PostgresJdbcContext(SnakeCase, "ctx")
@@ -12,11 +15,11 @@ class PostgresDatabase {
 }
 
 class MongoMan {
-  val mongoClient = MongoClient(
-    "mongodb://rusty:rusty@192.168.1.19:30933,192.168.1.19:30934,192.168.1.19:30935"
+  val url = MongoClient(
+    "mongodb://rusty:rusty@192.168.1.19:30933"
   )
 
-  lazy val url: MongoClient = MongoClient(buildHost())
+  lazy val mongoClient: MongoClient = MongoClient(buildHost())
 
   def buildHost(): MongoClientSettings = {
     val user: String = "rusty" // the user name
@@ -30,9 +33,7 @@ class MongoMan {
       .applyToClusterSettings(b =>
         b.hosts(
           List(
-            new ServerAddress("192.168.1.19", 30933),
-            new ServerAddress("192.168.1.19", 30934),
-            new ServerAddress("192.168.1.19", 30935)
+            new ServerAddress("192.168.1.19", 30933)
           ).asJava
         )
       )
@@ -51,15 +52,10 @@ class MongoMan {
   }
 
   def insertFactForUser(userUuid: String, fact: String) = {
-    val mongoClient = MongoClient(
-      "mongodb://rusty:rusty@192.168.1.19:30933,192.168.1.19:30934,192.168.1.19:30935"
-    )
-    // val db = getFactDatabase(userUuid)
-    val mdb = mongoClient.getDatabase("facts")
+    val db = getFactDatabase(userUuid)
 
     val document = Document("name" -> fact)
-    mdb
-      .getCollection(userUuid)
+    db
       .insertOne(document)
       .subscribe(println(_))
   }
