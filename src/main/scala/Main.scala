@@ -47,8 +47,9 @@ object Martian {
         path("hello") {
           complete("Hello To You")
         }
-        path("mine" / Segment) { mine => 
-          complete(s"${mine} is yours")
+        path("user" / Segment) { useruuid => 
+          val mc = new MongoMan().getFactDatabase(useruuid)
+          complete(s"${mc} is yours")
         }
       } ~ post {
         path("new" / Segment) { newData => 

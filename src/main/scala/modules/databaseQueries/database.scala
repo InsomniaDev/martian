@@ -16,14 +16,16 @@ class MongoMan {
     "mongodb://rusty:rusty@192.168.1.19:30933,192.168.1.19:30934,192.168.1.19:30935"
   )
 
-  def buildHost() = {
+  lazy val url: MongoClient = MongoClient(buildHost())
+
+  def buildHost(): MongoClientSettings = {
     val user: String = "rusty" // the user name
     val source: String = "admin" // the source where the user is defined
     val password: Array[Char] =
       "rusty".toCharArray // the password as a character array
 // ...
     val credential = MongoCredential.createCredential(user, source, password)
-    val settings: MongoClientSettings = MongoClientSettings
+    MongoClientSettings
       .builder()
       .applyToClusterSettings(b =>
         b.hosts(
@@ -36,7 +38,6 @@ class MongoMan {
       )
       .credential(credential)
       .build()
-    val mongoClient: MongoClient = MongoClient(settings)
   }
 
   def getFactConfiguration(): MongoCollection[Document] = {
@@ -50,8 +51,16 @@ class MongoMan {
   }
 
   def insertFactForUser(userUuid: String, fact: String) = {
-    val db = getFactDatabase(userUuid)
+    val mongoClient = MongoClient(
+      "mongodb://rusty:rusty@192.168.1.19:30933,192.168.1.19:30934,192.168.1.19:30935"
+    )
+    // val db = getFactDatabase(userUuid)
+    val mdb = mongoClient.getDatabase("facts")
+
     val document = Document("name" -> fact)
-    db.insertOne(document).subscribe(println(_))
+    mdb
+      .getCollection(userUuid)
+      .insertOne(document)
+      .subscribe(println(_))
   }
 }
