@@ -57,6 +57,7 @@ object Martian {
         }
         path("user" / Segment) { useruuid =>
           new MongoMan().getFactForUser("test", "{'name':'blach'}", (a => println(s"ADAM ******************* ${a.name}")))
+          // TODO: Need to return the found value here, currently is just returning "not found"
           complete("not found")
         }
       } ~ post {
