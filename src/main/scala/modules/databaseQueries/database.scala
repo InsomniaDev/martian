@@ -8,6 +8,8 @@ import org.bson.codecs.configuration.CodecRegistries.{
   fromProviders,
   fromCodecs
 }
+import org.mongodb.scala.MongoClient.DEFAULT_CODEC_REGISTRY
+
 import org.mongodb.scala._
 import org.mongodb.scala.model.Filters._
 import org.mongodb.scala.bson.codecs.Macros._
@@ -16,6 +18,7 @@ import fansi.ErrorMode
 import scala.util.Success
 import scala.util.Failure
 import java.{util => ju}
+import org.bson.BsonDocument
 
 // Using case classes with MongoDB
 // http://mongodb.github.io/mongo-java-driver/4.2/driver-scala/getting-started/quick-start-case-class/
@@ -72,7 +75,8 @@ class MongoMan {
 
   def getFactDatabase(userUuid: String): MongoCollection[User] = {
     val codecRegistry = fromRegistries(
-      fromProviders(classOf[User])
+      fromProviders(classOf[User]),
+      DEFAULT_CODEC_REGISTRY
     )
     val mdb = mongoClient.getDatabase("facts").withCodecRegistry(codecRegistry)
     mdb.getCollection(userUuid)
@@ -87,19 +91,18 @@ class MongoMan {
     */
   def getFactForUser(
       userUuid: String,
-      queryString: Bson,
+      queryString: String,
       callback: (User) => Unit
   ) = {
     val db = getFactDatabase(userUuid)
-    db.find(queryString)
+    db.find(BsonDocument.parse(queryString))
       .subscribe(
         (doc: User) => callback(doc),
         (e: Throwable) => println("there was an error")
       )
   }
 
-  /**
-    * Insert the facts for the user
+  /** Insert the facts for the user
     *
     * @param userUuid collection to insert into
     * @param user object to insert as a document

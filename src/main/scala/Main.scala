@@ -13,6 +13,7 @@ import scala.io.StdIn
 import modules.MongoMan
 import org.mongodb.scala.bson.collection.immutable.Document
 import modules.User
+import org.mongodb.scala.model.Filters._
 
 object Martian {
 
@@ -37,6 +38,12 @@ object Martian {
 
   }
 
+  // def processGet(value: String): Route = {
+  //   onComplete(new MongoMan().getFactForUser("test", null)) {
+      
+  //   }
+  // }
+
   def main(args: Array[String]): Unit = {
 
     implicit val system = ActorSystem(Behaviors.empty, "my-system")
@@ -49,8 +56,8 @@ object Martian {
           complete("Hello To You")
         }
         path("user" / Segment) { useruuid =>
-          val mc = new MongoMan().getFactDatabase(useruuid)
-          complete(s"${mc} is yours")
+          new MongoMan().getFactForUser("test", "{'name':'blach'}", (a => println(s"ADAM ******************* ${a.name}")))
+          complete("not found")
         }
       } ~ post {
         path("new" / Segment) { newData =>
