@@ -12,6 +12,7 @@ import akka.http.scaladsl.server.Directives._
 import scala.io.StdIn
 import modules.MongoMan
 import org.mongodb.scala.bson.collection.immutable.Document
+import modules.User
 
 object Martian {
 
@@ -47,13 +48,13 @@ object Martian {
         path("hello") {
           complete("Hello To You")
         }
-        path("user" / Segment) { useruuid => 
+        path("user" / Segment) { useruuid =>
           val mc = new MongoMan().getFactDatabase(useruuid)
           complete(s"${mc} is yours")
         }
       } ~ post {
-        path("new" / Segment) { newData => 
-          val mc = new MongoMan().insertFactForUser("test", newData)
+        path("new" / Segment) { newData =>
+          val mc = new MongoMan().insertFactForUser("test", User(newData))
           complete("done")
         }
       }
