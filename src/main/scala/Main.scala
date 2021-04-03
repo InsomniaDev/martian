@@ -53,6 +53,8 @@ object Martian {
     // needed for the future flatMap/onComplete in the end
     implicit val executionContext = system.executionContext
 
+    implicit val mongoMan = new MongoMan()
+
     val route = {
       get {
         path("hello") {
@@ -65,7 +67,7 @@ object Martian {
             .collect { case Array(k, v) => k -> v }
             .toMap
           val (userUuid, factName) = values.head
-          val getValue = new MongoMan()
+          val getValue = mongoMan
             .getFactForUser(userUuid, s"{'name':'${factName}'}")
           onSuccess(getValue) { value =>
             complete(value.name)
@@ -77,7 +79,7 @@ object Martian {
         }
       } ~ post {
         path("new" / Segment) { newData =>
-          val mc = new MongoMan().insertFactForUser("test", User(newData))
+          val mc = mongoMan.insertFactForUser("test", User(newData))
           complete("done")
         }
       }
