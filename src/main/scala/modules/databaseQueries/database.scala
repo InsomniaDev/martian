@@ -19,6 +19,8 @@ import scala.util.Success
 import scala.util.Failure
 import java.{util => ju}
 import org.bson.BsonDocument
+import akka.compat.Future
+import scala.concurrent.Future
 
 // Using case classes with MongoDB
 // http://mongodb.github.io/mongo-java-driver/4.2/driver-scala/getting-started/quick-start-case-class/
@@ -91,10 +93,13 @@ class MongoMan {
   def getFactForUser(
       userUuid: String,
       queryString: String
-  ): Observable[String] = {
+  ): Future[User] = {
     val db = getFactDatabase(userUuid)
-    db.find(BsonDocument.parse(queryString))
-      .map(_.name)
+    db.find(BsonDocument.parse(queryString)).first().head()
+    // .andThen({
+    //   case Success(value: User) => value
+    //   case Failure(t) => User("")Future
+    // })
   }
 
   /** Insert the facts for the user

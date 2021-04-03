@@ -62,13 +62,11 @@ object Martian {
           // new MongoMan().getFactForUser("test", "{'name':'blach'}", (a => println(s"ADAM ******************* ${a.name}")))
           // TODO: Need to return the found value here, currently is just returning "not found"
           // complete("not found")
-          new MongoMan()
+          val getValue = new MongoMan()
             .getFactForUser("test", "{'name':'blach'}")
-            .andThen({
-              case Success(value: String) =>
-                complete(HttpResponse(entity = value))
-              case Failure(t) => complete(HttpResponse(status = 400))
-            })
+          onSuccess(getValue) { value =>
+            complete(value.name)
+          }
           // resp match {
           //   case User(id, name) => complete(HttpResponse(entity = e.name))
           // }
