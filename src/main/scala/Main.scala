@@ -58,19 +58,22 @@ object Martian {
         path("hello") {
           complete("Hello To You")
         }
-        path("user" / Segment) { useruuid =>
-          // new MongoMan().getFactForUser("test", "{'name':'blach'}", (a => println(s"ADAM ******************* ${a.name}")))
-          // TODO: Need to return the found value here, currently is just returning "not found"
-          // complete("not found")
+        path("user" / Segment) { query =>
+          val values = query
+            .split("=")
+            .grouped(2)
+            .collect { case Array(k, v) => k -> v }
+            .toMap
+          val (userUuid, factName) = values.head
           val getValue = new MongoMan()
-            .getFactForUser("test", "{'name':'blach'}")
+            .getFactForUser(userUuid, s"{'name':'${factName}'}")
           onSuccess(getValue) { value =>
             complete(value.name)
           }
-          // resp match {
-          //   case User(id, name) => complete(HttpResponse(entity = e.name))
-          // }
-          // complete(HttpResponse(entity = resp.name))
+        // resp match {
+        //   case User(id, name) => complete(HttpResponse(entity = e.name))
+        // }
+        // complete(HttpResponse(entity = resp.name))
         }
       } ~ post {
         path("new" / Segment) { newData =>
