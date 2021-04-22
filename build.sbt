@@ -19,8 +19,7 @@ version := "1.0"
 libraryDependencies += "org.scala-lang.modules" %% "scala-parser-combinators" % "1.1.2"
 libraryDependencies += "com.lambdazen.bitsy" % "bitsy" % "3.4.2"
 libraryDependencies ++= Seq(
-  "org.postgresql" % "postgresql" % "42.2.8",
-  "io.getquill" %% "quill-jdbc" % "3.4.10"
+  "io.getquill" %% "quill-cassandra" % "3.7.0"
 )
 
 val akkaHttpVersion = "10.2.4"

@@ -9,3 +9,6 @@ martian is the home ai system
 
 ## Login to postgres from the instance
 - `psql -h 127.0.0.1 -U jarvis`
+
+## Connect to Cassandra
+- `./opt/cassandra/bin/cqlsh`

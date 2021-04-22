@@ -7,7 +7,7 @@ case class Config(
     value: Option[String]
 )
 
-class ConfigData(ctx: PostgresJdbcContext[SnakeCase.type]) {
+class ConfigData(ctx: CassandraAsyncContext[SnakeCase.type]) {
   import ctx._
 
   def getConfigByKey(configKey: Option[String]): List[Config] = {

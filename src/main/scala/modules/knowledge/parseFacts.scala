@@ -9,7 +9,7 @@ import io.getquill._
 // TODO: Provide option for the editing user to relate facts - Facts should have an importance based on the number of related facts
 
 // TODO: Make the database communication occur through dependency injection
-class FactParser(ctx: PostgresJdbcContext[SnakeCase.type])
+class FactParser(ctx: CassandraAsyncContext[SnakeCase.type])
     extends FactData(ctx) {
 
   /** getNonCommonWords

@@ -2,6 +2,17 @@ package modules.databaseQueries
 
 import io.getquill._
 
+// val q = quote {
+//   query[Book].filter(p => p.pages.contains(25)).allowFiltering
+// }
+// ctx.run(q)
+    // record_uuid uuid,
+    // account_uuid uuid,
+    // tags set<text>,
+    // words set<text>,
+    // record text,
+    // importance int,
+
 case class Fact(
     id: Option[Int],
     name: String,
@@ -24,7 +35,7 @@ case class Word(
     word: String
 )
 
-class FactData(ctx: PostgresJdbcContext[SnakeCase.type]) {
+class FactData(ctx: CassandraAsyncContext[SnakeCase.type]) {
   import ctx._
 
   /** getFactsByUsedWords

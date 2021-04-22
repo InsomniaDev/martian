@@ -10,9 +10,7 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives._
 import scala.io.StdIn
-import modules.MongoMan
 import org.mongodb.scala.bson.collection.immutable.Document
-import modules.User
 import org.mongodb.scala.model.Filters._
 import akka.actor.Status
 import scala.util.Success
@@ -21,7 +19,7 @@ import scala.util.Failure
 object Martian {
 
   private def loadConfig() = {
-    lazy val ctx = new PostgresJdbcContext(SnakeCase, "ctx")
+    lazy val ctx = new CassandraAsyncContext(SnakeCase, "ctx")
 
     // new FactData(ctx).(getFactData)
     val config = new ConfigData(ctx)
@@ -53,7 +51,7 @@ object Martian {
     // needed for the future flatMap/onComplete in the end
     implicit val executionContext = system.executionContext
 
-    implicit val mongoMan = new MongoMan()
+    // implicit val mongoMan = new MongoMan()
 
     val route = {
       get {
@@ -67,11 +65,10 @@ object Martian {
             .collect { case Array(k, v) => k -> v }
             .toMap
           val (userUuid, factName) = values.head
-          val getValue = mongoMan
-            .getFactForUser(userUuid, s"{'name':'${factName}'}")
-          onSuccess(getValue) { value =>
-            complete(value.name)
-          }
+          complete("done")
+          // onSuccess(getValue) { value =>
+          //   complete(value.name)
+          // }
         // resp match {
         //   case User(id, name) => complete(HttpResponse(entity = e.name))
         // }
@@ -79,7 +76,6 @@ object Martian {
         }
       } ~ post {
         path("new" / Segment) { newData =>
-          val mc = mongoMan.insertFactForUser("test", User(newData))
           complete("done")
         }
       }
