@@ -7,3 +7,10 @@ CREATE TABLE records(
     importance int,
     PRIMARY KEY ((record_uuid, account_uuid), importance)
 ) WITH CLUSTERING ORDER BY (importance DESC);
+
+CREATE TABLE config(
+    config_uuid uuid,
+    name text,
+    record text,
+    PRIMARY KEY (config_uuid, name)
+);

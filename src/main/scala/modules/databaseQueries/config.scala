@@ -1,23 +1,26 @@
 package modules.databaseQueries
 import io.getquill._
+import java.util.UUID
+import scala.concurrent.ExecutionContext
+import scala.concurrent.Future
 
 case class Config(
-    id: Int,
-    key: Option[String],
-    value: Option[String]
+    config_uuid: UUID,
+    name: String,
+    record: String
 )
 
-class ConfigData(ctx: CassandraAsyncContext[SnakeCase.type]) {
+class ConfigData(ctx: CassandraAsyncContext[SnakeCase.type])(implicit ec: ExecutionContext) {
   import ctx._
 
-  def getConfigByKey(configKey: Option[String]): List[Config] = {
+  def getConfigByName(configKey: String): Future[List[Config]] = {
     run {
       query[Config]
-        .filter(_.key == lift(configKey))
+        .filter(_.name == lift(configKey))
     }
   }
 
-  def getConfig(): List[Config] = {
+  def getConfig(): Future[List[Config]] = {
     run {
       query[Config]
     }
@@ -26,29 +29,30 @@ class ConfigData(ctx: CassandraAsyncContext[SnakeCase.type]) {
   def insertConfigItem(config: Config) = {
     run {
       query[Config]
-        .insert(
-          _.key -> lift(config.key),
-          _.value -> lift(config.value)
-        )
+        .insert(lift(config))
     }
+    true
   }
 
   def updateConfig(config: Config) = {
     run {
       query[Config]
-        .filter(_.id == lift(config.id))
+        .filter(_.config_uuid == lift(config.config_uuid))
         .update(
-          _.key -> lift(config.key),
-          _.value -> lift(config.value)
+          _.config_uuid -> lift(config.config_uuid),
+          _.name -> lift(config.name),
+          _.record -> lift(config.record)
         )
     }
+    true
   }
 
   def deleteConfig(config: Config) = {
     run {
       query[Config]
-        .filter(_.id == lift(config.id))
+        .filter(_.config_uuid == lift(config.config_uuid))
         .delete
     }
+    true
   }
 }
