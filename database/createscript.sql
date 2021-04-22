@@ -1,3 +1,11 @@
+./opt/cassandra/bin/cqlsh
+
+CREATE KEYSPACE martian
+  WITH REPLICATION = { 
+   'class' : 'SimpleStrategy', 
+   'replication_factor' : 1 
+  };
+
 CREATE TABLE records(
     record_uuid uuid,
     account_uuid uuid,

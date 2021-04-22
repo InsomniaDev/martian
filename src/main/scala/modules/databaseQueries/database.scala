@@ -9,7 +9,7 @@ import io.getquill._
 
 class CassandraDatabase {
 
-  lazy val ctx = new CassandraSyncContext(SnakeCase, "db")
+  lazy val ctx = new CassandraSyncContext(SnakeCase, "martian")
 
   import ctx._
 }
