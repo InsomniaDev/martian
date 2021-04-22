@@ -1,7 +1,7 @@
 package modules.databaseQueries
 
 import io.getquill._
-
+import java.util.UUID
 // val q = quote {
 //   query[Book].filter(p => p.pages.contains(25)).allowFiltering
 // }
@@ -13,27 +13,15 @@ import io.getquill._
     // record text,
     // importance int,
 
-case class Fact(
-    id: Option[Int],
-    name: String,
-    fact_data: String,
-    common_words: String,
-    related_fact_ids: Option[String],
-    related_facts: Option[String],
+case class Records(
+    record_uuid: UUID,
+    account_uuid: UUID,
+    tags: Set[String],
+    words: Set[String],
+    record: String,
     importance: Int
 )
 
-case class FactsToWords(
-    id: Option[Int],
-    fact_id: Int,
-    word_id: Int,
-    importance: Int
-)
-
-case class Word(
-    id: Int,
-    word: String
-)
 
 class FactData(ctx: CassandraAsyncContext[SnakeCase.type]) {
   import ctx._
