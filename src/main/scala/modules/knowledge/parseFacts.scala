@@ -2,6 +2,8 @@ package modules.knowledge
 
 import modules.databaseQueries._
 import io.getquill._
+import scala.concurrent.ExecutionContext
+import java.util.UUID
 
 // TODO: Could we possibly export all of this knowledge data into markdown files and then display them through something like Hugo?
 // https://gohugo.io/documentation/
@@ -9,7 +11,9 @@ import io.getquill._
 // TODO: Provide option for the editing user to relate facts - Facts should have an importance based on the number of related facts
 
 // TODO: Make the database communication occur through dependency injection
-class FactParser(ctx: CassandraAsyncContext[SnakeCase.type])
+class FactParser(ctx: CassandraSyncContext[SnakeCase.type])(implicit
+    ec: ExecutionContext
+)
     extends FactData(ctx) {
 
   /** getNonCommonWords
@@ -23,9 +27,9 @@ class FactParser(ctx: CassandraAsyncContext[SnakeCase.type])
   private def getNonCommonWords(value: String): Seq[String] = {
     // Get all of the commonWords from the database
     val conf = new ConfigData(ctx)
-      .getConfigByKey(Some("commonWords"))
-      .flatMap(_.value)
-      .flatMap(_.split(","))
+      .getConfigByName("commonWords")
+      .flatMap(_.record)
+      // .flatMap(_.split(","))
 
     // Get all of the values that aren't in the common words list
     value.split(" ").filter(!conf.contains(_))
@@ -39,21 +43,23 @@ class FactParser(ctx: CassandraAsyncContext[SnakeCase.type])
     *
     * @param words is a list of words that aren't commonly used and are currently being searched
     */
-  private def getMatchesForAllWords(words: List[String]): Seq[FactsToWords] = {
+  private def getMatchesForAllWords(words: List[String]): Seq[Records] = {
 
     // FIXME: Need to create a unit test for this functionality
-    val resp = getFactsByUsedWords(words)
+    val resp = getFactsByUsedWord(words(0))
 
     // Need to group by the fact_id
     // **IMPORTANT** This counts on a unique relationship between fact_id and word_id
-    val distinctFacts = resp.groupBy(_._1.fact_id)
+    // val distinctFacts = resp.groupBy(_.record_uuid)
 
-    // Sort by the highest amount of matches
-    val highestFoundWords =
-      distinctFacts.toSeq.sortWith(_._1 > _._1).take(3).flatMap(_._2)
+    // // Sort by the highest amount of matches
+    // val highestFoundWords =
+    //   distinctFacts.toSeq.sortWith(_._1 > _._1).take(3).flatMap(_._2)
 
-    // Return the matched list sorted by the importance level
-    highestFoundWords.map(_._1).sortWith(_.importance > _.importance)
+    // // Return the matched list sorted by the importance level
+    // highestFoundWords.map(_._1).sortWith(_.importance > _.importance)
+
+    resp
   }
 
   /** getFactsByFoundIds
@@ -64,9 +70,9 @@ class FactParser(ctx: CassandraAsyncContext[SnakeCase.type])
     * @param factIds
     * @return
     */
-  private def getFactsByFoundIds(factIds: Seq[Int]): Seq[Fact] = {
+  private def getFactsByFoundIds(factIds: Seq[UUID]): Seq[Records] = {
 
-    val foundFacts = getFactsByIds(factIds.toList)
+    val foundFacts = getFactsByUuids(factIds.toList)
 
     foundFacts.sortWith(_.importance > _.importance)
   }
@@ -78,7 +84,7 @@ class FactParser(ctx: CassandraAsyncContext[SnakeCase.type])
     * @param value is the string of words to be checked against
     * @return the relevant fact set
     */
-  def DecipherKnowledgeString(value: String): Option[List[Fact]] = {
+  def DecipherKnowledgeString(value: String): Option[List[Records]] = {
 
     // Get all of the values that aren't in the common words list
     val parsedValues = getNonCommonWords(value).toList
@@ -91,10 +97,10 @@ class FactParser(ctx: CassandraAsyncContext[SnakeCase.type])
       case tim if (tim.length > 0) => {
 
         // Increment the importance for the returned matches
-        topImportantMatches.foreach(a => incrementFactToWordImportance(a.id))
+        topImportantMatches.foreach(a => incrementFactToWordImportance(a.record_uuid))
 
         // Get the facts for these matches sorted by the fact importance
-        Some(getFactsByFoundIds(topImportantMatches.map(_.fact_id)).toList)
+        Some(getFactsByFoundIds(topImportantMatches.map(_.record_uuid)).toList)
       }
       case _ => None
     }
@@ -105,7 +111,7 @@ class FactParser(ctx: CassandraAsyncContext[SnakeCase.type])
     * @param value is the Fact to be inserted into the database
     * @return the inserted entry
     */
-  def InputKnowledgeString(value: Fact): Option[Fact] = {
+  def InputKnowledgeString(value: Records): Option[Records] = {
     // FIXME: Also need to check if the words inside of the new fact have a highly related content to another fact
 
     // Get all of the values that aren't in the common words list
@@ -116,13 +122,19 @@ class FactParser(ctx: CassandraAsyncContext[SnakeCase.type])
 
     // Get all of the ids for the provided words
     val idsForParsedWords = getIdsForWords(
-      getNonCommonWords(value.fact_data.toString()).toList
+      getNonCommonWords(value.record.toString()).toList
     )
 
     // Insert relationships between the words and the facts
     batchInsertWordsToFact(
       idsForParsedWords.map((a) =>
-        (new FactsToWords(None, insertedFact.id.getOrElse(0), a.id, 0))
+        (new Records(
+          record_uuid = UUID.randomUUID(), 
+          account_uuid = UUID.randomUUID(), 
+          tags = Set("two"),
+          words = Set("two"),
+          record = "muscle",
+          importance = 1))
       )
     )
 

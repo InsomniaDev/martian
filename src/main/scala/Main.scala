@@ -15,11 +15,13 @@ import org.mongodb.scala.model.Filters._
 import akka.actor.Status
 import scala.util.Success
 import scala.util.Failure
+import scala.concurrent.ExecutionContext
+import java.util.UUID
 
 object Martian {
 
-  private def loadConfig() = {
-    lazy val ctx = new CassandraAsyncContext(SnakeCase, "ctx")
+  private def loadConfig()(implicit ec: ExecutionContext) = {
+    lazy val ctx = new CassandraSyncContext(SnakeCase, "ctx")
 
     // new FactData(ctx).(getFactData)
     val config = new ConfigData(ctx)
@@ -27,11 +29,9 @@ object Martian {
     if (config.getConfig().map(println(_)).size == 0) {
       // Let's have common words inserted into the database for the time being
       val commonWordsConfig = new Config(
-        0,
-        Some("commonWords"),
-        Some(
-          "the,be,to,of,and,a,in,that,have,I,it,for,not,on,with,he,as,you,do,at,this,but,his,by,from,they,we,say,her,she,or,an,will,my,one,all,would,there,their,what,so,up,out,if,about,who,get,which,go,me,when,make,can,like,time,no,just,him,know,take,people,into,year,your,good,some,could,them,see,other,than,then,now,look,only,come,its,over,think,also,back,after,use,two,how,our,work,first,well,way,even,new,want,because,any,these,give,day,most,us"
-        )
+        UUID.randomUUID(),
+        "commonWords",
+        "the,be,to,of,and,a,in,that,have,I,it,for,not,on,with,he,as,you,do,at,this,but,his,by,from,they,we,say,her,she,or,an,will,my,one,all,would,there,their,what,so,up,out,if,about,who,get,which,go,me,when,make,can,like,time,no,just,him,know,take,people,into,year,your,good,some,could,them,see,other,than,then,now,look,only,come,its,over,think,also,back,after,use,two,how,our,work,first,well,way,even,new,want,because,any,these,give,day,most,us"
       )
       config.insertConfigItem(commonWordsConfig)
       println("Config updated")
@@ -66,9 +66,9 @@ object Martian {
             .toMap
           val (userUuid, factName) = values.head
           complete("done")
-          // onSuccess(getValue) { value =>
-          //   complete(value.name)
-          // }
+        // onSuccess(getValue) { value =>
+        //   complete(value.name)
+        // }
         // resp match {
         //   case User(id, name) => complete(HttpResponse(entity = e.name))
         // }

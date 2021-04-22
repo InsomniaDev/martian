@@ -10,17 +10,17 @@ case class Config(
     record: String
 )
 
-class ConfigData(ctx: CassandraAsyncContext[SnakeCase.type])(implicit ec: ExecutionContext) {
+class ConfigData(ctx: CassandraSyncContext[SnakeCase.type])(implicit ec: ExecutionContext) {
   import ctx._
 
-  def getConfigByName(configKey: String): Future[List[Config]] = {
+  def getConfigByName(configKey: String): List[Config] = {
     run {
       query[Config]
         .filter(_.name == lift(configKey))
     }
   }
 
-  def getConfig(): Future[List[Config]] = {
+  def getConfig(): List[Config] = {
     run {
       query[Config]
     }

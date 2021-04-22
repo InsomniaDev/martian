@@ -2,16 +2,17 @@ package modules.databaseQueries
 
 import io.getquill._
 import java.util.UUID
+import scala.concurrent.{Future, ExecutionContext}
 // val q = quote {
 //   query[Book].filter(p => p.pages.contains(25)).allowFiltering
 // }
 // ctx.run(q)
-    // record_uuid uuid,
-    // account_uuid uuid,
-    // tags set<text>,
-    // words set<text>,
-    // record text,
-    // importance int,
+// record_uuid uuid,
+// account_uuid uuid,
+// tags set<text>,
+// words set<text>,
+// record text,
+// importance int,
 
 case class Records(
     record_uuid: UUID,
@@ -22,154 +23,144 @@ case class Records(
     importance: Int
 )
 
-
-class FactData(ctx: CassandraAsyncContext[SnakeCase.type]) {
+class FactData(ctx: CassandraSyncContext[SnakeCase.type])(implicit
+    ec: ExecutionContext
+) {
   import ctx._
 
-  /** getFactsByUsedWords
+  /** getFactsByUsedWord
     *
-    * SELECT x1.id, x1.fact_id, x1.word_id, x1.importance, a.id, a.word
-    * FROM facts_to_words x1
-    *   INNER JOIN (
-    *     SELECT a.id, a.word
-    *     FROM word a
-    *     WHERE a.word IN (?)
-    *   ) AS a
-    *   ON x1.word_id = a.id
-    *   WHERE a.word = ?
+    * SELECT
+    *   record_uuid,
+    *   account_uuid,
+    *   tags,
+    *   words,
+    *   record,
+    *   importance
+    * FROM records
+    * WHERE words CONTAINS ?
+    * ALLOW FILTERING
     *
     * @param words
     * @return
     */
-  def getFactsByUsedWords(words: List[String]): List[(FactsToWords, Word)] = {
+  def getFactsByUsedWord(word: String): List[Records] = {
     run {
-      query[FactsToWords]
-        .join(query[Word].filter(a => liftQuery(words).contains(a.word)))
-        .on(_.word_id == _.id)
-        .filter({ case (ftw, w) => w.word == lift(words(1)) })
+      query[Records]
+        .filter(r => r.words.contains(lift(word)))
+        .allowFiltering
     }
   }
 
   /** incrementFactToWordImportance
     *
-    * UPDATE facts_to_words
-    * SET importance = (importance + 1)
-    * WHERE id = ?
+    * UPDATE records
+    * SET importance = importance + 1
+    * WHERE record_uuid = ?
     *
     * @param id
     */
-  def incrementFactToWordImportance(id: Option[Int]) = {
+  def incrementFactToWordImportance(record_uuid: UUID) = {
     run {
-      query[FactsToWords]
-        .filter(_.id == lift(id))
+      query[Records]
+        .filter(_.record_uuid == lift(record_uuid))
         .update(p => p.importance -> (p.importance + 1))
     }
+    true
   }
 
-  /** getFactsByIds
+  /** getFactsByUuids
     *
-    * SELECT a.id, a.name, a.related_fact_ids, a.related_facts, a.fact_data
-    * FROM fact a
-    * WHERE a.id IN (?)
+    * SELECT record_uuid, account_uuid, tags, words, record, importance
+    * FROM records
+    * WHERE record_uuid IN (?)
     *
     * @param factIds
     * @return
     */
-  def getFactsByIds(factIds: List[Int]): List[Fact] = {
-    run(query[Fact].filter(a => liftQuery(factIds).contains(a.id)))
-  }
-
-  /** checkFactName
-    *
-    * SELECT x4.id, x4.name, x4.related_fact_ids, x4.related_facts, x4.fact_data, x4.importance
-    * FROM fact x4
-    * WHERE x4.name = ?
-    *
-    * @param factName
-    * @return
-    */
-  def checkFactName(factName: String): List[Fact] = {
-    run(query[Fact].filter(_.name == lift(factName)))
+  def getFactsByUuids(factIds: List[UUID]): List[Records] = {
+    run(query[Records].filter(a => liftQuery(factIds).contains(a.record_uuid)))
   }
 
   /** upsertFact
     *
-    * INSERT INTO fact AS t (name,fact_data) 
-    * VALUES (?, ?) 
-    * ON CONFLICT (name) 
-    * DO UPDATE 
-    *   SET fact_data = EXCLUDED.fact_data, 
-    *       common_words = EXCLUDED.common_words, 
-    *       related_fact_ids = EXCLUDED.related_fact_ids, 
-    *       related_facts = EXCLUDED.related_facts, 
-    *       importance = EXCLUDED.importance 
-    * RETURNING id, name, fact_data, common_words, related_fact_ids, related_facts, importance
+    * UPDATE records
+    * SET
+    *   record_uuid = ?,
+    *   account_uuid = ?,
+    *   tags = ?,
+    *   words = ?,
+    *   record = ?,
+    *   importance = ?
+    * WHERE record_uuid = ?
+    *   AND account_uuid = ?
     *
     * @param fact
     * @return
     */
-  def upsertFact(fact: Fact): Fact = {
+  def upsertFact(fact: Records): Records = {
     run {
-      query[Fact]
-        .insert(
-          _.name -> lift(fact.name),
-          _.fact_data -> lift(fact.fact_data)
+      query[Records]
+        .filter(a =>
+          (a.record_uuid == lift(fact.record_uuid))
+            && a.account_uuid == lift(fact.account_uuid)
         )
-        .onConflictUpdate(_.name)(
-          (oldVal, newVal) => oldVal.fact_data -> newVal.fact_data,
-          (oldVal, newVal) => oldVal.common_words -> newVal.common_words,
-          (oldVal, newVal) => oldVal.related_fact_ids -> newVal.related_fact_ids,
-          (oldVal, newVal) => oldVal.related_facts -> newVal.related_facts,
-          (oldVal, newVal) => oldVal.importance -> newVal.importance
-        )
-        .returning(r =>
-          (new Fact(
-            r.id,
-            r.name,
-            r.fact_data,
-            r.common_words,
-            r.related_fact_ids,
-            r.related_facts,
-            r.importance
-          ))
+        .update(
+          _.record_uuid -> lift(fact.record_uuid),
+          _.account_uuid -> lift(fact.account_uuid),
+          _.tags -> lift(fact.tags),
+          _.words -> lift(fact.words),
+          _.record -> lift(fact.record),
+          _.importance -> lift(fact.importance)
         )
     }
+    fact
   }
 
   /** batchInsertWordsToFact
     *
-    * INSERT INTO facts_to_words (fact_id,word_id)
-    * VALUES (?, ?)
+    * INSERT INTO records (
+    *   record_uuid,
+    *   account_uuid,
+    *   tags,
+    *   words,
+    *   record,
+    *   importance) 
+    * VALUES (?, ?, ?, ?, ?, ?)
     *
     * @param insertValues
     */
-  def batchInsertWordsToFact(insertValues: List[FactsToWords]) = {
+  def batchInsertWordsToFact(insertValues: List[Records]) = {
     run {
       quote {
-        liftQuery(insertValues).foreach(e =>
-          query[FactsToWords]
+        liftQuery(insertValues).foreach(fact =>
+          query[Records]
             .insert(
-              _.fact_id -> e.fact_id,
-              _.word_id -> e.word_id
+              _.record_uuid -> lift(fact.record_uuid),
+              _.account_uuid -> lift(fact.account_uuid),
+              _.tags -> lift(fact.tags),
+              _.words -> lift(fact.words),
+              _.record -> lift(fact.record),
+              _.importance -> lift(fact.importance)
             )
         )
       }
     }
+    true
   }
 
   /** getIdsForWords
-    * 
-    * SELECT a.id, a.word 
-    * FROM word a 
-    * WHERE a.word IN (?)
+    *
+    * SELECT record_uuid, account_uuid, tags, words, record, importance 
+    * FROM records 
+    * WHERE words IN (?)
     *
     * @param words
     */
-  def getIdsForWords(words: List[String]) = {
+  def getIdsForWords(words: List[String]): List[Records] = {
     run {
-      query[Word]
-       .filter(a => liftQuery(words).contains(a.word))
+      query[Records]
+        .filter(a => liftQuery(words).contains(a.words))
     }
   }
-
 }
