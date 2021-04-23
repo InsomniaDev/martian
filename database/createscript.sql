@@ -6,6 +6,7 @@ CREATE KEYSPACE martian
    'replication_factor' : 1 
   };
 
+-- Get all of the tags and their associated records
 CREATE TABLE tags_to_records(
     tag text,
     account_uuid uuid,
@@ -13,6 +14,7 @@ CREATE TABLE tags_to_records(
     PRIMARY KEY (account_uuid, tag)
 ) WITH CLUSTERING ORDER BY (tag ASC);
 
+-- Get all of the words and their associated records
 CREATE TABLE words_to_records(
     word text,
     account_uuid uuid,
@@ -20,6 +22,7 @@ CREATE TABLE words_to_records(
     PRIMARY KEY (account_uuid, word)
 ) WITH CLUSTERING ORDER BY (word ASC);
 
+-- Get the record(s) back that we need to return
 CREATE TABLE record(
     account_uuid uuid,
     record_uuid uuid,
