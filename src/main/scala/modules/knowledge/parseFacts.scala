@@ -16,7 +16,7 @@ class FactParser(ctx: CassandraSyncContext[SnakeCase.type])(implicit
 )
     extends FactData(ctx)(ec) {
 
-  /** getNonCommonWords
+  /** getNonCommonWordsFromString
     *
     * Pull the common words from the config value in the database
     * Return all of the words that don't match the values in the `commonWords` config
@@ -24,12 +24,11 @@ class FactParser(ctx: CassandraSyncContext[SnakeCase.type])(implicit
     * @param value is a string to parse out common words from
     * @return sequence of non common words
     */
-  private def getNonCommonWords(value: String): Seq[String] = {
+  private def getNonCommonWordsFromString(value: String): Seq[String] = {
     // Get all of the commonWords from the database
     val conf = new ConfigData(ctx)
       .getConfigByName("commonWords")
-      .flatMap(_.record)
-      // .flatMap(_.split(","))
+      .flatMap(a => a.record.split(","))
 
     // Get all of the values that aren't in the common words list
     value.split(" ").filter(!conf.contains(_))
@@ -87,7 +86,7 @@ class FactParser(ctx: CassandraSyncContext[SnakeCase.type])(implicit
   def DecipherKnowledgeString(value: String): Option[List[Records]] = {
 
     // Get all of the values that aren't in the common words list
-    val parsedValues = getNonCommonWords(value).toList
+    val parsedValues = getNonCommonWordsFromString(value).toList
 
     // Get all of the top matches by the count of words matched ordered by importance level
     val topImportantMatches = getMatchesForAllWords(parsedValues)
@@ -122,21 +121,21 @@ class FactParser(ctx: CassandraSyncContext[SnakeCase.type])(implicit
 
     // Get all of the ids for the provided words
     val idsForParsedWords = getIdsForWords(
-      getNonCommonWords(value.record.toString()).toList
+      getNonCommonWordsFromString(value.record.toString()).toList
     )
 
     // Insert relationships between the words and the facts
-    // batchInsertWordsToFact(
-    //   idsForParsedWords.map((a) =>
-    //     (new Records(
-    //       record_uuid = UUID.randomUUID(), 
-    //       account_uuid = UUID.randomUUID(), 
-    //       tags = Set("two"),
-    //       words = Set("two"),
-    //       record = "muscle",
-    //       importance = 1))
-    //   )
-    // )
+    batchInsertWordsToFact(
+      idsForParsedWords.map((a) =>
+        (new Records(
+          record_uuid = UUID.randomUUID(), 
+          account_uuid = UUID.randomUUID(), 
+          tags = Set("two"),
+          words = Set("two"),
+          record = "muscle",
+          importance = 1))
+      )
+    )
 
     Some(insertedFact)
   }

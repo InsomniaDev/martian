@@ -119,40 +119,25 @@ class FactData(ctx: CassandraSyncContext[SnakeCase.type])(implicit
 
   /** batchInsertWordsToFact
     *
-    * INSERT INTO records (
-    *   record_uuid,
-    *   account_uuid,
-    *   tags,
-    *   words,
-    *   record,
-    *   importance) 
+    * INSERT INTO records (record_uuid,account_uuid,tags,words,record,importance) 
     * VALUES (?, ?, ?, ?, ?, ?)
     *
     * @param insertValues
     */
-  // def batchInsertWordsToFact(insertValues: List[Records]) = {
-  //   run {
-  //     quote {
-  //       liftQuery(insertValues).foreach(fact =>
-  //         query[Records]
-  //           .insert(
-  //             _.record_uuid -> lift(fact.record_uuid),
-  //             _.account_uuid -> lift(fact.account_uuid),
-  //             _.tags -> lift(fact.tags),
-  //             _.words -> lift(fact.words),
-  //             _.record -> lift(fact.record),
-  //             _.importance -> lift(fact.importance)
-  //           )
-  //       )
-  //     }
-  //   }
-  //   true
-  // }
+  def batchInsertWordsToFact(insertValues: List[Records]) = {
+    insertValues.foreach(record => {
+      run {
+        quote {
+            query[Records].insert(lift(record))
+        }
+      }
+    })
+  }
 
   /** getIdsForWords
     *
-    * SELECT record_uuid, account_uuid, tags, words, record, importance 
-    * FROM records 
+    * SELECT record_uuid, account_uuid, tags, words, record, importance
+    * FROM records
     * WHERE words IN (?)
     * ALLOW FILTERING
     *
