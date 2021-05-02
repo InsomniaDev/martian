@@ -11,16 +11,16 @@ CREATE TABLE tags_to_records(
     tag text,
     account_uuid uuid,
     record_uuid set<text>,
-    PRIMARY KEY (account_uuid, tag)
-) WITH CLUSTERING ORDER BY (tag ASC);
+    PRIMARY KEY ((account_uuid, tag))
+);
 
 -- Get all of the words and their associated records
 CREATE TABLE words_to_records(
     word text,
     account_uuid uuid,
     record_uuid set<text>,
-    PRIMARY KEY (account_uuid, word)
-) WITH CLUSTERING ORDER BY (word ASC);
+    PRIMARY KEY ((account_uuid, word))
+);
 
 -- Get the record(s) back that we need to return
 CREATE TABLE record(
@@ -31,7 +31,7 @@ CREATE TABLE record(
     record text,
     title text,
     importance int,
-    PRIMARY KEY (account_uuid, record_uuid, title)
+    PRIMARY KEY ((account_uuid, record_uuid), title)
 );
 
 CREATE TABLE config(

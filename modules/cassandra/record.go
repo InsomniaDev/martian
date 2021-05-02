@@ -7,13 +7,13 @@ import (
 )
 
 type Record struct {
-	AccountUuid gocql.UUID
-	RecordUuid  gocql.UUID
-	Tags        []string
-	Words       []string
-	Record      string
-	Title       string
-	Importance  int
+	AccountUuid gocql.UUID `cql:"account_uuid"`
+	RecordUuid  gocql.UUID `cql:"record_uuid"`
+	Tags        []string   `cql:"tags"`
+	Words       []string   `cql:"words"`
+	Record      string     `cql:"record"`
+	Title       string     `cql:"title"`
+	Importance  int        `cql:"importance"`
 }
 
 func (s *Session) UpsertRecord(record Record) {
