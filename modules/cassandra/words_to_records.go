@@ -12,6 +12,7 @@ type WordsToRecords struct {
 	RecordUuid  []string   `cql:"record_uuid"`
 }
 
+// UpsertWordsToRecords will add record association to word
 func (s *Session) UpsertWordsToRecords(words WordsToRecords) {
 	if err := s.Connection.Query(`
 		UPDATE words_to_records
@@ -23,6 +24,7 @@ func (s *Session) UpsertWordsToRecords(words WordsToRecords) {
 	}
 }
 
+// DeleteRecordsFromWords will delete the associated record_uuid from the entry
 func (s *Session) DeleteRecordsFromWords(words WordsToRecords) {
 	if err := s.Connection.Query(`
 		UPDATE words_to_records 
@@ -34,6 +36,7 @@ func (s *Session) DeleteRecordsFromWords(words WordsToRecords) {
 	}
 }
 
+// GetWordsToRecords will get all matching words for the associated account
 func (s *Session) GetWordsToRecords(words []string, account gocql.UUID) ([]WordsToRecords) {
 	var wordsToRecords []WordsToRecords
 	m := map[string]interface{}{}

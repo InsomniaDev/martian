@@ -12,6 +12,7 @@ type TagsToRecords struct {
 	RecordUuid  []string   `cql:"record_uuid"`
 }
 
+// UpsertTagsToRecords will add record association to tag
 func (s *Session) UpsertTagsToRecords(tags TagsToRecords) {
 	if err := s.Connection.Query(`
 		UPDATE tags_to_records 
@@ -23,6 +24,7 @@ func (s *Session) UpsertTagsToRecords(tags TagsToRecords) {
 	}
 }
 
+// DeleteRecordsFromTags will delete the records from the tags
 func (s *Session) DeleteRecordsFromTags(tags TagsToRecords) {
 	if err := s.Connection.Query(`
 		UPDATE tags_to_records 
@@ -34,6 +36,7 @@ func (s *Session) DeleteRecordsFromTags(tags TagsToRecords) {
 	}
 }
 
+// Will get all records that have the provided tags
 func (s *Session) GetTagsToRecords(tags []string, account gocql.UUID) ([]TagsToRecords) {
 	var tagsToRecords []TagsToRecords
 	m := map[string]interface{}{}
