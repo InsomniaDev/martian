@@ -17,7 +17,7 @@ import scala.concurrent.{Future, ExecutionContext}
 case class Records(
     record_uuid: UUID,
     account_uuid: UUID,
-    tags: Set[String],
+    tags: Option[Set[String]],
     words: Set[String],
     record: String,
     importance: Int

@@ -90,6 +90,3 @@ object Martian {
       .onComplete(_ => system.terminate()) // and shutdown when done
   }
 }
-
-// TODO: See if we want to do Akka Streams here
-// - https://doc.akka.io/docs/alpakka/current/mongodb.html

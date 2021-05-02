@@ -110,7 +110,7 @@ class FactParser(ctx: CassandraSyncContext[SnakeCase.type])(implicit
     * @param value is the Fact to be inserted into the database
     * @return the inserted entry
     */
-  def InputKnowledgeString(value: Records): Option[Boolean] = {
+  def InputKnowledgeString(value: Records, account_uuid: UUID, newRecord: Boolean = false): Option[Boolean] = {
     // FIXME: Also need to check if the words inside of the new fact have a highly related content to another fact
 
     // Get all of the values that aren't in the common words list
@@ -128,11 +128,11 @@ class FactParser(ctx: CassandraSyncContext[SnakeCase.type])(implicit
     batchInsertWordsToFact(
       idsForParsedWords.map((a) =>
         (new Records(
-          record_uuid = UUID.randomUUID(), 
-          account_uuid = UUID.randomUUID(), 
-          tags = Set("two"),
-          words = Set("two"),
-          record = "muscle",
+          record_uuid = if (newRecord) UUID.randomUUID() else a.record_uuid, 
+          account_uuid = account_uuid, 
+          tags = a.tags,
+          words = a.words,
+          record = a.record,
           importance = 1))
       )
     )

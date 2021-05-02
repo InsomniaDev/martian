@@ -41,3 +41,4 @@ CREATE TABLE config(
     PRIMARY KEY (config_uuid, name)
 );
 
+-- https://medium.com/rahasak/cassandra-golang-client-14f50171846b
