@@ -25,8 +25,8 @@ func (la *LocalCache) Init() error {
 }
 
 // Set will put the value into the cache with a TTL of 1 hour
-func (la *LocalCache) Set(key string, value interface{}) {
-	la.Cache.SetWithTTL(key, value, 1, 1*time.Hour)
+func (la *LocalCache) Set(key string, value interface{}) bool {
+	return la.Cache.SetWithTTL(key, value, 1, 1*time.Hour)
 }
 
 // Get will return the stored value in the cache by the key provided
