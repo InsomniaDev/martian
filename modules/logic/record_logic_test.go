@@ -81,6 +81,36 @@ func TestSortAndRetrieveRecordUuids(t *testing.T) {
 			},
 			want: []string{"response","test"},
 		},
+		{
+			name: "test3",
+			args: args{
+				records: [][]string{
+					{
+						"test", "response", "new",
+					},
+					{
+						"test", "response",
+					},
+					{
+						"response",
+					},
+					{
+						"test", "response", "new",
+					},
+					{
+						"test", "response",
+					},
+					{
+						"response",
+					},
+					{
+						"test", "response", "new",
+					},
+				},
+				numOfRecordsToReturn: 4,
+			},
+			want: []string{"response","test","new"},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
