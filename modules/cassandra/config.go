@@ -11,7 +11,7 @@ type Config struct {
 }
 
 // GetConfig will get the configuration value stored for the provided name
-func (s *Session) GetConfig(name string) Config {
+func (s *Session) GetConfig(name string) string {
 	var tagsToRecords []Config
 	m := map[string]interface{}{}
 	query := "SELECT * FROM config WHERE name = ?"
@@ -25,5 +25,5 @@ func (s *Session) GetConfig(name string) Config {
 		m = map[string]interface{}{}
 	}
 	// There should only ever be one config per name
-	return tagsToRecords[0]
+	return tagsToRecords[0].Record
 }

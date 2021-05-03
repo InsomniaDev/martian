@@ -4,20 +4,37 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/gocql/gocql"
 	"github.com/insomniadev/martian/modules/cassandra"
 )
 
 var commonWords []string
 
-func RetrieveListOfRecordsForWords(conn *cassandra.Session, searchString string) {
-	// Get the list of common words from the database
+// RetrieveListOfRecordsForWords will get the defined number of relevant records and return the record uuids
+func RetrieveListOfRecordsForWords(conn *cassandra.Session, accountUuid gocql.UUID, searchString string, numOfRecords int) []string {
 
+	// Get the list of common words from the database
+	commonWords = strings.Split(conn.GetConfig("commonWords"), ",")
+
+	// Remove all of the common words for the words that will be searched by
+	wordsToSearch := removeCommonWords(searchString)
+
+	// Get all of the results from the Cassandra database that have the words
+	results := conn.GetWordsToRecords(wordsToSearch, accountUuid)
+
+	// Filter down to just the records that were retrieved
+	var recordsRetrieved [][]string
+	for _, records := range results {
+		recordsRetrieved = append(recordsRetrieved, records.RecordUuid)
+	}
+
+	// Get the top list of received records
+	return SortAndRetrieveRecordUuids(recordsRetrieved, numOfRecords)
 }
 
-// RemoveCommonWords will remove the common words from the string of words that was provided
-func RemoveCommonWords(common []string, stringToParse string) []string {
+// removeCommonWords will remove the common words from the string of words that was provided
+func removeCommonWords(stringToParse string) []string {
 	// Setup variables for efficiency, do once and use everywhere
-	commonWords = common
 	sort.Strings(commonWords)
 
 	// Split the provided string by spaces
