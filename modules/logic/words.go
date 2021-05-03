@@ -3,9 +3,16 @@ package logic
 import (
 	"sort"
 	"strings"
+
+	"github.com/insomniadev/martian/modules/cassandra"
 )
 
 var commonWords []string
+
+func RetrieveListOfRecordsForWords(conn *cassandra.Session, searchString string) {
+	// Get the list of common words from the database
+
+}
 
 // RemoveCommonWords will remove the common words from the string of words that was provided
 func RemoveCommonWords(common []string, stringToParse string) []string {
