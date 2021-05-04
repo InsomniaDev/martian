@@ -1,5 +1,0 @@
-package routes
-
-class FactRoute() {
-    
-}
