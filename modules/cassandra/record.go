@@ -17,7 +17,7 @@ type Record struct {
 }
 
 // UpsertRecord will insert or update a record in the Cassandra database
-func (s *Session) UpsertRecord(record Record) {
+func (s *Session) UpsertRecord(record Record) bool {
 	if err := s.Connection.Query(`
 		UPDATE record 
 		SET tags = tags + ?,
@@ -29,7 +29,9 @@ func (s *Session) UpsertRecord(record Record) {
 		  AND record_uuid = ?
 		`, record.Tags, record.Words, record.Record, record.Title, record.Importance, record.AccountUuid, record.RecordUuid).Exec(); err != nil {
 		fmt.Println(err)
+		return false
 	}
+	return true
 }
 
 // GetRecords Will return all of the records for the account in the passed in recordUuid list

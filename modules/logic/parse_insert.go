@@ -13,3 +13,7 @@ func ParseInsert(conn *cassandra.Session, accountUuid gocql.UUID, ) {
 	fmt.Println("I don't do anything yet")
 	
 }
+
+func UpsertRecord(conn *cassandra.Session, record cassandra.Record) bool {
+	return conn.UpsertRecord(record)
+}
