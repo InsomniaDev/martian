@@ -4,8 +4,11 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strings"
 
+	"github.com/gocql/gocql"
 	"github.com/gorilla/mux"
+	"github.com/insomniadev/martian/modules/logic"
 )
 
 type MartianBody struct {
@@ -25,15 +28,62 @@ func UpdateRecord(w http.ResponseWriter, r *http.Request) {
 	log.Panic("not implemented")
 }
 
+// RetrieveRecord will retrieve the records matching the query string and return them to the calling application
 func RetrieveRecord(w http.ResponseWriter, r *http.Request) {
+	recordData, authToken := getMessageBody(r)
+	accountUuid, err := gocql.ParseUUID(authToken)
+	if err != nil {
+		log.Fatal(err)
+	}
 
+	// Set the account uuid
+	var searchRecord logic.RecordRequest
+	searchRecord.AccountUuid = accountUuid
+	
+	// Parse out the tags and words from the passed record
+	tags, words := parseEntry(recordData.Record)
+	searchRecord.Tags = tags
+	searchRecord.Words = words
+
+	// Retrieve the records that match the incoming request
+	searchRecord.ParseRequest(&CassandraConnection, 3)
+	data := searchRecord.RetrieveRecords(&CassandraConnection, 3)
+
+	// Convert response to JSON
+	jsonData, err := json.Marshal(data)
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(jsonData)
+}
+
+func getAuthToken(r *http.Request) string {
+	return r.Header.Get("x-access-token")
+}
+
+func getMessageBody(r *http.Request) (MartianBody, string) {
 	var body MartianBody
-	authToken := r.Header.Get("x-access-token")
 
 	err := json.NewDecoder(r.Body).Decode(&body)
 	if err != nil {
 		log.Fatal(err)
 	}
+	return body, getAuthToken(r)
+}
 
-	log.Print(authToken)
+// Split up the incoming query record between words and tags
+func parseEntry(recordData string) ([]string, []string) {
+	// split the string into an array first
+	recordDataSlice := strings.Split(recordData, " ")
+
+	var tags []string
+	var words []string
+	// Take apart and get separate lists of tags and words
+	for _, value := range recordDataSlice {
+		if strings.HasPrefix(value, "#") {
+			tags = append(tags, value)
+		} else {
+			words = append(words, value)
+		}
+	}
+	return tags, words
 }
