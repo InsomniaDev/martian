@@ -2,6 +2,7 @@ package server
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -18,8 +19,60 @@ type MartianBody struct {
 	Record      string `json:"entry"`
 }
 
-// InsertNewRecord will insert a new record into the cassandra Record table and will return success boolean
+type MartianResponse struct {
+	Records []cassandra.Record `json:"records"`
+	Message string             `json:"message"`
+}
+
+// InsertNewRecord will parse the http POST and insert a new record into the cassandra Record table
+//  return success boolean
 func InsertNewRecord(w http.ResponseWriter, r *http.Request) {
+	log.Println("we are inserting new record")
+	recordData, authToken := getMessageBody(r)
+	accountUuid, err := gocql.ParseUUID(authToken)
+	if err != nil {
+		log.Println("Auth token not provided")
+		log.Println(err)
+		return
+	}
+
+	// Create the record and assign the account UUID and create a new record UUID
+	var record cassandra.Record
+	record.AccountUuid = accountUuid
+	record.RecordUuid, err = gocql.RandomUUID()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Set the title as the first line
+	record.Title = strings.Split(recordData.Record, "\n")[0]
+
+	// Set the record to the whole entry including the title
+	record.Record = recordData.Record
+
+	// Parse out the tags and words from the passed record
+	tags, words := parseEntry(recordData.Record)
+	record.Tags = tags
+	record.Words = words
+
+	// Set importance to 0 since this is the first insert
+	record.Importance = 0
+	fmt.Printf("%#v", record)
+	return
+
+	// Insert the provided record into the Cassandra database
+	inserted := logic.UpsertRecord(&CassandraConnection, record)
+	if inserted {
+		log.Println("Inserted new record")
+	} else {
+		log.Panic("Record insert failed")
+	}
+}
+
+func UpdateRecord(w http.ResponseWriter, r *http.Request) {
+	log.Println("we are updating a record")
+	vars := mux.Vars(r)
+	recordUuid := vars["recordUuid"]
 	recordData, authToken := getMessageBody(r)
 	accountUuid, err := gocql.ParseUUID(authToken)
 	if err != nil {
@@ -29,6 +82,13 @@ func InsertNewRecord(w http.ResponseWriter, r *http.Request) {
 	// Create the record and assign the account UUID and create a new record UUID
 	var record cassandra.Record
 	record.AccountUuid = accountUuid
+	// if record.RecordUuid {
+	uuid, err := gocql.ParseUUID(recordUuid)
+	if err != nil {
+		log.Fatal(err)
+	}
+	record.RecordUuid = uuid
+	// }
 	record.RecordUuid, err = gocql.RandomUUID()
 	if err != nil {
 		log.Fatal(err)
@@ -57,20 +117,22 @@ func InsertNewRecord(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func UpdateRecord(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	record := vars["recordUuid"]
-	log.Print(record)
-	log.Panic("not implemented")
-}
-
 // RetrieveRecord will retrieve the records matching the query string and return them to the calling application
 func RetrieveRecord(w http.ResponseWriter, r *http.Request) {
+
 	recordData, authToken := getMessageBody(r)
 	accountUuid, err := gocql.ParseUUID(authToken)
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	var response MartianResponse
+	response.Message = "Consumed: " + recordData.Record
+	jsonData, err := json.Marshal(response)
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(jsonData)
+	return
+
 
 	// Set the account uuid
 	var searchRecord logic.RecordRequest
@@ -85,23 +147,26 @@ func RetrieveRecord(w http.ResponseWriter, r *http.Request) {
 	searchRecord.ParseRequest(&CassandraConnection, 3)
 	data := searchRecord.RetrieveRecords(&CassandraConnection, 3)
 
+	response.Records = data
 	// Convert response to JSON
-	jsonData, err := json.Marshal(data)
+	jsonData, err = json.Marshal(data)
 
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(jsonData)
 }
 
+// getAuthToken parses the header and returns the auth token string
 func getAuthToken(r *http.Request) string {
 	return r.Header.Get("x-access-token")
 }
 
+// getMessageBody parses the http request body into a MartianBody struct and returns the struct and the auth token string
 func getMessageBody(r *http.Request) (MartianBody, string) {
 	var body MartianBody
 
 	err := json.NewDecoder(r.Body).Decode(&body)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	return body, getAuthToken(r)
 }

@@ -7,10 +7,12 @@ import (
 	"github.com/gocql/gocql"
 	"github.com/insomniadev/martian/modules/cache"
 	"github.com/insomniadev/martian/modules/cassandra"
+	"github.com/insomniadev/martian/modules/server"
 )
 
 func main() {
-	testLocalCache()
+	// testLocalCache()
+	server.Start()
 }
 
 func testLocalCache() {

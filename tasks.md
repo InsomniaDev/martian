@@ -1,5 +1,6 @@
 ## Need to do
 - [ ] Need to add unit test coverage
+- [ ] Setup a user uuid for who created the message, we can search by user uuid in the future as well
 
 
 ## Setup Web API
