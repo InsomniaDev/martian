@@ -17,6 +17,7 @@ type MartianBody struct {
 	RecordUuid  string `json:"recordUuid"`
 	MessageUuid string `json:"messageUuid"`
 	Record      string `json:"entry"`
+	AccountUuid gocql.UUID 
 }
 
 type MartianResponse struct {
@@ -28,21 +29,16 @@ type MartianResponse struct {
 //  return success boolean
 func InsertNewRecord(w http.ResponseWriter, r *http.Request) {
 	log.Println("we are inserting new record")
-	recordData, authToken := getMessageBody(r)
-	accountUuid, err := gocql.ParseUUID(authToken)
-	if err != nil {
-		log.Println("Auth token not provided")
-		log.Println(err)
-		return
-	}
+	recordData := getMessageBody(r)
 
 	// Create the record and assign the account UUID and create a new record UUID
 	var record cassandra.Record
-	record.AccountUuid = accountUuid
-	record.RecordUuid, err = gocql.RandomUUID()
+	record.AccountUuid = recordData.AccountUuid
+	randomUuid, err := gocql.RandomUUID()
 	if err != nil {
 		log.Fatal(err)
 	}
+	record.RecordUuid = randomUuid
 
 	// Set the title as the first line
 	record.Title = strings.Split(recordData.Record, "\n")[0]
@@ -73,15 +69,11 @@ func UpdateRecord(w http.ResponseWriter, r *http.Request) {
 	log.Println("we are updating a record")
 	vars := mux.Vars(r)
 	recordUuid := vars["recordUuid"]
-	recordData, authToken := getMessageBody(r)
-	accountUuid, err := gocql.ParseUUID(authToken)
-	if err != nil {
-		log.Fatal(err)
-	}
+	recordData := getMessageBody(r)
 
 	// Create the record and assign the account UUID and create a new record UUID
 	var record cassandra.Record
-	record.AccountUuid = accountUuid
+	record.AccountUuid = recordData.AccountUuid
 	// if record.RecordUuid {
 	uuid, err := gocql.ParseUUID(recordUuid)
 	if err != nil {
@@ -117,26 +109,22 @@ func UpdateRecord(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// RetrieveRecord will retrieve the records matching the query string and return them to the calling application
-func RetrieveRecord(w http.ResponseWriter, r *http.Request) {
+// DecipherQuery point of this is decipher the query string
+func DecipherQuery(w http.ResponseWriter, r *http.Request) {
+	
+	recordData := getMessageBody(r)
+	fmt.Print(recordData.Record)
 
-	recordData, authToken := getMessageBody(r)
-	accountUuid, err := gocql.ParseUUID(authToken)
-	if err != nil {
-		log.Fatal(err)
-	}
+}
 
-	var response MartianResponse
-	response.Message = "Consumed: " + recordData.Record
-	jsonData, err := json.Marshal(response)
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(jsonData)
-	return
+// retrieveRecord will retrieve the records matching the query string and return them to the calling application
+func retrieveRecord(w http.ResponseWriter, r *http.Request, message MartianBody) {
 
+	recordData := getMessageBody(r)
 
 	// Set the account uuid
 	var searchRecord logic.RecordRequest
-	searchRecord.AccountUuid = accountUuid
+	searchRecord.AccountUuid = recordData.AccountUuid
 
 	// Parse out the tags and words from the passed record
 	tags, words := parseEntry(recordData.Record)
@@ -147,28 +135,40 @@ func RetrieveRecord(w http.ResponseWriter, r *http.Request) {
 	searchRecord.ParseRequest(&CassandraConnection, 3)
 	data := searchRecord.RetrieveRecords(&CassandraConnection, 3)
 
+	var response MartianResponse
+	response.Message = "Consumed: " + recordData.Record
 	response.Records = data
+	
 	// Convert response to JSON
-	jsonData, err = json.Marshal(data)
+	jsonData, err := json.Marshal(response)
+	if err != nil {
+		log.Println(err)
+	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(jsonData)
 }
 
 // getAuthToken parses the header and returns the auth token string
-func getAuthToken(r *http.Request) string {
-	return r.Header.Get("x-access-token")
+func getAuthToken(r *http.Request) gocql.UUID {
+	authToken, err := gocql.ParseUUID(r.Header.Get("x-access-token"))
+	if err != nil {
+		log.Println(err)
+	}
+	return authToken
 }
 
 // getMessageBody parses the http request body into a MartianBody struct and returns the struct and the auth token string
-func getMessageBody(r *http.Request) (MartianBody, string) {
+func getMessageBody(r *http.Request) MartianBody {
 	var body MartianBody
 
 	err := json.NewDecoder(r.Body).Decode(&body)
 	if err != nil {
 		log.Println(err)
 	}
-	return body, getAuthToken(r)
+	body.AccountUuid = getAuthToken(r)
+
+	return body
 }
 
 // Split up the incoming query record between words and tags

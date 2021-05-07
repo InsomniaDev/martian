@@ -17,7 +17,7 @@ func Start() {
 
 	r.HandleFunc("/record/update/{recordUuid}", UpdateRecord).Methods("POST")
 	r.HandleFunc("/record/new", InsertNewRecord).Methods("POST")
-	r.HandleFunc("/query", RetrieveRecord).Methods("POST")
+	r.HandleFunc("/query", DecipherQuery).Methods("POST")
 
 	http.ListenAndServe(":9000", r)
 }
