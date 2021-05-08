@@ -25,7 +25,7 @@ type MartianResponse struct {
 	Message string             `json:"message"`
 }
 
-// InsertNewRecord will parse the http POST and insert a new record into the cassandra Record table
+// insertNewRecord will parse the http POST and insert a new record into the cassandra Record table
 //  return success boolean
 func insertNewRecord(w http.ResponseWriter, r *http.Request, message MartianBody) {
 	log.Println("we are inserting new record")
@@ -64,6 +64,7 @@ func insertNewRecord(w http.ResponseWriter, r *http.Request, message MartianBody
 	}
 }
 
+// updateRecord will go through and update the record that is provided]]]
 func updateRecord(w http.ResponseWriter, r *http.Request, message MartianBody) {
 	log.Println("we are updating a record")
 	vars := mux.Vars(r)
