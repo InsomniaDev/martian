@@ -120,7 +120,7 @@ func DecipherQuery(w http.ResponseWriter, r *http.Request) {
 
 	helpCommand := strings.TrimSpace(recordData.Record)
 	if strings.ToLower(helpCommand) == "help" {
-
+		returnHelp(w, r)
 	}
 }
 
