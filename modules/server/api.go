@@ -15,8 +15,8 @@ func Start() {
 	CassandraConnection = cassandra.Session{}
 	CassandraConnection.Init()
 
-	r.HandleFunc("/record/update/{recordUuid}", UpdateRecord).Methods("POST")
-	r.HandleFunc("/record/new", InsertNewRecord).Methods("POST")
+	// r.HandleFunc("/record/update/{recordUuid}", UpdateRecord).Methods("POST")
+	// r.HandleFunc("/record/new", InsertNewRecord).Methods("POST")
 	r.HandleFunc("/query", DecipherQuery).Methods("POST")
 
 	http.ListenAndServe(":9000", r)
