@@ -1,7 +1,12 @@
 package logic
 
 import (
+	"log"
 	"sort"
+	"strings"
+
+	"github.com/gocql/gocql"
+	"github.com/insomniadev/martian/modules/cassandra"
 )
 
 func SortAndRetrieveRecordUuids(records [][]string, numOfRecordsToReturn int) []string {
@@ -39,4 +44,46 @@ func SortAndRetrieveRecordUuids(records [][]string, numOfRecordsToReturn int) []
 	}
 
 	return recordUuidsToReturn
+}
+
+func ParseRecordIntoCassandraRecord(postRecord string) cassandra.Record {
+	var record cassandra.Record
+	randomUuid, err := gocql.RandomUUID()
+	if err != nil {
+		log.Fatal(err)
+	}
+	record.RecordUuid = randomUuid
+
+	// Set the title as the first line
+	record.Title = strings.Split(postRecord, "\n")[0]
+
+	// Set the record to the whole entry including the title
+	record.Record = postRecord
+
+	// Parse out the tags and words from the passed record
+	tags, words := parseEntry(postRecord)
+	record.Tags = tags
+	record.Words = words
+
+	// Set importance to 0 since this is the first insert
+	record.Importance = 0
+	return record
+}
+
+// Split up the incoming query record between words and tags
+func parseEntry(recordData string) ([]string, []string) {
+	// split the string into an array first
+	recordDataSlice := strings.Split(recordData, " ")
+
+	var tags []string
+	var words []string
+	// Take apart and get separate lists of tags and words
+	for _, value := range recordDataSlice {
+		if strings.HasPrefix(value, "#") {
+			tags = append(tags, value)
+		} else {
+			words = append(words, value)
+		}
+	}
+	return tags, words
 }

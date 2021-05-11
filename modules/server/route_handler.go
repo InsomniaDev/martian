@@ -25,33 +25,32 @@ type MartianResponse struct {
 	Message string             `json:"message"`
 }
 
+// DecipherQuery point of this is decipher the query string
+func DecipherQuery(w http.ResponseWriter, r *http.Request) {
+
+	recordData, err := getMessageBody(r)
+	if err != nil {
+		w.Write([]byte("Not Authorized"))
+		return
+	}
+	fmt.Print(recordData.Record)
+
+	helpCommand := strings.TrimSpace(recordData.Record)
+	if strings.ToLower(helpCommand) == "help" {
+		returnHelp(w, r)
+	}
+	// TODO: Check what the prefix of this is
+}
+
 // insertNewRecord will parse the http POST and insert a new record into the cassandra Record table
 //  return success boolean
 func insertNewRecord(w http.ResponseWriter, r *http.Request, message MartianBody) {
 	log.Println("we are inserting new record")
 
-	// Create the record and assign the account UUID and create a new record UUID
-	var record cassandra.Record
+	// Parse the record into a Cassandra record and then set the AccountUuid
+	record := logic.ParseRecordIntoCassandraRecord(message.Record)
 	record.AccountUuid = message.AccountUuid
-	randomUuid, err := gocql.RandomUUID()
-	if err != nil {
-		log.Fatal(err)
-	}
-	record.RecordUuid = randomUuid
 
-	// Set the title as the first line
-	record.Title = strings.Split(message.Record, "\n")[0]
-
-	// Set the record to the whole entry including the title
-	record.Record = message.Record
-
-	// Parse out the tags and words from the passed record
-	tags, words := parseEntry(message.Record)
-	record.Tags = tags
-	record.Words = words
-
-	// Set importance to 0 since this is the first insert
-	record.Importance = 0
 	fmt.Printf("%#v", record)
 	return
 
@@ -70,34 +69,17 @@ func updateRecord(w http.ResponseWriter, r *http.Request, message MartianBody) {
 	vars := mux.Vars(r)
 	recordUuid := vars["recordUuid"]
 
-	// Create the record and assign the account UUID and create a new record UUID
-	var record cassandra.Record
+	// Parse the record into a Cassandra record and then set the AccountUuid
+	record := logic.ParseRecordIntoCassandraRecord(message.Record)
 	record.AccountUuid = message.AccountUuid
-	// if record.RecordUuid {
+	
 	uuid, err := gocql.ParseUUID(recordUuid)
 	if err != nil {
 		log.Fatal(err)
 	}
 	record.RecordUuid = uuid
-	// }
-	record.RecordUuid, err = gocql.RandomUUID()
-	if err != nil {
-		log.Fatal(err)
-	}
 
-	// Set the title as the first line
-	record.Title = strings.Split(message.Record, "\n")[0]
-
-	// Set the record to the whole entry including the title
-	record.Record = message.Record
-
-	// Parse out the tags and words from the passed record
-	tags, words := parseEntry(message.Record)
-	record.Tags = tags
-	record.Words = words
-
-	// Set importance to 0 since this is the first insert
-	record.Importance = 0
+	// TODO: Need to search for the record here and update with the data that already exists
 
 	// Insert the provided record into the Cassandra database
 	inserted := logic.UpsertRecord(&CassandraConnection, record)
@@ -108,29 +90,14 @@ func updateRecord(w http.ResponseWriter, r *http.Request, message MartianBody) {
 	}
 }
 
-// DecipherQuery point of this is decipher the query string
-func DecipherQuery(w http.ResponseWriter, r *http.Request) {
-
-	recordData, err := getMessageBody(r)
-	if err != nil {
-		w.Write([]byte("Not Authorized"))
-		return
-	}
-	fmt.Print(recordData.Record)
-
-	helpCommand := strings.TrimSpace(recordData.Record)
-	if strings.ToLower(helpCommand) == "help" {
-		returnHelp(w, r)
-	}
-}
-
 // returnHelp will return the help output which specifies how to use the application
 func returnHelp(w http.ResponseWriter, r *http.Request) {
 	helpOutput := `
 		To start:
-			A query begins with zzzz
-			Record Begins with xxxxx
-			Update begins with zzzzz
+			A query begins with one of the W's and an H -> the Who, What, When, Where, Why, How
+			NEW Record begins with anything else
+			UPDATE begins with the record Uuid and then it will fully replace that record. 
+			DELETE with the record UUID will delte the record
 	`
 	var response MartianResponse
 	response.Message = helpOutput
@@ -195,22 +162,4 @@ func getMessageBody(r *http.Request) (MartianBody, error) {
 	body.AccountUuid, err = getAuthToken(r)
 
 	return body, err
-}
-
-// Split up the incoming query record between words and tags
-func parseEntry(recordData string) ([]string, []string) {
-	// split the string into an array first
-	recordDataSlice := strings.Split(recordData, " ")
-
-	var tags []string
-	var words []string
-	// Take apart and get separate lists of tags and words
-	for _, value := range recordDataSlice {
-		if strings.HasPrefix(value, "#") {
-			tags = append(tags, value)
-		} else {
-			words = append(words, value)
-		}
-	}
-	return tags, words
 }
