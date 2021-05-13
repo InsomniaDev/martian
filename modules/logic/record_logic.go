@@ -61,7 +61,7 @@ func ParseRecordIntoCassandraRecord(postRecord string) cassandra.Record {
 	record.Record = postRecord
 
 	// Parse out the tags and words from the passed record
-	tags, words := parseEntry(postRecord)
+	tags, words := ParseEntry(postRecord)
 	record.Tags = tags
 	record.Words = words
 
@@ -70,8 +70,8 @@ func ParseRecordIntoCassandraRecord(postRecord string) cassandra.Record {
 	return record
 }
 
-// Split up the incoming query record between words and tags
-func parseEntry(recordData string) ([]string, []string) {
+// ParseEntry Split up the incoming query record between words and tags
+func ParseEntry(recordData string) ([]string, []string) {
 	// split the string into an array first
 	recordDataSlice := strings.Split(recordData, " ")
 

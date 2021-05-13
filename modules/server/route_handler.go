@@ -120,7 +120,7 @@ func retrieveRecord(w http.ResponseWriter, r *http.Request, message MartianBody)
 	searchRecord.AccountUuid = message.AccountUuid
 
 	// Parse out the tags and words from the passed record
-	tags, words := parseEntry(message.Record)
+	tags, words := logic.ParseEntry(message.Record)
 	searchRecord.Tags = tags
 	searchRecord.Words = words
 

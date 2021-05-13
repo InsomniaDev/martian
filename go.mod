@@ -6,4 +6,5 @@ require (
 	github.com/dgraph-io/ristretto v0.0.3
 	github.com/gocql/gocql v0.0.0-20210504150947-558dfae50b5d
 	github.com/gorilla/mux v1.8.0
+	github.com/jdkato/prose/v2 v2.0.0 // indirect
 )
