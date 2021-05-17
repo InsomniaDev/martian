@@ -9,7 +9,7 @@ import (
 type Record struct {
 	AccountUuid gocql.UUID `cql:"account_uuid"`
 	RecordUuid  gocql.UUID `cql:"record_uuid"`
-	Tags        []string   `cql:"tags"`
+	Entities    []string   `cql:"entities"`
 	Words       []string   `cql:"words"`
 	Record      string     `cql:"record"`
 	Title       string     `cql:"title"`
@@ -20,14 +20,14 @@ type Record struct {
 func (s *Session) UpsertRecord(record Record) bool {
 	if err := s.Connection.Query(`
 		UPDATE record 
-		SET tags = tags + ?,
+		SET entities = entities + ?,
 			words = words + ?,
 			record = ?,
 			title = ?,
 			importance = ?
 		WHERE account_uuid = ?
 		  AND record_uuid = ?
-		`, record.Tags, record.Words, record.Record, record.Title, record.Importance, record.AccountUuid, record.RecordUuid).Exec(); err != nil {
+		`, record.Entities, record.Words, record.Record, record.Title, record.Importance, record.AccountUuid, record.RecordUuid).Exec(); err != nil {
 		fmt.Println(err)
 		return false
 	}
@@ -44,7 +44,7 @@ func (s *Session) GetRecords(accountUuid gocql.UUID, recordUuids []gocql.UUID) [
 		recordSets = append(recordSets, Record{
 			AccountUuid: m["account_uuid"].(gocql.UUID),
 			RecordUuid:  m["record_uuid"].(gocql.UUID),
-			Tags:        m["tags"].([]string),
+			Entities:    m["entities"].([]string),
 			Words:       m["words"].([]string),
 			Record:      m["record"].(string),
 			Title:       m["title"].(string),

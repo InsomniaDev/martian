@@ -9,22 +9,22 @@ import (
 
 type RecordRequest struct {
 	AccountUuid gocql.UUID
-	Tags        []string
+	Entities        []string
 	Words       []string
 	Records     []gocql.UUID
 }
 
-// ParseRequest gets all of the records that match the tags and words and sets the Records variable
+// ParseRequest gets all of the records that match the entities and words and sets the Records variable
 func (rr *RecordRequest) ParseRequest(conn *cassandra.Session, numOfRecords int) {
 	var likelyRecords []string
 
 	// Get three records from the provided words
 	recordsFromWords := RetrieveListOfRecordsForWords(conn, rr.AccountUuid, rr.Words, 3)
 
-	if len(rr.Tags) > 0 {
-		// If tags are provided then get three records from the provided tags
-		recordsFromTags := RetrieveListOfRecordsForTags(conn, rr.AccountUuid, rr.Tags, 3)
-		likelyRecords = returnMostImportantRecords(recordsFromWords, recordsFromTags)
+	if len(rr.Entities) > 0 {
+		// If entities are provided then get three records from the provided entities
+		recordsFromEntities := RetrieveListOfRecordsForEntities(conn, rr.AccountUuid, rr.Entities, 3)
+		likelyRecords = returnMostImportantRecords(recordsFromWords, recordsFromEntities)
 	} else {
 		likelyRecords = returnMostImportantRecords(recordsFromWords, nil)
 	}

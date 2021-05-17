@@ -6,49 +6,49 @@ import (
 	"github.com/gocql/gocql"
 )
 
-type TagsToRecords struct {
-	Tag         string     `cql:"tag"`
+type EntitiesToRecords struct {
+	Entity      string     `cql:"entity"`
 	AccountUuid gocql.UUID `cql:"account_uuid"`
 	RecordUuid  []string   `cql:"record_uuid"`
 }
 
-// UpsertTagsToRecords will add record association to tag
-func (s *Session) UpsertTagsToRecords(tags TagsToRecords) {
+// UpsertEntitiesToRecords will add record association to tag
+func (s *Session) UpsertEntitiesToRecords(tags EntitiesToRecords) {
 	if err := s.Connection.Query(`
-		UPDATE tags_to_records 
+		UPDATE entities_to_records 
 		SET record_uuid = record_uuid + ?
 		WHERE account_uuid = ?
-		  AND tag = ?
-		`, tags.RecordUuid, tags.AccountUuid, tags.Tag).Exec(); err != nil {
+		  AND entity = ?
+		`, tags.RecordUuid, tags.AccountUuid, tags.Entity).Exec(); err != nil {
 		fmt.Println(err)
 	}
 }
 
-// DeleteRecordsFromTags will delete the records from the tags
-func (s *Session) DeleteRecordsFromTags(tags TagsToRecords) {
+// DeleteRecordsFromEntities will delete the records from the Entities
+func (s *Session) DeleteRecordsFromEntities(tags EntitiesToRecords) {
 	if err := s.Connection.Query(`
-		UPDATE tags_to_records 
+		UPDATE entities_to_records 
 		SET record_uuid = record_uuid - ?
 		WHERE account_uuid = ?
-		  AND tag = ?
-		`, tags.RecordUuid, tags.AccountUuid, tags.Tag).Exec(); err != nil {
+		  AND entity = ?
+		`, tags.RecordUuid, tags.AccountUuid, tags.Entity).Exec(); err != nil {
 		fmt.Println(err)
 	}
 }
 
 // Will get all records that have the provided tags
-func (s *Session) GetTagsToRecords(tags []string, account gocql.UUID) ([]TagsToRecords) {
-	var tagsToRecords []TagsToRecords
+func (s *Session) GetEntitiesToRecords(tags []string, account gocql.UUID) []EntitiesToRecords {
+	var entitiesToRecords []EntitiesToRecords
 	m := map[string]interface{}{}
-	query := "SELECT * FROM tags_to_records WHERE account_uuid = ? and tag IN ?"
+	query := "SELECT * FROM entities_to_records WHERE account_uuid = ? and tag IN ?"
 	iterable := s.Connection.Query(query, account, tags).Iter()
 	for iterable.MapScan(m) {
-		tagsToRecords = append(tagsToRecords, TagsToRecords{
-			Tag:        m["tag"].(string),
+		entitiesToRecords = append(entitiesToRecords, EntitiesToRecords{
+			Entity:      m["entity"].(string),
 			AccountUuid: m["account_uuid"].(gocql.UUID),
 			RecordUuid:  m["record_uuid"].([]string),
 		})
 		m = map[string]interface{}{}
 	}
-	return tagsToRecords
+	return entitiesToRecords
 }

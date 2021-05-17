@@ -63,8 +63,8 @@ func ParseRecordIntoCassandraRecord(postRecord string) cassandra.Record {
 	record.Record = postRecord
 
 	// Parse out the tags and words from the passed record
-	tags, words := ParseEntry(postRecord)
-	record.Tags = tags
+	entities, words := ParseEntry(postRecord)
+	record.Entities = entities
 	record.Words = words
 
 	// Set importance to 0 since this is the first insert

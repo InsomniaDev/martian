@@ -6,12 +6,12 @@ CREATE KEYSPACE martian
    'replication_factor' : 1 
   };
 
--- Get all of the tags and their associated records
-CREATE TABLE tags_to_records(
-    tag text,
+-- Get all of the entities and their associated records
+CREATE TABLE entities_to_records(
+    entity text,
     account_uuid uuid,
     record_uuid set<text>,
-    PRIMARY KEY ((account_uuid, tag))
+    PRIMARY KEY ((account_uuid, entity))
 );
 
 -- Get all of the words and their associated records
@@ -26,7 +26,7 @@ CREATE TABLE words_to_records(
 CREATE TABLE record(
     account_uuid uuid,
     record_uuid uuid,
-    tags set<text>,
+    entities set<text>,
     words set<text>,
     record text,
     title text,
