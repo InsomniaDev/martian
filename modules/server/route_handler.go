@@ -33,7 +33,8 @@ func DecipherQuery(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Not Authorized"))
 		return
 	}
-	fmt.Print(recordData.Record)
+
+	logic.ParseEntry(recordData.Record)
 
 	helpCommand := strings.TrimSpace(recordData.Record)
 	if strings.ToLower(helpCommand) == "help" {

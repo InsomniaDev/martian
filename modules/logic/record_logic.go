@@ -1,12 +1,14 @@
 package logic
 
 import (
+	"fmt"
 	"log"
 	"sort"
 	"strings"
 
 	"github.com/gocql/gocql"
 	"github.com/insomniadev/martian/modules/cassandra"
+	"github.com/jdkato/prose/v2"
 )
 
 func SortAndRetrieveRecordUuids(records [][]string, numOfRecordsToReturn int) []string {
@@ -74,6 +76,26 @@ func ParseRecordIntoCassandraRecord(postRecord string) cassandra.Record {
 func ParseEntry(recordData string) ([]string, []string) {
 	// split the string into an array first
 	recordDataSlice := strings.Split(recordData, " ")
+
+	// Get the language from the document
+	// https://github.com/jdkato/prose
+	doc, err := prose.NewDocument(recordData)
+	if err != nil {
+		log.Println("ERROR", err)
+		return nil, nil
+	}
+
+	fmt.Println(doc.Text)
+
+	fmt.Println("Printing Tokens")
+	for _, token := range doc.Tokens() {
+		log.Println(token.Text, token.Label, token.Tag)
+	}
+
+	fmt.Println("Printing Entities")
+	for _, entity := range doc.Entities() {
+		log.Println(entity.Text, entity.Label)
+	}
 
 	var tags []string
 	var words []string
