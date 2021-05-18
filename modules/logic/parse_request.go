@@ -15,11 +15,11 @@ type RecordRequest struct {
 }
 
 // ParseRequest gets all of the records that match the entities and words and sets the Records variable
-func (rr *RecordRequest) ParseRequest(conn *cassandra.Session, numOfRecords int) {
+func (rr *RecordRequest) ParseRequest(conn *cassandra.Session, commonWords *[]string, numOfRecords int) {
 	var likelyRecords []string
 
 	// Get three records from the provided words
-	recordsFromWords := RetrieveListOfRecordsForWords(conn, rr.AccountUuid, rr.Words, 3)
+	recordsFromWords := RetrieveListOfRecordsForWords(conn, rr.AccountUuid, rr.Words, commonWords, 3)
 
 	if len(rr.Entities) > 0 {
 		// If entities are provided then get three records from the provided entities

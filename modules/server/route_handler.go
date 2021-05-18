@@ -126,7 +126,7 @@ func retrieveRecord(w http.ResponseWriter, r *http.Request, message MartianBody)
 	searchRecord.Words = words
 
 	// Retrieve the records that match the incoming request
-	searchRecord.ParseRequest(&CassandraConnection, 3)
+	searchRecord.ParseRequest(&CassandraConnection, &CommonWords, 3)
 	data := searchRecord.RetrieveRecords(&CassandraConnection, 3)
 
 	var response MartianResponse
