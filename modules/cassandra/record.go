@@ -22,11 +22,11 @@ func (s *Session) UpsertRecord(record Record) bool {
 		UPDATE record 
 		SET entities = entities + ?,
 			words = words + ?,
-			record = '?',
+			record = ?,
 			importance = ?
 		WHERE account_uuid = ?
 		  AND record_uuid = ?
-		  AND title = '?'
+		  AND title = ?
 		`, record.Entities, record.Words, record.Record, record.Importance, record.AccountUuid, record.RecordUuid, record.Title).Exec(); err != nil {
 		fmt.Println(err)
 		return false
