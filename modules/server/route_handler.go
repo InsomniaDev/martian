@@ -2,7 +2,6 @@ package server
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -38,10 +37,14 @@ func DecipherQuery(w http.ResponseWriter, r *http.Request) {
 
 	logic.ParseEntry(recordData.Record)
 
+	recordArray := strings.Fields(recordData.Record)
 	helpCommand := strings.TrimSpace(recordData.Record)
 	if strings.ToLower(helpCommand) == "help" {
 		returnHelp(w, r)
+	} else if strings.ToLower(recordArray[0]) == "new" {
+		insertNewRecord(w, r, recordData)
 	}
+
 	// TODO: Check what the prefix of this is
 }
 
@@ -54,9 +57,6 @@ func insertNewRecord(w http.ResponseWriter, r *http.Request, message MartianBody
 	record := logic.ParseRecordIntoCassandraRecord(message.Record)
 	record.AccountUuid = message.AccountUuid
 
-	fmt.Printf("%#v", record)
-	return
-
 	// Insert the provided record into the Cassandra database
 	inserted := logic.UpsertRecord(&CassandraConnection, record)
 	if inserted {
@@ -64,6 +64,7 @@ func insertNewRecord(w http.ResponseWriter, r *http.Request, message MartianBody
 	} else {
 		log.Panic("Record insert failed")
 	}
+	createResponse(w, r, "I will remember that for you")
 }
 
 // updateRecord will go through and update the record that is provided]]]
@@ -91,6 +92,20 @@ func updateRecord(w http.ResponseWriter, r *http.Request, message MartianBody) {
 	} else {
 		log.Panic("Record insert failed")
 	}
+}
+
+func createResponse(w http.ResponseWriter, r *http.Request, responseMessage string) {
+	var response MartianResponse
+	response.Message = responseMessage
+
+	// Convert response to JSON
+	jsonData, err := json.Marshal(response)
+	if err != nil {
+		log.Println(err)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(jsonData)
 }
 
 // returnHelp will return the help output which specifies how to use the application
