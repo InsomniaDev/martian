@@ -22,8 +22,8 @@ func (s *Session) UpsertRecord(record Record) bool {
 		UPDATE record 
 		SET entities = entities + ?,
 			words = words + ?,
-			record = ?,
-			title = ?,
+			record = '?',
+			title = '?',
 			importance = ?
 		WHERE account_uuid = ?
 		  AND record_uuid = ?
