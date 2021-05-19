@@ -12,3 +12,6 @@ martian is the home ai system
 
 ## Connect to Cassandra
 - `./opt/cassandra/bin/cqlsh`
+
+## Connect to Service
+- `martian.default.svc.local:9000`

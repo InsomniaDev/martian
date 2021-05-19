@@ -17,6 +17,8 @@ type MartianBody struct {
 	RecordUuid  string `json:"recordUuid"`
 	MessageUuid string `json:"messageUuid"`
 	Record      string `json:"entry"`
+	UniqueValue string `json:"unique"`
+	Username    string `json:"username"`
 	AccountUuid gocql.UUID
 }
 
@@ -73,7 +75,7 @@ func updateRecord(w http.ResponseWriter, r *http.Request, message MartianBody) {
 	// Parse the record into a Cassandra record and then set the AccountUuid
 	record := logic.ParseRecordIntoCassandraRecord(message.Record)
 	record.AccountUuid = message.AccountUuid
-	
+
 	uuid, err := gocql.ParseUUID(recordUuid)
 	if err != nil {
 		log.Fatal(err)

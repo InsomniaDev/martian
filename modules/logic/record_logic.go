@@ -87,15 +87,16 @@ func ParseEntry(recordData string) ([]string, []string) {
 
 	fmt.Println(doc.Text)
 
-	fmt.Println("Printing Tokens")
-	for _, token := range doc.Tokens() {
-		log.Println(token.Text, token.Label, token.Tag)
-	}
+	// Comment out this code for now
+	// fmt.Println("Printing Tokens")
+	// for _, token := range doc.Tokens() {
+	// 	log.Println(token.Text, token.Label, token.Tag)
+	// }
 
-	fmt.Println("Printing Entities")
-	for _, entity := range doc.Entities() {
-		log.Println(entity.Text, entity.Label)
-	}
+	// fmt.Println("Printing Entities")
+	// for _, entity := range doc.Entities() {
+	// 	log.Println(entity.Text, entity.Label)
+	// }
 
 	var tags []string
 	var words []string
