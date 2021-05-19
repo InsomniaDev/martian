@@ -113,7 +113,7 @@ func returnHelp(w http.ResponseWriter, r *http.Request) {
 	helpOutput := `
 		To start:
 			A query begins with one of the W's and an H -> the Who, What, When, Where, Why, How
-			NEW Record begins with anything else
+			NEW Record begins with the keyword 'new'
 			UPDATE begins with the record Uuid and then it will fully replace that record. 
 			DELETE with the record UUID will delte the record
 	`
