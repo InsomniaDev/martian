@@ -18,7 +18,6 @@ type Record struct {
 
 // UpsertRecord will insert or update a record in the Cassandra database
 func (s *Session) UpsertRecord(record Record) bool {
-	// TODO: Need to setup the insert into the other tables here, words_to_records, entities_to_records
 	if err := s.Connection.Query(`
 		UPDATE record 
 		SET entities = entities + ?,

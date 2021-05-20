@@ -145,14 +145,12 @@ func retrieveRecord(w http.ResponseWriter, r *http.Request, message MartianBody)
 	searchRecord.Entities = entities
 	searchRecord.Words = words
 
-	fmt.Println("\nSearchRecord:")
 	fmt.Printf("%+v", searchRecord)
 
 	// Retrieve the records that match the incoming request
 	searchRecord.ParseRequest(&CassandraConnection, &CommonWords, 3)
 	data := searchRecord.RetrieveRecords(&CassandraConnection, 3)
 
-	fmt.Println("\nData:")
 	fmt.Printf("%+v", data)
 
 	var response MartianResponse

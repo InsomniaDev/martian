@@ -63,7 +63,6 @@ func (s *Session) GetWordsToRecords(words []string, account gocql.UUID) []WordsT
 	var wordsToRecords []WordsToRecords
 	m := map[string]interface{}{}
 	query := "SELECT * FROM words_to_records WHERE account_uuid = ? and word IN ?"
-	fmt.Println("\n\nQUERY:", query, account, words)
 	iterable := s.Connection.Query(query, account, words).Iter()
 	for iterable.MapScan(m) {
 		wordsToRecords = append(wordsToRecords, WordsToRecords{

@@ -1,7 +1,6 @@
 package logic
 
 import (
-	"fmt"
 	"log"
 	"sort"
 	"strings"
@@ -75,7 +74,7 @@ func ParseRecordIntoCassandraRecord(postRecord string) cassandra.Record {
 // ParseEntry Split up the incoming query record between words and tags
 func ParseEntry(recordData string) ([]string, []string) {
 	// Symbols required to move
-	symbolsToRemove := []string{"~","`","!","@","#","$","%","^","&","*","(",")","<",">","?","/",";",":","{","}","[","]","|","=","+","\n","-"}
+	symbolsToRemove := []string{"~", "`", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "<", ">", "?", "/", ";", ":", "{", "}", "[", "]", "|", "=", "+", "\n", "-"}
 
 	// Remove all symbols not needed first
 	for _, symbol := range symbolsToRemove {
@@ -90,28 +89,13 @@ func ParseEntry(recordData string) ([]string, []string) {
 		return nil, nil
 	}
 
-	fmt.Println(doc.Text)
-
 	var tags []string
 	var words []string
-	// Comment out this code for now
-	// fmt.Println("Printing Tokens")
 	for _, token := range doc.Tokens() {
 		words = append(words, token.Text)
 	}
-
-	// fmt.Println("Printing Entities")
 	for _, entity := range doc.Entities() {
 		tags = append(tags, entity.Text)
 	}
-
-	// // Take apart and get separate lists of tags and words
-	// for _, value := range recordDataSlice {
-	// 	if strings.HasPrefix(value, "#") {
-	// 		tags = append(tags, value)
-	// 	} else {
-	// 		words = append(words, value)
-	// 	}
-	// }
 	return tags, words
 }
