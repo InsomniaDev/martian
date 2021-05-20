@@ -147,7 +147,8 @@ func retrieveRecord(w http.ResponseWriter, r *http.Request, message MartianBody)
 	data := searchRecord.RetrieveRecords(&CassandraConnection, 3)
 
 	var response MartianResponse
-	response.Message = "Consumed: " + message.Record
+	// response.Message = "Consumed: " + message.Record
+	response.Message = data[0].Record
 	response.Records = data
 
 	// Convert response to JSON
