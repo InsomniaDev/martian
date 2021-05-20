@@ -1,6 +1,7 @@
 package logic
 
 import (
+	"fmt"
 	"sort"
 
 	"github.com/gocql/gocql"
@@ -17,6 +18,7 @@ func RetrieveListOfRecordsForWords(conn *cassandra.Session, accountUuid gocql.UU
 
 	// Remove all of the common words for the words that will be searched by
 	wordsToSearch := removeCommonWords(searchString, commonWords)
+	fmt.Println("\n\nwordsToSearch", wordsToSearch)
 
 	// Get all of the results from the Cassandra database that have the words
 	results := conn.GetWordsToRecords(wordsToSearch, accountUuid)

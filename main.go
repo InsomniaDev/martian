@@ -46,9 +46,9 @@ func testWords() {
 	// accountUuid, _ := gocql.RandomUUID()
 	accountUuid, _ := gocql.ParseUUID("4d2e9ace-474c-427f-a32d-cec835d1c688")
 
-	recordToInsert := cassandra.WordsToRecords{Word: "done", AccountUuid: accountUuid, RecordUuid: []string{recordUuid.String()}}
+	recordToInsert := cassandra.WordsToRecord{Word: "done", AccountUuid: accountUuid, RecordUuid: recordUuid.String()}
 
-	cassConn.UpsertWordsToRecords(recordToInsert)
+	cassConn.UpsertWordsToRecord(recordToInsert)
 
 	searchWords := []string{"adam", "testing"}
 	found := cassConn.GetWordsToRecords(searchWords, accountUuid)

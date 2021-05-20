@@ -20,6 +20,7 @@ func (rr *RecordRequest) ParseRequest(conn *cassandra.Session, commonWords *[]st
 
 	// Get three records from the provided words
 	recordsFromWords := RetrieveListOfRecordsForWords(conn, rr.AccountUuid, rr.Words, commonWords, 3)
+	fmt.Println("\n\nrecordsFromWords",recordsFromWords)
 
 	if len(rr.Entities) > 0 {
 		// If entities are provided then get three records from the provided entities
