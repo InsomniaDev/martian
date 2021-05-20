@@ -74,8 +74,13 @@ func ParseRecordIntoCassandraRecord(postRecord string) cassandra.Record {
 
 // ParseEntry Split up the incoming query record between words and tags
 func ParseEntry(recordData string) ([]string, []string) {
-	// split the string into an array first
-	recordDataSlice := strings.Split(recordData, " ")
+	// Symbols required to move
+	symbolsToRemove := []string{"~","`","!","@","#","$","%","^","&","*","(",")","<",">","?","/",";",":","{","}","[","]","|","=","+","\n"}
+
+	// Remove all symbols not needed first
+	for _, symbol := range symbolsToRemove {
+		recordData = strings.ReplaceAll(recordData, symbol, "")
+	}
 
 	// Get the language from the document
 	// https://github.com/jdkato/prose

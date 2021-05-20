@@ -36,8 +36,6 @@ func RetrieveListOfRecordsForWords(conn *cassandra.Session, accountUuid gocql.UU
 // removeCommonWords will remove the common words from the string of words that was provided
 func removeCommonWords(stringToParse []string, commonWords *[]string) []string {
 
-	// TODO: Need to remove these symbols: ~,`,!,@,#,$,%,^,&,*,(,),<,>,?,/,;,:,{,},[,],|,\,=,+
-
 	// Get a list of the words that we can now search by
 	goodWords := []string{}
 	for _, a := range stringToParse {
