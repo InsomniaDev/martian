@@ -66,12 +66,6 @@ func insertNewRecord(w http.ResponseWriter, r *http.Request, message MartianBody
 		log.Panic("Record insert failed")
 	}
 
-	// Create the word association with the record
-	var wordRecords []cassandra.WordsToRecord
-	for _, word := range record.Words {
-		wordRecords = append(wordRecords, cassandra.WordsToRecord{Word: word, AccountUuid: record.AccountUuid, RecordUuid: record.RecordUuid.String()})
-	}
-
 	createResponse(w, r, "I will remember that for you")
 }
 

@@ -9,11 +9,19 @@ import (
 
 // TODO: Process an incoming request
 
-func ParseInsert(conn *cassandra.Session, accountUuid gocql.UUID, ) {
+func ParseInsert(conn *cassandra.Session, accountUuid gocql.UUID) {
 	fmt.Println("I don't do anything yet")
-	
+
 }
 
 func UpsertRecord(conn *cassandra.Session, record cassandra.Record) bool {
+
+	// Create the word association with the record
+	var wordRecords []cassandra.WordsToRecord
+	for _, word := range record.Words {
+		wordRecords = append(wordRecords, cassandra.WordsToRecord{Word: word, AccountUuid: record.AccountUuid, RecordUuid: record.RecordUuid.String()})
+	}
+	conn.UpsertMultipleWordsToRecord(wordRecords)
+	
 	return conn.UpsertRecord(record)
 }
