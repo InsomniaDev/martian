@@ -34,11 +34,12 @@ func (s *Session) UpsertWordsToRecord(words WordsToRecord) {
 func (s *Session) UpsertMultipleWordsToRecord(words []WordsToRecord) {
 	batchQuery := s.Connection.NewBatch(gocql.LoggedBatch)
 	for _, wordRecord := range words {
+		recordUuid := []string{wordRecord.RecordUuid}
 		batchQuery.Query(`
 		UPDATE words_to_records
 		SET record_uuid = record_uuid + ?
 		WHERE account_uuid = ?
-		  AND word = ?`, wordRecord.RecordUuid, wordRecord.AccountUuid, wordRecord.Word)
+		  AND word = ?`, recordUuid, wordRecord.AccountUuid, wordRecord.Word)
 	}
 	if err := s.Connection.ExecuteBatch(batchQuery); err != nil {
 		fmt.Println(err)

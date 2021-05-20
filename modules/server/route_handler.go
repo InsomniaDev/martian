@@ -44,8 +44,9 @@ func DecipherQuery(w http.ResponseWriter, r *http.Request) {
 		returnHelp(w, r)
 	} else if strings.ToLower(recordArray[0]) == "new" {
 		insertNewRecord(w, r, recordData)
+	} else {
+		retrieveRecord(w, r, recordData)
 	}
-	retrieveRecord(w, r, recordData)
 	// TODO: Check what the prefix of this is
 }
 

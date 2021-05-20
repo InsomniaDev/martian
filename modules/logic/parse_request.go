@@ -9,7 +9,7 @@ import (
 
 type RecordRequest struct {
 	AccountUuid gocql.UUID
-	Entities        []string
+	Entities    []string
 	Words       []string
 	Records     []gocql.UUID
 }
@@ -20,7 +20,7 @@ func (rr *RecordRequest) ParseRequest(conn *cassandra.Session, commonWords *[]st
 
 	// Get three records from the provided words
 	recordsFromWords := RetrieveListOfRecordsForWords(conn, rr.AccountUuid, rr.Words, commonWords, 3)
-	fmt.Println("\n\nrecordsFromWords",recordsFromWords)
+	fmt.Println("\n\nrecordsFromWords", recordsFromWords)
 
 	if len(rr.Entities) > 0 {
 		// If entities are provided then get three records from the provided entities
@@ -29,10 +29,12 @@ func (rr *RecordRequest) ParseRequest(conn *cassandra.Session, commonWords *[]st
 	} else {
 		likelyRecords = returnMostImportantRecords(recordsFromWords, nil)
 	}
+	
+	fmt.Println("\n\nlikelyRecords, numOfRecords", likelyRecords, numOfRecords)
 
 	var recordsToReturn []gocql.UUID
 	if len(likelyRecords) > 0 {
-		for i := 0; i < numOfRecords && i < len(recordsToReturn); i++ {
+		for i := 0; i < numOfRecords && i < len(likelyRecords); i++ {
 			uuid, err := gocql.ParseUUID(likelyRecords[i])
 			if err != nil {
 				fmt.Println(err)
@@ -50,7 +52,9 @@ func (rr *RecordRequest) RetrieveRecords(conn *cassandra.Session, numOfRecords i
 	for i := 0; i < numOfRecords && i < recordLength; i++ {
 		recordsRequired = append(recordsRequired, rr.Records[i])
 	}
-
+	
+	// TODO: remove this
+	fmt.Println("****** recordsRequired, rr.Records *******", recordsRequired, rr.Records)
 	return conn.GetRecords(rr.AccountUuid, recordsRequired)
 }
 
