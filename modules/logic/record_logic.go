@@ -1,6 +1,7 @@
 package logic
 
 import (
+	"fmt"
 	"log"
 	"sort"
 	"strings"
@@ -61,6 +62,8 @@ func ParseRecordIntoCassandraRecord(postRecord string) cassandra.Record {
 	// Set the record to the whole entry including the title
 	record.Record = postRecord
 
+	fmt.Println("\nrecord to analyze:", postRecord)
+
 	// Parse out the tags and words from the passed record
 	entities, words := ParseEntry(postRecord)
 	record.Entities = entities
@@ -82,7 +85,7 @@ func ParseEntry(recordData string) ([]string, []string) {
 	}
 	
 	// Make sure that we are always checking against lowercase entries
-	recordData = strings.ToLower(recordData)
+	// recordData = strings.ToLower(recordData)
 
 	// Get the language from the document
 	// https://github.com/jdkato/prose
@@ -92,10 +95,15 @@ func ParseEntry(recordData string) ([]string, []string) {
 		return nil, nil
 	}
 
+	fmt.Println("\n\ntokens/words", doc.Tokens())
+	fmt.Println("\n\nentities", doc.Entities())
+
+	fmt.Println("\n\nsentences",doc.Sentences())
+
 	var tags []string
 	var words []string
 	for _, token := range doc.Tokens() {
-		words = append(words, token.Text)
+		words = append(words, strings.ToLower(token.Text))
 	}
 	for _, entity := range doc.Entities() {
 		tags = append(tags, entity.Text)

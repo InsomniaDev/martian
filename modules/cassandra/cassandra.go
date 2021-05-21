@@ -1,6 +1,10 @@
 package cassandra
 
-import "github.com/gocql/gocql"
+import (
+	"fmt"
+
+	"github.com/gocql/gocql"
+)
 
 type Session struct {
 	Connection *gocql.Session
@@ -18,4 +22,10 @@ func (s *Session) Init() {
 
 func (s *Session) Close() {
 	s.Connection.Close()
+}
+
+func (s *Session) ExecuteBatch(batch *gocql.Batch) {
+	if err := s.Connection.ExecuteBatch(batch); err != nil {
+		fmt.Println(err)
+	}
 }

@@ -23,7 +23,16 @@ func UpsertRecord(conn *cassandra.Session, record cassandra.Record) bool {
 	for _, word := range record.Words {
 		wordRecords = append(wordRecords, cassandra.WordsToRecord{Word: word, AccountUuid: record.AccountUuid, RecordUuid: record.RecordUuid.String()})
 	}
-	conn.UpsertMultipleWordsToRecord(wordRecords)
+	batchQuery := conn.UpsertMultipleWordsToRecord(wordRecords)
+
+	// Create the entity association with the record
+	var entityRecords []cassandra.EntitiesToRecord
+	for _, entity := range record.Entities {
+		entityRecords = append(entityRecords, cassandra.EntitiesToRecord{Entity: entity, AccountUuid: record.AccountUuid, RecordUuid: record.RecordUuid.String()})
+	}
+	batchQuery = conn.UpsertMultipleEntitiesToRecord(entityRecords, batchQuery)
+
+	conn.ExecuteBatch(batchQuery)
 
 	// TODO: need to upsert the entities to the record here
 

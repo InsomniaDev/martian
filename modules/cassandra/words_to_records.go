@@ -31,7 +31,7 @@ func (s *Session) UpsertWordsToRecord(words WordsToRecord) {
 }
 
 // UpsertMultipleWordsToRecord will upsert multiple words and records into the tables
-func (s *Session) UpsertMultipleWordsToRecord(words []WordsToRecord) {
+func (s *Session) UpsertMultipleWordsToRecord(words []WordsToRecord) *gocql.Batch {
 	batchQuery := s.Connection.NewBatch(gocql.LoggedBatch)
 	for _, wordRecord := range words {
 		recordUuid := []string{wordRecord.RecordUuid}
@@ -41,9 +41,7 @@ func (s *Session) UpsertMultipleWordsToRecord(words []WordsToRecord) {
 		WHERE account_uuid = ?
 		  AND word = ?`, recordUuid, wordRecord.AccountUuid, wordRecord.Word)
 	}
-	if err := s.Connection.ExecuteBatch(batchQuery); err != nil {
-		fmt.Println(err)
-	}
+	return batchQuery
 }
 
 // DeleteRecordsFromWords will delete the associated record_uuid from the entry

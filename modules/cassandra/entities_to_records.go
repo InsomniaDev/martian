@@ -6,6 +6,12 @@ import (
 	"github.com/gocql/gocql"
 )
 
+type EntitiesToRecord struct {
+	Entity      string     `cql:"entity"`
+	AccountUuid gocql.UUID `cql:"account_uuid"`
+	RecordUuid  string   `cql:"record_uuid"`
+}
+
 type EntitiesToRecords struct {
 	Entity      string     `cql:"entity"`
 	AccountUuid gocql.UUID `cql:"account_uuid"`
@@ -22,6 +28,19 @@ func (s *Session) UpsertEntitiesToRecords(tags EntitiesToRecords) {
 		`, tags.RecordUuid, tags.AccountUuid, tags.Entity).Exec(); err != nil {
 		fmt.Println(err)
 	}
+}
+
+// UpsertMultipleWordsToRecord will upsert multiple words and records into the tables
+func (s *Session) UpsertMultipleEntitiesToRecord(words []EntitiesToRecord, batchQuery *gocql.Batch) *gocql.Batch {
+	for _, entityRecord := range words {
+		recordUuid := []string{entityRecord.RecordUuid}
+		batchQuery.Query(`
+		UPDATE entities_to_records
+		SET record_uuid = record_uuid + ?
+		WHERE account_uuid = ?
+		  AND entity = ?`, recordUuid, entityRecord.AccountUuid, entityRecord.Entity)
+	}
+	return batchQuery
 }
 
 // DeleteRecordsFromEntities will delete the records from the Entities
