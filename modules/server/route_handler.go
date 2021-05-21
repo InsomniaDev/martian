@@ -47,7 +47,7 @@ func DecipherQuery(w http.ResponseWriter, r *http.Request) {
 	} else {
 		retrieveRecord(w, r, recordData)
 	}
-	// TODO: Check what the prefix of this is
+
 }
 
 // insertNewRecord will parse the http POST and insert a new record into the cassandra Record table
@@ -55,9 +55,13 @@ func DecipherQuery(w http.ResponseWriter, r *http.Request) {
 func insertNewRecord(w http.ResponseWriter, r *http.Request, message MartianBody) {
 	log.Println("we are inserting new record")
 
+	// Remove the "new" keyword
+	message.Record = strings.Join(strings.Fields(message.Record)[1:]," ")
+
 	// Parse the record into a Cassandra record and then set the AccountUuid
 	record := logic.ParseRecordIntoCassandraRecord(message.Record)
 	record.AccountUuid = message.AccountUuid
+
 
 	// Insert the provided record into the Cassandra database
 	inserted := logic.UpsertRecord(&CassandraConnection, record)
@@ -155,7 +159,12 @@ func retrieveRecord(w http.ResponseWriter, r *http.Request, message MartianBody)
 
 	var response MartianResponse
 	// response.Message = "Consumed: " + message.Record
-	response.Message = data[0].Record
+	if (len(data) > 0) {
+		response.Message = data[0].Record
+	} else {
+		response.Message = "Sorry, I'm not prepared to answer that just yet."
+	}
+
 	response.Records = data
 
 	// Convert response to JSON

@@ -80,6 +80,9 @@ func ParseEntry(recordData string) ([]string, []string) {
 	for _, symbol := range symbolsToRemove {
 		recordData = strings.ReplaceAll(recordData, symbol, "")
 	}
+	
+	// Make sure that we are always checking against lowercase entries
+	recordData = strings.ToLower(recordData)
 
 	// Get the language from the document
 	// https://github.com/jdkato/prose
