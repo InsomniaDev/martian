@@ -1,0 +1,71 @@
+{
+  "id": 1,
+  "type": "event",
+  "event": {
+    "event_type": "state_changed",
+    "data": {
+      "entity_id": "media_player.lily_s_google",
+      "old_state": {
+        "entity_id": "media_player.lily_s_google",
+        "state": "playing",
+        "attributes": {
+          "volume_level": 0.30000001192092896,
+          "is_volume_muted": false,
+          "media_content_id": "https://maestro.emfcdn.com/stream_for/sk005/tunein",
+          "media_content_type": "music",
+          "media_position": 11305.31245,
+          "media_position_updated_at": "2020-04-02T23:58:38.831756+00:00",
+          "media_title": "Diamonds - Hawk Nelson",
+          "media_artist": "107.3 K-LOVE Radio KLVS",
+          "app_id": "12F05308",
+          "app_name": "TuneIn Free",
+          "entity_picture_local": "/api/media_player_proxy/media_player.lily_s_google?token=41b53e0afc80b7b72dc10159ee223dd25aca7c062614e5f803ad26555698ea9a&cache=c38e33f3e01bc75e",
+          "friendly_name": "Lily's Google",
+          "entity_picture": "http://cdn-profiles.tunein.com/s35510/images/logoq.png?t=157444",
+          "supported_features": 21389
+        },
+        "last_changed": "2020-04-02T20:50:13.759774+00:00",
+        "last_updated": "2020-04-02T23:58:38.832346+00:00",
+        "context": {
+          "id": "96e27444e8af454d93c547980e3f82ce",
+          "parent_id": null,
+          "user_id": null
+        }
+      },
+      "new_state": {
+        "entity_id": "media_player.lily_s_google",
+        "state": "playing",
+        "attributes": {
+          "volume_level": 0.30000001192092896,
+          "is_volume_muted": false,
+          "media_content_id": "https://maestro.emfcdn.com/stream_for/sk005/tunein",
+          "media_content_type": "music",
+          "media_position": 11322.296733,
+          "media_position_updated_at": "2020-04-02T23:58:55.826174+00:00",
+          "media_title": "Diamonds - Hawk Nelson",
+          "media_artist": "107.3 K-LOVE Radio KLVS",
+          "app_id": "12F05308",
+          "app_name": "TuneIn Free",
+          "entity_picture_local": "/api/media_player_proxy/media_player.lily_s_google?token=41b53e0afc80b7b72dc10159ee223dd25aca7c062614e5f803ad26555698ea9a&cache=c38e33f3e01bc75e",
+          "friendly_name": "Lily's Google",
+          "entity_picture": "http://cdn-profiles.tunein.com/s35510/images/logoq.png?t=157444",
+          "supported_features": 21389
+        },
+        "last_changed": "2020-04-02T20:50:13.759774+00:00",
+        "last_updated": "2020-04-02T23:58:55.826817+00:00",
+        "context": {
+          "id": "387477ee7d6942fe8f0d7c02df9fb848",
+          "parent_id": null,
+          "user_id": null
+        }
+      }
+    },
+    "origin": "LOCAL",
+    "time_fired": "2020-04-02T23:58:55.826852+00:00",
+    "context": {
+      "id": "387477ee7d6942fe8f0d7c02df9fb848",
+      "parent_id": null,
+      "user_id": null
+    }
+  }
+}

@@ -1,17 +1,45 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/gocql/gocql"
+	"github.com/insomniadev/martian/brain"
+	"github.com/insomniadev/martian/graphql"
+	"github.com/insomniadev/martian/integrations/harmony"
 	"github.com/insomniadev/martian/modules/cache"
 	"github.com/insomniadev/martian/modules/cassandra"
+	"github.com/insomniadev/martian/modules/redispub"
 	"github.com/insomniadev/martian/modules/server"
 )
 
+var mainBrain brain.Brain
+
+func subscriptionSubscriber(channel, payload string) {
+
+	payload, err := strconv.Unquote(payload)
+	if err != nil {
+		fmt.Println(err)
+	}
+	eventData := brain.Event{}
+	err = json.Unmarshal([]byte(payload), &eventData)
+	if err != nil {
+		fmt.Println(err)
+	}
+	eventData.Time = time.Now()
+	mainBrain.ProcessEvent(eventData)
+}
+
 func main() {
 	// testLocalCache()
+
+	mainBrain.Init()
+	redispub.NewSubscriber("brain", subscriptionSubscriber)
+	harmony.RetrieveAllNodes()
+	go graphql.Graphql()
 	server.Start()
 }
 

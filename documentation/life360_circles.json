@@ -1,0 +1,23 @@
+{
+  "circles": [
+    {
+      "id": "b9dfbf1a-3227-438e-b92f-22d996cde826",
+      "name": "Family",
+      "color": "7f26c2",
+      "type": "basic",
+      "createdAt": "1546466323",
+      "memberCount": "2",
+      "unreadMessages": "0",
+      "unreadNotifications": "0",
+      "features": {
+        "ownerId": null,
+        "skuId": null,
+        "premium": "0",
+        "locationUpdatesLeft": 0,
+        "priceMonth": "0",
+        "priceYear": "0",
+        "skuTier": null
+      }
+    }
+  ]
+}

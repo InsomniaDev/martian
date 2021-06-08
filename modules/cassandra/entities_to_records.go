@@ -9,7 +9,7 @@ import (
 type EntitiesToRecord struct {
 	Entity      string     `cql:"entity"`
 	AccountUuid gocql.UUID `cql:"account_uuid"`
-	RecordUuid  string   `cql:"record_uuid"`
+	RecordUuid  string     `cql:"record_uuid"`
 }
 
 type EntitiesToRecords struct {

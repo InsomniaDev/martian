@@ -1,0 +1,26 @@
+{
+  "places": [
+    {
+      "id": "242e05c0-082a-4b0c-a91e-bc3d1518204a",
+      "ownerId": "ee46dded-08d9-449e-9004-946137ea0039",
+      "circleId": "b9dfbf1a-3227-438e-b92f-22d996cde826",
+      "name": "Work",
+      "latitude": "39.600306",
+      "longitude": "-104.891128",
+      "radius": "584.2",
+      "type": 2,
+      "typeLabel": "Home"
+    },
+    {
+      "id": "4d484ef2-28aa-47d7-a950-58235a29370f",
+      "ownerId": "ee46dded-08d9-449e-9004-946137ea0039",
+      "circleId": "b9dfbf1a-3227-438e-b92f-22d996cde826",
+      "name": "Martin Residence",
+      "latitude": "39.924408",
+      "longitude": "-104.957721",
+      "radius": "76.2",
+      "type": 3,
+      "typeLabel": "Work"
+    }
+  ]
+}

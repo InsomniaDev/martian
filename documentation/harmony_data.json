@@ -1,0 +1,398 @@
+[{
+  "id": 1,
+  "msg": "OK",
+  "data": {
+    "discoveryServerCF": "https://cf-svcs.myharmony.com/Discovery/Discovery.svc",
+    "email": "adam9190@gmail.com",
+    "username": "adam9190@gmail.com",
+    "activeRemoteId": 13853687,
+    "discoveryServer": "http://svcs.myharmony.com/Discovery/Discovery.svc",
+    "se": true,
+    "susChannel": "Production",
+    "mode": 3,
+    "accountId": "12108047"
+  },
+  "code": "200"
+},
+{
+  "cmd": "vnd.logitech.harmony\\/vnd.logitech.harmony.engine?config",
+  "code": 200,
+  "id": "1",
+  "msg": "OK",
+  "data": {
+    "dataConsent": false,
+    "sequence": [],
+    "global": {
+      "timeStampHash": "a41c4e6f-e0f5-4637-9c44-29eb9248d31942a2f24a-e3d6-49e1-a9a4-c0d60e744a28\\/62b7660b-6513-41ab-95cb-e9fbdc2a5d9155760e21-333a-4042-ab02-802b6683ef454921d581-9c27-4ded-b8a0-a6ab562ef23a13853687TVHuben-USadam9190@gmail.comUSMS-3a7de624-464b-4c7d-9753-b20eee24f8cd0-971890638False-361815191america%2fdenverTrue-4927196811;8d9e2c8d5678ea235e86ef54719a87c5",
+      "locale": "en-US"
+    },
+    "device": [
+      {
+        "label": "FiveHome AV Switch",
+        "deviceAddedDate": "\\/Date(1565448673357+0000)\\/",
+        "ControlPort": 7,
+        "contentProfileKey": 64473342,
+        "deviceProfileUri": "svcs.myharmony.com\\/res\\/device\\/64473342-3PGbuZisdQ5BUCYvFnB3dDyhyIwPSCywIv7rsB3fPvk=",
+        "manufacturer": "FiveHome",
+        "icon": "30",
+        "Capabilities": [8],
+        "deviceTypeDisplayName": "AudioVideoSwitch",
+        "powerFeatures": {
+          "PowerOffActions": [
+            {
+              "__type": "IRPressAction",
+              "IRCommandName": "PowerOff",
+              "Order": 0,
+              "Duration": 0,
+              "ActionId": 0
+            }
+          ],
+          "PowerOnActions": [
+            {
+              "__type": "IRPressAction",
+              "IRCommandName": "PowerOn",
+              "Order": 0,
+              "Duration": 0,
+              "ActionId": 0
+            }
+          ]
+        },
+        "isManualPower": "false",
+        "controlGroup": [
+          {
+            "name": "Power",
+            "function": [
+              {
+                "action": "{\"command\":\"PowerOff\",\"type\":\"IRCommand\",\"deviceId\":\"64473342\"}",
+                "name": "PowerOff",
+                "label": "Power Off"
+              },
+              {
+                "action": "{\"command\":\"PowerOn\",\"type\":\"IRCommand\",\"deviceId\":\"64473342\"}",
+                "name": "PowerOn",
+                "label": "Power On"
+              }
+            ]
+          },
+          {
+            "name": "NumericBasic",
+            "function": [
+              {
+                "action": "{\"command\":\"1\",\"type\":\"IRCommand\",\"deviceId\":\"64473342\"}",
+                "name": "Number1",
+                "label": "1"
+              },
+              {
+                "action": "{\"command\":\"2\",\"type\":\"IRCommand\",\"deviceId\":\"64473342\"}",
+                "name": "Number2",
+                "label": "2"
+              },
+              {
+                "action": "{\"command\":\"3\",\"type\":\"IRCommand\",\"deviceId\":\"64473342\"}",
+                "name": "Number3",
+                "label": "3"
+              },
+              {
+                "action": "{\"command\":\"4\",\"type\":\"IRCommand\",\"deviceId\":\"64473342\"}",
+                "name": "Number4",
+                "label": "4"
+              },
+              {
+                "action": "{\"command\":\"5\",\"type\":\"IRCommand\",\"deviceId\":\"64473342\"}",
+                "name": "Number5",
+                "label": "5"
+              }
+            ]
+          },
+          {
+            "name": "Miscellaneous",
+            "function": [
+              {
+                "action": "{\"command\":\"Input1\",\"type\":\"IRCommand\",\"deviceId\":\"64473342\"}",
+                "name": "Input1",
+                "label": "Input1"
+              },
+              {
+                "action": "{\"command\":\"Input2\",\"type\":\"IRCommand\",\"deviceId\":\"64473342\"}",
+                "name": "Input2",
+                "label": "Input2"
+              },
+              {
+                "action": "{\"command\":\"Input3\",\"type\":\"IRCommand\",\"deviceId\":\"64473342\"}",
+                "name": "Input3",
+                "label": "Input3"
+              },
+              {
+                "action": "{\"command\":\"Input4\",\"type\":\"IRCommand\",\"deviceId\":\"64473342\"}",
+                "name": "Input4",
+                "label": "Input4"
+              },
+              {
+                "action": "{\"command\":\"Input5\",\"type\":\"IRCommand\",\"deviceId\":\"64473342\"}",
+                "name": "Input5",
+                "label": "Input5"
+              },
+              {
+                "action": "{\"command\":\"InputNext\",\"type\":\"IRCommand\",\"deviceId\":\"64473342\"}",
+                "name": "InputNext",
+                "label": "InputNext"
+              },
+              {
+                "action": "{\"command\":\"InputPrev\",\"type\":\"IRCommand\",\"deviceId\":\"64473342\"}",
+                "name": "InputPrev",
+                "label": "InputPrev"
+              }
+            ]
+          }
+        ],
+        "model": "FW2501",
+        "IsKeyboardAssociated": false,
+        "DongleRFID": 0,
+        "id": "64473342",
+        "type": "AudioVideoSwitch",
+        "suggestedDisplay": "DEFAULT",
+        "Transport": 1
+      },
+      {
+        "label": "Google Chromecast",
+        "deviceAddedDate": "\\/Date(1577216981880+0000)\\/",
+        "ControlPort": 7,
+        "contentProfileKey": 66982728,
+        "deviceProfileUri": "svcs.myharmony.com\\/res\\/device\\/66982728-51vZa95dpr8orzh9Hpr21BYys+wf6SkZ1dRebcIBGRw=",
+        "manufacturer": "Google",
+        "icon": "35",
+        "Capabilities": [1, 2, 3, 4, 5, 6, 8, 15, 31, 60],
+        "deviceTypeDisplayName": "MediaCenterPC",
+        "powerFeatures": { "PowerOffActions": [], "PowerOnActions": [] },
+        "isManualPower": "true",
+        "controlGroup": [],
+        "model": "Chromecast",
+        "IsKeyboardAssociated": false,
+        "DongleRFID": 0,
+        "id": "66982728",
+        "type": "MediaCenterPC",
+        "suggestedDisplay": "DEFAULT",
+        "Transport": 1
+      },
+      {
+        "label": "Nintendo Game Console",
+        "deviceAddedDate": "\\/Date(1548005806673+0000)\\/",
+        "ControlPort": 7,
+        "contentProfileKey": 60825760,
+        "deviceProfileUri": "svcs.myharmony.com\\/res\\/device\\/60825760-x+M4TOVPfDHbYxAozV2pUYcArCEoPr+vSD0SPdTjZJg=",
+        "manufacturer": "Nintendo",
+        "icon": "9",
+        "Capabilities": [4, 5],
+        "deviceTypeDisplayName": "GameConsole",
+        "powerFeatures": [],
+        "isManualPower": "true",
+        "controlGroup": [],
+        "model": "Switch",
+        "IsKeyboardAssociated": false,
+        "DongleRFID": 0,
+        "id": "60825760",
+        "type": "GameConsole",
+        "suggestedDisplay": "DEFAULT",
+        "Transport": 1
+      },
+      {
+        "label": "…",
+        "function": [
+          {
+            "action": "{\"command\":\"Stop\",\"type\":\"IRCommand\",\"deviceId\":\"58830178\"}",
+            "name": "Stop",
+            "label": "Stop"
+          },
+          {
+            "action": "{\"command\":\"Play\",\"type\":\"IRCommand\",\"deviceId\":\"58830178\"}",
+            "name": "Play",
+            "label": "Play"
+          },
+          {
+            "action": "{\"command\":\"Rewind\",\"type\":\"IRCommand\",\"deviceId\":\"58830178\"}",
+            "name": "Rewind",
+            "label": "Rewind"
+          },
+          {
+            "action": "{\"command\":\"Pause\",\"type\":\"IRCommand\",\"deviceId\":\"58830178\"}",
+            "name": "Pause",
+            "label": "Pause"
+          },
+          {
+            "action": "{\"command\":\"FastForward\",\"type\":\"IRCommand\",\"deviceId\":\"58830178\"}",
+            "name": "FastForward",
+            "label": "Fast Forward"
+          }
+        ]
+      },
+      {
+        "name": "TransportRecording",
+        "function": [
+          {
+            "action": "{\"command\":\"Record\",\"type\":\"IRCommand\",\"deviceId\":\"58830178\"}",
+            "name": "Record",
+            "label": "Record"
+          }
+        ]
+      },
+      {
+        "name": "NavigationDVD",
+        "function": [
+          {
+            "action": "{\"command\":\"Return\",\"type\":\"IRCommand\",\"deviceId\":\"58830178\"}",
+            "name": "Return",
+            "label": "Return"
+          },
+          {
+            "action": "{\"command\":\"Menu\",\"type\":\"IRCommand\",\"deviceId\":\"58830178\"}",
+            "name": "Menu",
+            "label": "Menu"
+          }
+        ]
+      },
+      {
+        "name": "NavigationDSTB",
+        "function": [
+          {
+            "action": "{\"command\":\"C\",\"type\":\"IRCommand\",\"deviceId\":\"58830178\"}",
+            "name": "C",
+            "label": "C"
+          },
+          {
+            "action": "{\"command\":\"B\",\"type\":\"IRCommand\",\"deviceId\":\"58830178\"}",
+            "name": "B",
+            "label": "B"
+          },
+          {
+            "action": "{\"command\":\"D\",\"type\":\"IRCommand\",\"deviceId\":\"58830178\"}",
+            "name": "D",
+            "label": "D"
+          },
+          {
+            "action": "{\"command\":\"A\",\"type\":\"IRCommand\",\"deviceId\":\"58830178\"}",
+            "name": "A",
+            "label": "A"
+          },
+          {
+            "action": "{\"command\":\"ChannelList\",\"type\":\"IRCommand\",\"deviceId\":\"58830178\"}",
+            "name": "List",
+            "label": "List"
+          },
+          {
+            "action": "{\"command\":\"Search\",\"type\":\"IRCommand\",\"deviceId\":\"58830178\"}",
+            "name": "Search",
+            "label": "Search"
+          }
+        ]
+      },
+      {
+        "name": "GameType3",
+        "function": [
+          {
+            "action": "{\"command\":\"A\",\"type\":\"IRCommand\",\"deviceId\":\"58830178\"}",
+            "name": "WiiA",
+            "label": "A"
+          },
+          {
+            "action": "{\"command\":\"B\",\"type\":\"IRCommand\",\"deviceId\":\"58830178\"}",
+            "name": "WiiB",
+            "label": "B"
+          },
+          {
+            "action": "{\"command\":\"Home\",\"type\":\"IRCommand\",\"deviceId\":\"58830178\"}",
+            "name": "Home",
+            "label": "Home"
+          },
+          {
+            "action": "{\"command\":\"Home\",\"type\":\"IRCommand\",\"deviceId\":\"58830178\"}",
+            "name": "Tivo",
+            "label": "Home"
+          },
+          {
+            "action": "{\"command\":\"Select\",\"type\":\"IRCommand\",\"deviceId\":\"58830178\"}",
+            "name": "SelectGame",
+            "label": "Select"
+          }
+        ]
+      },
+      {
+        "name": "NavigationExtended",
+        "function": [
+          {
+            "action": "{\"command\":\"Guide\",\"type\":\"IRCommand\",\"deviceId\":\"58830178\"}",
+            "name": "Guide",
+            "label": "Guide"
+          },
+          {
+            "action": "{\"command\":\"Info\",\"type\":\"IRCommand\",\"deviceId\":\"58830178\"}",
+            "name": "Info",
+            "label": "Info"
+          },
+          {
+            "action": "{\"command\":\"Exit\",\"type\":\"IRCommand\",\"deviceId\":\"58830178\"}",
+            "name": "Exit",
+            "label": "Exit"
+          }
+        ]
+      },
+      {
+        "name": "DisplayMode",
+        "function": [
+          {
+            "action": "{\"command\":\"PictureSize\",\"type\":\"IRCommand\",\"deviceId\":\"58830178\"}",
+            "name": "Aspect",
+            "label": "Aspect"
+          }
+        ]
+      },
+      {
+        "name": "ColoredButtons",
+        "function": [
+          {
+            "action": "{\"command\":\"Green\",\"type\":\"IRCommand\",\"deviceId\":\"58830178\"}",
+            "name": "Green",
+            "label": "Green"
+          },
+          {
+            "action": "{\"command\":\"Red\",\"type\":\"IRCommand\",\"deviceId\":\"58830178\"}",
+            "name": "Red",
+            "label": "Red"
+          },
+          {
+            "action": "{\"command\":\"Blue\",\"type\":\"IRCommand\",\"deviceId\":\"58830178\"}",
+            "name": "Blue",
+            "label": "Blue"
+          },
+          {
+            "action": "{\"command\":\"Yellow\",\"type\":\"IRCommand\",\"deviceId\":\"58830178\"}",
+            "name": "Yellow",
+            "label": "Yellow"
+          }
+        ]
+      },
+      {
+        "name": "Teletext",
+        "function": [
+          {
+            "action": "{\"command\":\"Teletext\",\"type\":\"IRCommand\",\"deviceId\":\"58830178\"}",
+            "name": "Teletext",
+            "label": "Teletext"
+          }
+        ]
+      }
+    ],
+    "isMultiZone": false,
+    "VolumeActivityRole": "58830178",
+    "activityOrder": 2,
+    "roles": {
+      "ChannelChangingActivityRole": "58830178",
+      "DisplayActivityRole": "58830178",
+      "VolumeActivityRole": "58830178",
+      "PassThroughActivityRole": "64473342"
+    },
+    "label": "Computer",
+    "imageKey": "Activity\\/58DF2164-056E-4965-A911-CAE9621E0885.png",
+    "type": "VirtualTelevisionN"
+  }
+}
+]

@@ -1,17 +1,5 @@
-# martian
-martian is the home ai system
+# rusthome
+Machine Learning Rust Program for the Home
 
-## Connect to Postgres
-- Create the table accounts
-`CREATE TABLE accounts (user_id serial PRIMARY KEY,username VARCHAR ( 50 ) UNIQUE NOT NULL);`
-- Open connection to the postgres database
-`kubectl port-forward postgres-9c7b87574-jm2bf 5432`
-
-## Login to postgres from the instance
-- `psql -h 127.0.0.1 -U jarvis`
-
-## Connect to Cassandra
-- `./opt/cassandra/bin/cqlsh`
-
-## Connect to Service
-- `martian.default.svc.local:9000`
+## Run locally
+- `docker run -p 3000:4000 -v /home/adam/go/src/github.com/insomniadev/martian/config/:/config --net="host" --env-file .env rusty`

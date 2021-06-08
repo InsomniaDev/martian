@@ -1,0 +1,44 @@
+{
+  "access_token": "",
+  "token_type": "Bearer",
+  "onboarding": 0,
+  "user": {
+    "id": "ee46dded-08d9-449e-9004-946137ea0039",
+    "firstName": "Adam Martin",
+    "lastName": "",
+    "loginEmail": "adam9190@gmail.com",
+    "loginPhone": "+13037254693",
+    "avatar": null,
+    "locale": "en_US",
+    "language": "en",
+    "created": "2019-01-02 13:58:43",
+    "settings": {
+      "map": {
+        "police": "0",
+        "fire": "0",
+        "hospital": "0",
+        "sexOffenders": "0",
+        "crime": "0",
+        "crimeDuration": "a",
+        "family": "1",
+        "advisor": "1",
+        "placeRadius": "1",
+        "memberRadius": "1"
+      },
+      "alerts": { "crime": "0", "sound": "1" },
+      "zendrive": { "sdk_enabled": "OFF" },
+      "locale": "en_US",
+      "unitOfMeasure": "i",
+      "dateFormat": "mdy12",
+      "timeZone": "America/Denver"
+    },
+    "communications": [
+      { "channel": "Voice", "value": "+13037254693", "type": "Home" },
+      { "channel": "Email", "value": "adam9190@gmail.com", "type": null }
+    ],
+    "cobranding": []
+  },
+  "cobranding": [],
+  "promotions": [],
+  "state": null
+}

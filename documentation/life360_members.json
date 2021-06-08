@@ -1,0 +1,134 @@
+{
+  "members": [
+    {
+      "features": {
+        "device": "1",
+        "smartphone": "1",
+        "nonSmartphoneLocating": "0",
+        "geofencing": "1",
+        "shareLocation": "1",
+        "shareOffTimestamp": null,
+        "disconnected": "0",
+        "pendingInvite": "0",
+        "mapDisplay": "1"
+      },
+      "issues": {
+        "disconnected": "0",
+        "type": null,
+        "status": null,
+        "title": null,
+        "dialog": null,
+        "action": null,
+        "troubleshooting": "0"
+      },
+      "location": {
+        "latitude": "39.9243947",
+        "longitude": "-104.9576857",
+        "accuracy": "50",
+        "startTimestamp": 1594339163,
+        "endTimestamp": "1594393197",
+        "since": 1594339163,
+        "timestamp": "1594393197",
+        "name": "Martin Residence",
+        "placeType": null,
+        "source": "l",
+        "sourceId": "4d484ef2-28aa-47d7-a950-58235a29370f",
+        "address1": "Martin Residence",
+        "address2": "",
+        "shortAddress": "",
+        "inTransit": "0",
+        "tripId": null,
+        "driveSDKStatus": null,
+        "battery": "28",
+        "charge": "0",
+        "wifiState": "1",
+        "speed": 0,
+        "isDriving": "0",
+        "userActivity": null
+      },
+      "communications": [
+        { "channel": "Voice", "value": "+13037254693", "type": "Home" },
+        { "channel": "Email", "value": "adam9190@gmail.com", "type": null }
+      ],
+      "medical": null,
+      "relation": null,
+      "createdAt": "1546466323",
+      "activity": null,
+      "id": "ee46dded-08d9-449e-9004-946137ea0039",
+      "firstName": "Adam Martin",
+      "lastName": "",
+      "isAdmin": "1",
+      "avatar": null,
+      "pinNumber": null,
+      "loginEmail": "adam9190@gmail.com",
+      "loginPhone": "+13037254693"
+    },
+    {
+      "features": {
+        "device": "1",
+        "smartphone": "1",
+        "nonSmartphoneLocating": "0",
+        "geofencing": "1",
+        "shareLocation": "1",
+        "shareOffTimestamp": null,
+        "disconnected": "0",
+        "pendingInvite": "0",
+        "mapDisplay": "1"
+      },
+      "issues": {
+        "disconnected": "0",
+        "type": null,
+        "status": null,
+        "title": null,
+        "dialog": null,
+        "action": null,
+        "troubleshooting": "0"
+      },
+      "location": {
+        "latitude": "39.9243868",
+        "longitude": "-104.957647",
+        "accuracy": "50",
+        "startTimestamp": 1594340031,
+        "endTimestamp": "1594392664",
+        "since": 1594340031,
+        "timestamp": "1594392664",
+        "name": "Martin Residence",
+        "placeType": null,
+        "source": "l",
+        "sourceId": "4d484ef2-28aa-47d7-a950-58235a29370f",
+        "address1": "Martin Residence",
+        "address2": "",
+        "shortAddress": "",
+        "inTransit": "0",
+        "tripId": null,
+        "driveSDKStatus": null,
+        "battery": "35",
+        "charge": "0",
+        "wifiState": "1",
+        "speed": 0,
+        "isDriving": "0",
+        "userActivity": null
+      },
+      "communications": [
+        { "channel": "Voice", "value": "+17205579717", "type": "Home" },
+        {
+          "channel": "Email",
+          "value": "beckymartin589@gmail.com",
+          "type": null
+        }
+      ],
+      "medical": null,
+      "relation": null,
+      "createdAt": "1546470208",
+      "activity": null,
+      "id": "257bbefa-afa1-4ee3-8919-1eab0f1c632f",
+      "firstName": "Becky",
+      "lastName": "",
+      "isAdmin": "0",
+      "avatar": "https://www.life360.com/img/user_images/257bbefa-afa1-4ee3-8919-1eab0f1c632f/13d89cc9-c4a1-48b1-9a15-fa774f590f13.jpg?fd=2",
+      "pinNumber": null,
+      "loginEmail": "beckymartin589@gmail.com",
+      "loginPhone": "+17205579717"
+    }
+  ]
+}

@@ -1,0 +1,102 @@
+redis:
+    url: "192.168.1.19"
+    port: "30911"
+lutron:
+    url: "192.168.1.150"
+    port: 23
+    file: "lutron_configuration.json"
+    username: "lutron"
+    password: "integration"
+zwave:
+    driver_location: "/dev/ttyACM0"
+kasa:
+  devices: 
+    - "192.168.1.151"
+    - "192.168.1.156"
+    - "192.168.1.161"
+life360:
+  username: "adam9190@gmail.com"
+  password: "CFmp5gjLNG4Q"
+  authenticationToken: "cFJFcXVnYWJSZXRyZTRFc3RldGhlcnVmcmVQdW1hbUV4dWNyRUh1YzptM2ZydXBSZXRSZXN3ZXJFQ2hBUHJFOTZxYWtFZHI0Vg=="
+myq:
+    username: "adam9190@gmail.com"
+    password: "Martian9190!"
+harmony:
+    ip_address: "192.168.1.219"
+menu:
+  - index: 1
+    areaName:  "Family Room"
+    lutron:
+      - 6
+      - 7
+      - 8
+  - index: 2
+    areaName:  "Kitchen"
+    lutron:
+      - 4
+      - 5
+  - index: 3
+    areaName:  "Dining Room"
+    lutron:
+      - 11
+  - index: 4
+    areaName:  "Living Room"
+    lutron:
+      - 12
+      - 13
+  - index: 5
+    areaName:  "Basement"
+    lutron:
+      - 16
+      - 18
+  - index: 6
+    areaName:  "Playroom"
+    lutron:
+      - 2
+      - 3
+    kasa:
+      - "192.168.1.156"
+  - index: 7
+    areaName:  "Master Bedroom"
+    lutron:
+      - 14
+      - 15
+    kasa:
+      - "192.168.1.161"
+  - index: 8
+    areaName:  "Kids Bathroom"
+    lutron:
+      - 19
+  - index: 9
+    areaName:  "Office"
+    lutron:
+      - 9
+      - 10
+    kasa:
+      - "192.168.1.151"
+  - index: 10
+    areaName: "Main"
+    harmony: 
+      - activities:
+          - state: "off"
+            activity: "-1"
+          - state: "on"
+            activity: "40771265"
+    custom:
+      - type: "lutron"
+        name: "All Lights"
+        devices:
+          - "2"
+          - "3"
+          - "4"
+          - "5"
+          - "6"
+          - "7"
+          - "9"
+          - "10"
+          - "11"
+          - "12"
+          - "14"
+          - "16"
+          - "18"
+          - "19"
