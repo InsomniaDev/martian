@@ -2,15 +2,16 @@ package config
 
 // Config is the overall configuration
 type Config struct {
-	RedisData   Redis        `yaml:"redis"`
-	LutronData  LutronConfig `yaml:"lutron"`
-	MyQData     MyQ          `yaml:"myq"`
-	HarmonyData Harmony      `yaml:"harmony"`
-	KasaData    Kasa         `yaml:"kasa"`
-	SleepIqData SleepIq      `yaml:"sleepiq"`
-	Life360Data Life360      `yaml:"life360"`
-	ZwaveData   Zwave        `yaml:"zwave"`
-	MenuConfig  []Menu       `yaml:"menu"`
+	RedisData     Redis        `yaml:"redis"`
+	LutronData    LutronConfig `yaml:"lutron"`
+	MyQData       MyQ          `yaml:"myq"`
+	HarmonyData   Harmony      `yaml:"harmony"`
+	KasaData      Kasa         `yaml:"kasa"`
+	SleepIqData   SleepIq      `yaml:"sleepiq"`
+	Life360Data   Life360      `yaml:"life360"`
+	ZwaveData     Zwave        `yaml:"zwave"`
+	HomeAssistant Hass         `yaml:"homeAssistant"`
+	MenuConfig    []Menu       `yaml:"menu"`
 }
 
 // Redis is the configuration for Redis
@@ -50,16 +51,22 @@ type SleepIq struct {
 	Password string `yaml:"password"`
 }
 
-// Life360 is the configuration for life60
+// Life360 is the configuration for life360
 type Life360 struct {
 	Username            string `yaml:"username"`
 	Password            string `yaml:"password"`
 	AuthenticationToken string `yaml:"authenticationToken"`
 }
 
-// Zwave is the configuration for life60
+// Zwave is the configuration for zwave
 type Zwave struct {
 	URL string `yaml:"url"`
+}
+
+// Hass is the configuration for HomeAssistant
+type Hass struct {
+	URL   string `yaml:"url"`
+	Token string `yaml:"token"`
 }
 
 // Menu is the setup for the configuration to display on the Web UI
