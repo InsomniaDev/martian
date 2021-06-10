@@ -1,6 +1,9 @@
 redis:
     url: "192.168.1.19"
     port: "30911"
+homeAssistant:
+    url: "192.168.1.19:8123"
+    token: ""
 lutron:
     url: "192.168.1.150"
     port: 23

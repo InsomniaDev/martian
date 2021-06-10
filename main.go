@@ -8,12 +8,9 @@ import (
 
 	"github.com/gocql/gocql"
 	"github.com/insomniadev/martian/brain"
-	"github.com/insomniadev/martian/graphql"
-	"github.com/insomniadev/martian/integrations/harmony"
+	"github.com/insomniadev/martian/integrations/homeassistant"
 	"github.com/insomniadev/martian/modules/cache"
 	"github.com/insomniadev/martian/modules/cassandra"
-	"github.com/insomniadev/martian/modules/redispub"
-	"github.com/insomniadev/martian/modules/server"
 )
 
 var mainBrain brain.Brain
@@ -36,11 +33,14 @@ func subscriptionSubscriber(channel, payload string) {
 func main() {
 	// testLocalCache()
 
-	mainBrain.Init()
-	redispub.NewSubscriber("brain", subscriptionSubscriber)
-	harmony.RetrieveAllNodes()
-	go graphql.Graphql()
-	server.Start()
+	var newHass homeassistant.HomeAssistant
+	newHass.Init()
+
+	// mainBrain.Init()
+	// redispub.NewSubscriber("brain", subscriptionSubscriber)
+	// harmony.RetrieveAllNodes()
+	// go graphql.Graphql()
+	// server.Start()
 }
 
 func testLocalCache() {
