@@ -35,7 +35,9 @@ func main() {
 
 	var newHass homeassistant.HomeAssistant
 	newHass.Init()
-
+	for {
+		
+	}
 	// mainBrain.Init()
 	// redispub.NewSubscriber("brain", subscriptionSubscriber)
 	// harmony.RetrieveAllNodes()

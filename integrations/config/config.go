@@ -89,3 +89,10 @@ func LoadMenu() []Menu {
 	c.LoadFile()
 	return c.MenuConfig
 }
+
+// LoadHomeAssistant loads up the set home assistant configuration
+func LoadHomeAssistant() Hass {
+	c := Config{}
+	c.LoadFile()
+	return c.HomeAssistant
+}

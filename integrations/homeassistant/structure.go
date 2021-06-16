@@ -1,11 +1,20 @@
 package homeassistant
 
-import "github.com/gorilla/websocket"
+import (
+	"github.com/gorilla/websocket"
+	"github.com/insomniadev/martian/integrations/config"
+)
 
 type HomeAssistant struct {
 	Url        string
 	Token      string
+	Config     config.Hass
 	Connection *websocket.Conn
+}
+
+type AuthEvent struct {
+	Type        string `json:"type"`
+	AccessToken string `json:"access_token"`
 }
 
 type Event struct {

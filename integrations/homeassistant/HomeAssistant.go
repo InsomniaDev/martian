@@ -1,9 +1,11 @@
 package homeassistant
 
 import (
+	"encoding/json"
 	"log"
 
 	"github.com/gorilla/websocket"
+	"github.com/insomniadev/martian/integrations/config"
 )
 
 func (h *HomeAssistant) Init() {
@@ -12,7 +14,8 @@ func (h *HomeAssistant) Init() {
 
 func (h *HomeAssistant) connect() {
 	// host := "ws://" + h.Url
-	host := "ws://" + "192.168.1.19:8123"
+	h.Config = config.LoadHomeAssistant()
+	host := "ws://" + h.Config.URL + "/api/websocket"
 
 	conn, _, err := websocket.DefaultDialer.Dial(host, nil)
 	h.Connection = conn
@@ -24,10 +27,26 @@ func (h *HomeAssistant) connect() {
 
 func (h *HomeAssistant) listen() {
 	for {
-		_, message, err := h.Connection.ReadMessage()
+		_, incoming, err := h.Connection.ReadMessage()
 		if err != nil {
 			println(err)
 		}
-		println(string(message))
+		var message Event
+		err = json.Unmarshal(incoming, &message)
+		if err != nil {
+			println(err)
+		}
+		if message.Type == "auth_required" {
+			authMessage := AuthEvent{Type: "auth", AccessToken: h.Config.Token}
+			authEvent, err := json.Marshal(authMessage)
+			println(string(authEvent))
+			if err != nil {
+				println(err)
+			}
+			h.Connection.WriteMessage(1, authEvent)
+		} else {
+			println(string(incoming))
+			return
+		}
 	}
 }
