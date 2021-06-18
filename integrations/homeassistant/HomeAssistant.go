@@ -2,10 +2,36 @@ package homeassistant
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
+	"strconv"
+	"strings"
 
 	"github.com/gorilla/websocket"
 	"github.com/insomniadev/martian/integrations/config"
+)
+
+var (
+	subscribeEventsId   int    = 1
+	subscribeEventsType string = "subscribe_events"
+
+	getStatesId   int    = 2
+	getStatesType string = "get_states"
+
+	getServicesId   int    = 3
+	getServicesType string = "get_services"
+
+	getPanelsId   int    = 4
+	getPanelsType string = "get_panels"
+
+	getConfigId   int    = 5
+	getConfigType string = "get_config"
+
+	getMediaPlayerThumbnailId   int    = 6
+	getMediaPlayerThumbnailType string = "media_player_thumbnail"
+
+	getCameraThumbnailId   int    = 7
+	getCameraThumbnailType string = "camera_thumbnail"
 )
 
 func (h *HomeAssistant) Init() {
@@ -36,7 +62,8 @@ func (h *HomeAssistant) listen() {
 		if err != nil {
 			println(err)
 		}
-		if message.Type == "auth_required" {
+		switch message.Type {
+		case "auth_required":
 			authMessage := AuthEvent{Type: "auth", AccessToken: h.Config.Token}
 			authEvent, err := json.Marshal(authMessage)
 			println(string(authEvent))
@@ -44,9 +71,77 @@ func (h *HomeAssistant) listen() {
 				println(err)
 			}
 			h.Connection.WriteMessage(1, authEvent)
-		} else {
-			println(string(incoming))
-			return
+		case "auth_ok":
+			// h.SubscribeEvents()
+			// h.getConfig()
+			// h.getServices()
+			h.getStates()
+			// default:
+			// 	println(string(incoming))
 		}
+		switch message.ID {
+		case getStatesId:
+			for _, result := range message.Result {
+				s := strings.Split(result.EntityId, ".")
+				deviceType, name := s[0], s[1]
+				name = strings.Replace(name, "_", " ", -1)
+				newDevice := HomeAssistantDevice{EntityId: result.EntityId, Name: name, Type: deviceType}
+				h.Devices = append(h.Devices, newDevice)
+			}
+			for _, dev := range h.Devices {
+				if dev.Type == "light" {
+					fmt.Println(dev.Name)
+				}
+			}
+		}
+	}
+}
+
+func (h *HomeAssistant) TurnOffOfficeLight() {
+	turnofflight := `{"id": 24,"type": "call_service","domain": "light","service":"turn_on","service_data":{"entity_id": "light.office_main_lights"}}`
+	println(turnofflight)
+	err := h.Connection.WriteMessage(websocket.TextMessage, []byte(turnofflight))
+	if err != nil {
+		log.Println("hass write:", err)
+	}
+}
+
+func (h *HomeAssistant) SubscribeEvents() {
+	subscription := `{"id":` + strconv.Itoa(subscribeEventsId) + `,"type":"` + subscribeEventsType + `","event_type":"state_changed"}`
+
+	println(subscription)
+	err := h.Connection.WriteMessage(websocket.TextMessage, []byte(subscription))
+	if err != nil {
+		log.Println("hass write:", err)
+	}
+}
+
+func (h *HomeAssistant) getConfig() {
+	config := `{"id":` + strconv.Itoa(getConfigId) + `,"type":"` + getConfigType + `"}`
+
+	println(config)
+	err := h.Connection.WriteMessage(websocket.TextMessage, []byte(config))
+	if err != nil {
+		log.Println("hass write:", err)
+	}
+}
+
+func (h *HomeAssistant) getServices() {
+	Services := `{"id":` + strconv.Itoa(getServicesId) + `,"type":"` + getServicesType + `"}`
+
+	println(Services)
+	err := h.Connection.WriteMessage(websocket.TextMessage, []byte(Services))
+	if err != nil {
+		log.Println("hass write:", err)
+	}
+}
+
+func (h *HomeAssistant) getStates() {
+	States := `{"id":` + strconv.Itoa(getStatesId) + `,"type":"` + getStatesType + `"}`
+
+	println(States)
+	err := h.Connection.WriteMessage(websocket.TextMessage, []byte(States))
+	if err != nil {
+		log.Println("hass write:", err)
 	}
 }

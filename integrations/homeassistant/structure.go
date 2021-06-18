@@ -10,6 +10,14 @@ type HomeAssistant struct {
 	Token      string
 	Config     config.Hass
 	Connection *websocket.Conn
+	Devices    []HomeAssistantDevice
+}
+
+type HomeAssistantDevice struct {
+	EntityId string
+	Name     string
+	Group    string
+	Type     string
 }
 
 type AuthEvent struct {
@@ -18,9 +26,19 @@ type AuthEvent struct {
 }
 
 type Event struct {
-	ID    int64      `json:"id"`
-	Type  string     `json:"type"`
-	Event EventClass `json:"event"`
+	ID      int        `json:"id"`
+	Type    string     `json:"type"`
+	Success bool       `json:"success"`
+	Event   EventClass `json:"event"`
+	Result  []Results  `json:"result"`
+}
+
+type Results struct {
+	EntityId    string      `json:"entity_id"`
+	State       string      `json:"state"`
+	Attributes  interface{} `json:"attributes"`
+	LastChanged string      `json:"last_changed"`
+	LastUpdated string      `json:"last_updated"`
 }
 
 type EventClass struct {
@@ -53,12 +71,12 @@ type NewState struct {
 }
 
 type NewStateAttributes struct {
-	RGBColor          []int64   `json:"rgb_color"`
-	ColorTemp         int64     `json:"color_temp"`
-	SupportedFeatures int64     `json:"supported_features"`
+	RGBColor          []int     `json:"rgb_color"`
+	ColorTemp         int       `json:"color_temp"`
+	SupportedFeatures int       `json:"supported_features"`
 	XyColor           []float64 `json:"xy_color"`
-	Brightness        int64     `json:"brightness"`
-	WhiteValue        int64     `json:"white_value"`
+	Brightness        int       `json:"brightness"`
+	WhiteValue        int       `json:"white_value"`
 	FriendlyName      string    `json:"friendly_name"`
 }
 
@@ -72,6 +90,6 @@ type OldState struct {
 }
 
 type OldStateAttributes struct {
-	SupportedFeatures int64  `json:"supported_features"`
+	SupportedFeatures int    `json:"supported_features"`
 	FriendlyName      string `json:"friendly_name"`
 }

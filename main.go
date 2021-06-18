@@ -35,6 +35,9 @@ func main() {
 
 	var newHass homeassistant.HomeAssistant
 	newHass.Init()
+	time.Sleep(2 * time.Second)
+	newHass.SubscribeEvents()
+
 	for {
 		
 	}
