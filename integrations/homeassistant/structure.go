@@ -14,10 +14,11 @@ type HomeAssistant struct {
 }
 
 type HomeAssistantDevice struct {
-	EntityId string
-	Name     string
-	Group    string
-	Type     string
+	EntityId string `json:"entityId"`
+	Name     string `json:"name"`
+	Group    string `json:"group"`
+	Type     string `json:"type"`
+	State    string `json:"state"`
 }
 
 type AuthEvent struct {

@@ -8,7 +8,7 @@ import (
 
 	"github.com/gocql/gocql"
 	"github.com/insomniadev/martian/brain"
-	"github.com/insomniadev/martian/integrations/homeassistant"
+	"github.com/insomniadev/martian/graphql"
 	"github.com/insomniadev/martian/modules/cache"
 	"github.com/insomniadev/martian/modules/cassandra"
 )
@@ -33,14 +33,8 @@ func subscriptionSubscriber(channel, payload string) {
 func main() {
 	// testLocalCache()
 
-	var newHass homeassistant.HomeAssistant
-	newHass.Init()
-	time.Sleep(2 * time.Second)
-	newHass.SubscribeEvents()
+	graphql.Graphql()
 
-	for {
-		
-	}
 	// mainBrain.Init()
 	// redispub.NewSubscriber("brain", subscriptionSubscriber)
 	// harmony.RetrieveAllNodes()
@@ -92,3 +86,43 @@ func testWords() {
 	// SELECT * FROM words_to_records WHERE account_uuid = '4d2e9ace-474c-427f-a32d-cec835d1c688' and word IN ('adam','testing')
 	cassConn.Close()
 }
+
+// Old Main File for Rusty
+
+// package main
+
+// import (
+// 	"encoding/json"
+// 	"fmt"
+// 	"strconv"
+// 	"time"
+
+// 	"github.com/insomniadev/rusty/brain"
+// 	graphql "github.com/insomniadev/rusty/graphql"
+// 	"github.com/insomniadev/rusty/integrations/harmony"
+// 	"github.com/insomniadev/rusty/modules/redispub"
+// )
+
+// var mainBrain brain.Brain
+
+// func subscriptionSubscriber(channel, payload string) {
+
+// 	payload, err := strconv.Unquote(payload)
+// 	if err != nil {
+// 		fmt.Println(err)
+// 	}
+// 	eventData := brain.Event{}
+// 	err = json.Unmarshal([]byte(payload), &eventData)
+// 	if err != nil {
+// 		fmt.Println(err)
+// 	}
+// 	eventData.Time = time.Now()
+// 	mainBrain.ProcessEvent(eventData)
+// }
+
+// func main() {
+// 	mainBrain.Init()
+// 	redispub.NewSubscriber("brain", subscriptionSubscriber)
+// 	harmony.RetrieveAllNodes()
+// 	graphql.Graphql()
+// }

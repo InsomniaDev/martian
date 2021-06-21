@@ -32,6 +32,8 @@ var (
 
 	getCameraThumbnailId   int    = 7
 	getCameraThumbnailType string = "camera_thumbnail"
+
+	callServiceId int = 9
 )
 
 func (h *HomeAssistant) Init() {
@@ -72,7 +74,7 @@ func (h *HomeAssistant) listen() {
 			}
 			h.Connection.WriteMessage(1, authEvent)
 		case "auth_ok":
-			// h.SubscribeEvents()
+			h.subscribeEvents()
 			// h.getConfig()
 			// h.getServices()
 			h.getStates()
@@ -85,7 +87,7 @@ func (h *HomeAssistant) listen() {
 				s := strings.Split(result.EntityId, ".")
 				deviceType, name := s[0], s[1]
 				name = strings.Replace(name, "_", " ", -1)
-				newDevice := HomeAssistantDevice{EntityId: result.EntityId, Name: name, Type: deviceType}
+				newDevice := HomeAssistantDevice{EntityId: result.EntityId, Name: name, Type: deviceType, State: result.State}
 				h.Devices = append(h.Devices, newDevice)
 			}
 			for _, dev := range h.Devices {
@@ -97,20 +99,40 @@ func (h *HomeAssistant) listen() {
 	}
 }
 
-func (h *HomeAssistant) TurnOffOfficeLight() {
-	turnofflight := `{"id": 24,"type": "call_service","domain": "light","service":"turn_on","service_data":{"entity_id": "light.office_main_lights"}}`
-	println(turnofflight)
-	err := h.Connection.WriteMessage(websocket.TextMessage, []byte(turnofflight))
+// CallService will call a service and update the value
+func (h *HomeAssistant) CallService(device HomeAssistantDevice, activate bool) {
+	setValue := "turn_off"
+	if activate {
+		setValue = "turn_on"
+	}
+	serviceJson := `{"id": ` + strconv.Itoa(callServiceId) + `,"type": "call_service","domain": "` + device.Type + `","service":"` + setValue + `","service_data":{"entity_id": "` + device.EntityId + `"}}`
+
+	// TODO: We don't need this print statement here once we are done with Hass implementation
+	println(serviceJson)
+
+	err := h.Connection.WriteMessage(websocket.TextMessage, []byte(serviceJson))
 	if err != nil {
 		log.Println("hass write:", err)
 	}
 }
 
-func (h *HomeAssistant) SubscribeEvents() {
+// subscribeEvents will subscribe to the events from the home assistant websocket
+func (h *HomeAssistant) subscribeEvents() {
 	subscription := `{"id":` + strconv.Itoa(subscribeEventsId) + `,"type":"` + subscribeEventsType + `","event_type":"state_changed"}`
 
 	println(subscription)
 	err := h.Connection.WriteMessage(websocket.TextMessage, []byte(subscription))
+	if err != nil {
+		log.Println("hass write:", err)
+	}
+}
+
+// getStates will get the states of all of the devices used by home assistant
+func (h *HomeAssistant) getStates() {
+	States := `{"id":` + strconv.Itoa(getStatesId) + `,"type":"` + getStatesType + `"}`
+
+	println(States)
+	err := h.Connection.WriteMessage(websocket.TextMessage, []byte(States))
 	if err != nil {
 		log.Println("hass write:", err)
 	}
@@ -131,16 +153,6 @@ func (h *HomeAssistant) getServices() {
 
 	println(Services)
 	err := h.Connection.WriteMessage(websocket.TextMessage, []byte(Services))
-	if err != nil {
-		log.Println("hass write:", err)
-	}
-}
-
-func (h *HomeAssistant) getStates() {
-	States := `{"id":` + strconv.Itoa(getStatesId) + `,"type":"` + getStatesType + `"}`
-
-	println(States)
-	err := h.Connection.WriteMessage(websocket.TextMessage, []byte(States))
 	if err != nil {
 		log.Println("hass write:", err)
 	}

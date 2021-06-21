@@ -243,3 +243,26 @@ var life360Type = graphql.NewObject(
 		},
 	},
 )
+
+var homeAssistantType = graphql.NewObject(
+	graphql.ObjectConfig{
+		Name: "HomeAssistantDevice",
+		Fields: graphql.Fields{
+			"entityId": &graphql.Field{
+				Type: graphql.String,
+			},
+			"name": &graphql.Field{
+				Type: graphql.String,
+			},
+			"group": &graphql.Field{
+				Type: graphql.String,
+			},
+			"type": &graphql.Field{
+				Type: graphql.String,
+			},
+			"state": &graphql.Field{
+				Type: graphql.String,
+			},
+		},
+	},
+)

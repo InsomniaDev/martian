@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/graphql-go/graphql"
+	"github.com/insomniadev/martian/integrations/homeassistant"
 )
 
 // Return a single lutron element
@@ -68,6 +69,32 @@ func life360Members(params graphql.ResolveParams) (interface{}, error) {
 		members = append(members, member)
 	}
 	return members, nil
+}
+
+func homeAssistantDevices(params graphql.ResolveParams) (interface{}, error) {
+	var devices []homeassistant.HomeAssistantDevice
+	hassType, _ := params.Args["type"].(string)
+	hassName, _ := params.Args["name"].(string)
+	for _, device := range Integrations.Hass.Devices {
+		if hassType != "" && hassName != "" {
+			if strings.EqualFold(device.Type, hassType) && strings.Contains(strings.ToLower(device.Name), strings.ToLower(hassName)) {
+				devices = append(devices, device)
+			}
+		} else if hassType != "" {
+			if strings.EqualFold(device.Type, hassType) {
+				devices = append(devices, device)
+			}
+		} else if hassName != "" {
+			if strings.Contains(strings.ToLower(device.Name), strings.ToLower(hassName)) {
+				devices = append(devices, device)
+			}
+		}
+	}
+	if len(devices) > 0 {
+		return devices, nil
+	} else {
+		return Integrations.Hass.Devices, nil
+	}
 }
 
 func menuConfiguration(params graphql.ResolveParams) (interface{}, error) {

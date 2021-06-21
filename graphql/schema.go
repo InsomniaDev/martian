@@ -14,6 +14,7 @@ const Schema = `
     getHarmonyDeviceCommands(id: String!): [Harmony]
     zwaveDevices: [ZWave]
     kasaDevices: [Kasa]
+    homeAssistantDevices(name: String, type: String): [HomeAssistant]
   }
 
   type Mutation {
@@ -94,6 +95,14 @@ const Schema = `
   }
 
   type GarageDoorState {
+    state: String
+  }
+
+  type HomeAssistant {
+    entityId: String
+    name: String
+    group: String
+    type: String
     state: String
   }
 

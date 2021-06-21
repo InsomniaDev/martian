@@ -33,19 +33,34 @@ var rootQuery = graphql.NewObject(graphql.ObjectConfig{
 			Resolve:     getCurrentHarmonyActivity,
 		},
 		"kasaDevices": &graphql.Field{
-			Type: graphql.NewList(kasaType),
+			Type:        graphql.NewList(kasaType),
 			Description: "All of the kasa devices",
-			Resolve: getKasaDevices,
+			Resolve:     getKasaDevices,
 		},
 		"menuConfiguration": &graphql.Field{
-			Type: graphql.NewList(menuType),
+			Type:        graphql.NewList(menuType),
 			Description: "The configuration that is returned for the UI to display",
-			Resolve: menuConfiguration,
+			Resolve:     menuConfiguration,
 		},
 		"life360": &graphql.Field{
-			Type: graphql.NewList(life360Type),
+			Type:        graphql.NewList(life360Type),
 			Description: "The life360 members and their current locations",
-			Resolve: life360Members,
+			Resolve:     life360Members,
+		},
+		"homeAssistantDevices": &graphql.Field{
+			Type:        graphql.NewList(homeAssistantType),
+			Args: graphql.FieldConfigArgument{
+				"name": &graphql.ArgumentConfig{
+					Type: graphql.String,
+					DefaultValue: "",
+				},
+				"type": &graphql.ArgumentConfig{
+					Type: graphql.String,
+					DefaultValue: "",
+				},
+			},
+			Description: "The Home Assistant Device by Name or Type",
+			Resolve:     homeAssistantDevices,
 		},
 	},
 })
