@@ -35,6 +35,7 @@ const Schema = `
     healZwaveNetwork: Boolean
     turnOnKasaSwitch(id: ID!): Boolean
     turnOffKasaSwitch(id: ID!): Boolean
+    changeHassDeviceStatus(entityId: String!, activated: Boolean!): Boolean
   }
 
   type Subscription {

@@ -107,3 +107,15 @@ func kasaTurnOnResolver(params graphql.ResolveParams) (interface{}, error) {
 	}
 	return true, nil
 }
+
+// changeHassDeviceStatusResolver changes the status of the Hass device
+func changeHassDeviceStatusResolver(params graphql.ResolveParams) (interface{}, error) {
+	entityId := params.Args["entityId"].(string)
+	activated := params.Args["activated"].(bool)
+	for _, d := range Integrations.Hass.Devices {
+		if d.EntityId == entityId {
+			Integrations.Hass.CallService(d, activated)
+		}
+	}
+	return true, nil
+}

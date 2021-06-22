@@ -105,7 +105,7 @@ func (h *HomeAssistant) CallService(device HomeAssistantDevice, activate bool) {
 	if activate {
 		setValue = "turn_on"
 	}
-	serviceJson := `{"id": ` + strconv.Itoa(callServiceId) + `,"type": "call_service","domain": "` + device.Type + `","service":"` + setValue + `","service_data":{"entity_id": "` + device.EntityId + `"}}`
+	serviceJson := `{"id":` + strconv.Itoa(callServiceId) + `,"type":"call_service","domain":"` + device.Type + `","service":"` + setValue + `","service_data":{"entity_id":"` + device.EntityId + `"}}`
 
 	// TODO: We don't need this print statement here once we are done with Hass implementation
 	println(serviceJson)
@@ -114,6 +114,7 @@ func (h *HomeAssistant) CallService(device HomeAssistantDevice, activate bool) {
 	if err != nil {
 		log.Println("hass write:", err)
 	}
+	callServiceId = callServiceId + 1
 }
 
 // subscribeEvents will subscribe to the events from the home assistant websocket
