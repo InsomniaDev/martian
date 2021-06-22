@@ -1,6 +1,9 @@
 package graphql
 
-import "github.com/graphql-go/graphql"
+import (
+	"github.com/graphql-go/graphql"
+	"github.com/insomniadev/martian/integrations/homeassistant"
+)
 
 //Lutron struct
 type Lutron struct {
@@ -52,6 +55,29 @@ type Harmony struct {
 		} `json:"action"`
 	} `json:"actions"`
 }
+
+var hassType = graphql.NewObject(
+	graphql.ObjectConfig{
+		Name: "Hass",
+		Fields: graphql.Fields{
+			"entityId": &graphql.Field{
+				Type: graphql.String,
+			},
+			"name": &graphql.Field{
+				Type: graphql.String,
+			},
+			"group": &graphql.Field{
+				Type: graphql.String,
+			},
+			"type": &graphql.Field{
+				Type: graphql.String,
+			},
+			"state": &graphql.Field{
+				Type: graphql.String,
+			},
+		},
+	},
+)
 
 var harmonyType = graphql.NewObject(
 	graphql.ObjectConfig{
@@ -135,12 +161,13 @@ var kasaType = graphql.NewObject(
 )
 
 type menu struct {
-	Index    int       `yaml:"index"`
-	AreaName string    `yaml:"areaName"`
-	Lutron   []Lutron  `yaml:"lutron"`
-	Kasa     []Kasa    `yaml:"kasa"`
-	Harmony  []Harmony `yaml:"harmony"`
-	Custom   []Custom  `yaml:"custom"`
+	Index    int                                 `yaml:"index"`
+	AreaName string                              `yaml:"areaName"`
+	Lutron   []Lutron                            `yaml:"lutron"`
+	Kasa     []Kasa                              `yaml:"kasa"`
+	Harmony  []Harmony                           `yaml:"harmony"`
+	Hass     []homeassistant.HomeAssistantDevice `yaml:"hass"`
+	Custom   []Custom                            `yaml:"custom"`
 }
 
 type Custom struct {
@@ -168,6 +195,9 @@ var menuType = graphql.NewObject(
 			},
 			"harmony": &graphql.Field{
 				Type: graphql.NewList(harmonyType),
+			},
+			"hass": &graphql.Field{
+				Type: graphql.NewList(hassType),
 			},
 			"custom": &graphql.Field{
 				Type: graphql.NewList(customType),

@@ -157,6 +157,17 @@ func menuConfiguration(params graphql.ResolveParams) (interface{}, error) {
 			}
 			menuItem.Harmony = currentActivity
 		}
+		if menuValue.Hass != nil {
+			var devices []homeassistant.HomeAssistantDevice
+			for _, configDevice := range menuValue.Hass {
+				for _, device := range Integrations.Hass.Devices {
+					if device.EntityId == configDevice {
+						devices = append(devices, device)
+					}
+				}
+			}
+			menuItem.Hass = devices
+		}
 		if menuValue.Custom != nil {
 			var customActivities []Custom
 			for _, data := range menuValue.Custom {

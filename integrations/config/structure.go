@@ -75,6 +75,7 @@ type Menu struct {
 	AreaName string   `yaml:"areaName"`
 	Lutron   []int    `yaml:"lutron"`
 	Kasa     []string `yaml:"kasa"`
+	Hass     []string `yaml:"hass"`
 	Harmony  []struct {
 		Activities []struct {
 			State    string `yaml:"state"`
