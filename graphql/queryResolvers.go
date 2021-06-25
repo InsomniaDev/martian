@@ -104,6 +104,7 @@ func menuConfiguration(params graphql.ResolveParams) (interface{}, error) {
 		menuItem := menu{
 			Index:    menuValue.Index,
 			AreaName: menuValue.AreaName,
+			Active:   false,
 		}
 		if menuValue.Lutron != nil {
 			var lutronDevices []Lutron
@@ -117,6 +118,9 @@ func menuConfiguration(params graphql.ResolveParams) (interface{}, error) {
 							Type:     lutronID.Type,
 							Value:    lutronID.Value,
 							State:    lutronID.State,
+						}
+						if lutronID.State == "on" {
+							menuItem.Active = true
 						}
 						lutronDevices = append(lutronDevices, newDev)
 					}
@@ -135,6 +139,9 @@ func menuConfiguration(params graphql.ResolveParams) (interface{}, error) {
 							IPAddress: kasaDev.IPAddress,
 							IsOn:      kasaDev.PlugInfo.On,
 							Name:      kasaDev.Name,
+						}
+						if newDev.IsOn {
+							menuItem.Active = true
 						}
 						kasaDevices = append(kasaDevices, newDev)
 					}
@@ -162,7 +169,15 @@ func menuConfiguration(params graphql.ResolveParams) (interface{}, error) {
 			for _, configDevice := range menuValue.Hass {
 				for _, device := range Integrations.Hass.Devices {
 					if device.EntityId == configDevice {
+						device.Name = strings.ToLower(device.Name)
+						device.Name = strings.Replace(device.Name, strings.ToLower(menuItem.AreaName), "", -1)
+						device.Name = strings.Replace(device.Name, strings.ToLower(device.Type) + "s", "", -1)
+						device.Name = strings.Replace(device.Name, strings.ToLower(device.Type), "", -1)
+						device.Name = strings.Title(device.Name)
 						devices = append(devices, device)
+						if strings.ToLower(device.State) == "on" {
+							menuItem.Active = true
+						}
 					}
 				}
 			}
@@ -191,6 +206,7 @@ func menuConfiguration(params graphql.ResolveParams) (interface{}, error) {
 					}
 					if lightOn {
 						newCustom.State = "on"
+						menuItem.Active = true
 					} else {
 						newCustom.State = "off"
 					}

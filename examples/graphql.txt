@@ -1,0 +1,77 @@
+query getOfficeDevices {
+  homeAssistantDevices(type: "light", name: "office") {
+    name
+    entityId
+  }
+}
+
+query menuTest {
+  menuConfiguration {
+    areaName
+    index
+    lutron {
+      id
+      name
+      state
+      areaName
+      type
+    }
+    kasa {
+      id
+      areaName
+      ipAddress
+      name
+      on
+    }
+    harmony {
+      id
+      activityId
+      name
+    }
+    hass {
+      entityId
+      name
+      type
+      state
+    }
+    custom {
+      devices
+      name
+      type
+      state
+    }
+  }
+}
+
+subscription menuConf {
+    menuChange {
+      areaName
+      index
+      hass {
+        entityId
+        name
+        type
+        state
+        group
+      }
+    }
+  }
+
+query hassTest {
+  menuConfiguration {
+    areaName
+    index
+    hass {
+      entityId
+      name
+      type
+      state
+      group
+    }
+  }
+}
+
+mutation changeHass($entityId: String!, $activated: Boolean!) {
+  changeHassDeviceStatus(entityId: $entityId, activated: $activated)
+}
+

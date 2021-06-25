@@ -9,6 +9,7 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/insomniadev/martian/integrations/config"
+	"github.com/insomniadev/martian/modules/redispub"
 )
 
 var (
@@ -78,6 +79,13 @@ func (h *HomeAssistant) listen() {
 			// h.getConfig()
 			// h.getServices()
 			h.getStates()
+		case "event":
+			for i := range h.Devices {
+				if h.Devices[i].EntityId == message.Event.Data.EntityID {
+					h.Devices[i].State = message.Event.Data.NewState.State
+				}
+			}
+			redispub.Service.Publish("subscriptions", "changed")
 			// default:
 			// 	println(string(incoming))
 		}

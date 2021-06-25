@@ -163,6 +163,7 @@ var kasaType = graphql.NewObject(
 type menu struct {
 	Index    int                                 `yaml:"index"`
 	AreaName string                              `yaml:"areaName"`
+	Active   bool                                `yaml:"active"`
 	Lutron   []Lutron                            `yaml:"lutron"`
 	Kasa     []Kasa                              `yaml:"kasa"`
 	Harmony  []Harmony                           `yaml:"harmony"`
@@ -186,6 +187,9 @@ var menuType = graphql.NewObject(
 			},
 			"areaName": &graphql.Field{
 				Type: graphql.String,
+			},
+			"active": &graphql.Field{
+				Type: graphql.Boolean,
 			},
 			"lutron": &graphql.Field{
 				Type: graphql.NewList(lutronType),
