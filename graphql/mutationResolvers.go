@@ -1,6 +1,7 @@
 package graphql
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -112,6 +113,7 @@ func kasaTurnOnResolver(params graphql.ResolveParams) (interface{}, error) {
 func changeHassDeviceStatusResolver(params graphql.ResolveParams) (interface{}, error) {
 	entityId := params.Args["entityId"].(string)
 	activated := params.Args["activated"].(bool)
+	fmt.Println("got something here", entityId, activated)
 	for _, d := range Integrations.Hass.Devices {
 		if d.EntityId == entityId {
 			Integrations.Hass.CallService(d, activated)

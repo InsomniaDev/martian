@@ -74,14 +74,14 @@ menu:
       - "light.office_main_lights"
     kasa:
       - "192.168.1.151"
-  - index: 10
-    areaName: "Main"
-    harmony: 
-      - activities:
-          - state: "off"
-            activity: "-1"
-          - state: "on"
-            activity: "40771265"
+  # - index: 10
+  #   areaName: "Main"
+  #   harmony: 
+  #     - activities:
+  #         - state: "off"
+  #           activity: "-1"
+  #         - state: "on"
+  #           activity: "40771265"
     # custom:
     #   - type: "lutron"
     #     name: "All Lights"
