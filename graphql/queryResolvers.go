@@ -1,7 +1,6 @@
 package graphql
 
 import (
-	"encoding/json"
 	"strconv"
 	"strings"
 
@@ -107,114 +106,119 @@ func menuConfiguration(params graphql.ResolveParams) (interface{}, error) {
 			Active:   false,
 		}
 		if menuValue.Lutron != nil {
-			var lutronDevices []Lutron
 			for _, id := range menuValue.Lutron {
 				for _, lutronID := range Integrations.LutronData.Inventory {
 					if id == lutronID.ID {
-						newDev := Lutron{
-							AreaName: lutronID.AreaName,
-							DeviceID: lutronID.ID,
-							Name:     lutronID.Name,
-							Type:     lutronID.Type,
-							Value:    lutronID.Value,
-							State:    lutronID.State,
+						newDev := menuDevice{
+							AreaName:    lutronID.AreaName,
+							Id:          strconv.Itoa(lutronID.ID),
+							Name:        lutronID.Name,
+							Type:        lutronID.Type,
+							Value:       strconv.FormatFloat(lutronID.Value, 'E', -1, 64),
+							State:       lutronID.State,
+							Integration: "lutron",
 						}
 						if lutronID.State == "on" {
 							menuItem.Active = true
 						}
-						lutronDevices = append(lutronDevices, newDev)
+						menuItem.Devices = append(menuItem.Devices, newDev)
 					}
 				}
 			}
-			menuItem.Lutron = lutronDevices
 		}
 		if menuValue.Kasa != nil {
-			var kasaDevices []Kasa
 			for _, id := range menuValue.Kasa {
 				for _, kasaDev := range Integrations.KasaData.Plugs {
 					if id == kasaDev.IPAddress {
-						newDev := Kasa{
-							ID:        kasaDev.ID,
-							AreaName:  kasaDev.AreaName,
-							IPAddress: kasaDev.IPAddress,
-							IsOn:      kasaDev.PlugInfo.On,
-							Name:      kasaDev.Name,
-						}
-						if newDev.IsOn {
+						state := "off"
+						if kasaDev.PlugInfo.On {
+							state = "on"
 							menuItem.Active = true
 						}
-						kasaDevices = append(kasaDevices, newDev)
+						newDev := menuDevice{
+							AreaName:    kasaDev.AreaName,
+							Id:          kasaDev.IPAddress,
+							Name:        kasaDev.Name,
+							Type:        "UKN",
+							State:       state,
+							Integration: "kasa",
+						}
+						menuItem.Devices = append(menuItem.Devices, newDev)
 					}
 				}
 			}
-			menuItem.Kasa = kasaDevices
 		}
 		if menuValue.Harmony != nil {
-			var currentActivity []Harmony
 			for _, activity := range Integrations.HarmonyData.Activities {
 				if activity.ActivityID == Integrations.HarmonyData.CurrentActivity {
-					newActivity := Harmony{
-						ID:         Integrations.HarmonyData.ActivityID,
-						ActivityID: activity.ActivityID,
-						Name:       activity.Name,
+					newDev := menuDevice{
+						Id:          Integrations.HarmonyData.ActivityID,
+						Name:        activity.Name,
+						Integration: "harmony",
 					}
 					harmonyID = harmonyID + 1
-					currentActivity = append(currentActivity, newActivity)
+					menuItem.Devices = append(menuItem.Devices, newDev)
 				}
 			}
-			menuItem.Harmony = currentActivity
 		}
 		if menuValue.Hass != nil {
-			var devices []homeassistant.HomeAssistantDevice
 			for _, configDevice := range menuValue.Hass {
 				for _, device := range Integrations.Hass.Devices {
 					if device.EntityId == configDevice {
-						device.Name = strings.ToLower(device.Name)
-						device.Name = strings.Replace(device.Name, strings.ToLower(menuItem.AreaName), "", -1)
-						device.Name = strings.Replace(device.Name, strings.ToLower(device.Type) + "s", "", -1)
-						device.Name = strings.Replace(device.Name, strings.ToLower(device.Type), "", -1)
-						device.Name = strings.Title(device.Name)
-						devices = append(devices, device)
 						if strings.ToLower(device.State) == "on" {
 							menuItem.Active = true
 						}
+						device.Name = strings.ToLower(device.Name)
+						device.Name = strings.Replace(device.Name, strings.ToLower(menuItem.AreaName), "", -1)
+						device.Name = strings.Replace(device.Name, strings.ToLower(device.Type)+"s", "", -1)
+						device.Name = strings.Replace(device.Name, strings.ToLower(device.Type), "", -1)
+						device.Name = strings.Title(device.Name)
+
+						newDev := menuDevice{
+							AreaName:    device.Group,
+							Id:          device.EntityId,
+							Name:        device.Name,
+							Type:        device.Type,
+							State:       device.State,
+							Integration: "hass",
+						}
+						menuItem.Devices = append(menuItem.Devices, newDev)
 					}
 				}
 			}
-			menuItem.Hass = devices
 		}
-		if menuValue.Custom != nil {
-			var customActivities []Custom
-			for _, data := range menuValue.Custom {
-				var newCustom Custom
-				jsonData, _ := json.Marshal(data)
-				json.Unmarshal(jsonData, &newCustom)
-				if strings.ToUpper(newCustom.Type) == "LUTRON" {
-					lightOn := false
-					for i := range Integrations.LutronData.Inventory {
-						for _, val := range newCustom.Devices {
-							if strconv.Itoa(Integrations.LutronData.Inventory[i].ID) == val {
-								if Integrations.LutronData.Inventory[i].Value > 0 {
-									lightOn = true
-								}
-								break
-							}
-						}
-						if lightOn {
-							break
-						}
-					}
-					if lightOn {
-						newCustom.State = "on"
-						menuItem.Active = true
-					} else {
-						newCustom.State = "off"
-					}
-				}
-				customActivities = append(customActivities, newCustom)
-			}
-			menuItem.Custom = customActivities
-		}
+		// if menuValue.Custom != nil {
+		// 	var customActivities []Custom
+		// 	for _, data := range menuValue.Custom {
+		// 		var newCustom Custom
+		// 		jsonData, _ := json.Marshal(data)
+		// 		json.Unmarshal(jsonData, &newCustom)
+		// 		if strings.ToUpper(newCustom.Type) == "LUTRON" {
+		// 			lightOn := false
+		// 			for i := range Integrations.LutronData.Inventory {
+		// 				for _, val := range newCustom.Devices {
+		// 					if strconv.Itoa(Integrations.LutronData.Inventory[i].ID) == val {
+		// 						if Integrations.LutronData.Inventory[i].Value > 0 {
+		// 							lightOn = true
+		// 						}
+		// 						break
+		// 					}
+		// 				}
+		// 				if lightOn {
+		// 					break
+		// 				}
+		// 			}
+		// 			if lightOn {
+		// 				newCustom.State = "on"
+		// 				menuItem.Active = true
+		// 			} else {
+		// 				newCustom.State = "off"
+		// 			}
+		// 		}
+		// 		customActivities = append(customActivities, newCustom)
+		// 	}
+		// 	menuItem.Custom = customActivities
+		// }
 		menuItems = append(menuItems, menuItem)
 	}
 

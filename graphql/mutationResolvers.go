@@ -121,3 +121,72 @@ func changeHassDeviceStatusResolver(params graphql.ResolveParams) (interface{}, 
 	}
 	return true, nil
 }
+
+// changeDeviceStatus is the one mutation to rule them all
+func changeDeviceStatus(params graphql.ResolveParams) (interface{}, error) {
+	id := params.Args["id"].(string)
+	status := params.Args["status"].(string)
+	level := params.Args["level"].(string)
+
+	switch params.Args["integration"].(string) {
+	case "lutron":
+		lutronId, err := strconv.Atoi(id)
+		if err != nil {
+			return nil, err
+		}
+		switch status {
+		case "off":
+			changeLutronDevice(lutronId, 0)
+		case "on":
+			changeLutronDevice(lutronId, 100)
+		case "dim":
+			level, err := strconv.ParseFloat(level, 64)
+			if err != nil {
+				return nil, err
+			}
+			changeLutronDevice(lutronId, level)
+		}
+	case "kasa":
+		changeKasaDevice(id, status)
+	case "hass":
+		hassDevice(id, status)
+	case "harmony":
+		_, err := harmonyStartActivityResolver(params)
+		if err != nil {
+			return false, nil
+		}
+	}
+	return true, nil
+}
+
+func changeLutronDevice(id int, level float64) {
+	for _, d := range Integrations.LutronData.Inventory {
+		if d.ID == id {
+			Integrations.LutronData.SetById(id, level)
+		}
+	}
+}
+
+func changeKasaDevice(id string, status string) {
+	for i, d := range Integrations.KasaData.Plugs {
+		if d.IPAddress == id {
+			if status == "on" {
+				Integrations.KasaData.Plugs[i].PowerOn()
+			} else {
+				Integrations.KasaData.Plugs[i].PowerOff()
+			}
+		}
+	}
+}
+
+func hassDevice(id string, status string) {
+	activated := false
+	if status == "on" {
+		activated = true
+	}
+	for _, d := range Integrations.Hass.Devices {
+		if d.EntityId == id {
+			Integrations.Hass.CallService(d, activated)
+		}
+	}
+}

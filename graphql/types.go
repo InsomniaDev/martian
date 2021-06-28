@@ -2,7 +2,6 @@ package graphql
 
 import (
 	"github.com/graphql-go/graphql"
-	"github.com/insomniadev/martian/integrations/homeassistant"
 )
 
 //Lutron struct
@@ -161,14 +160,10 @@ var kasaType = graphql.NewObject(
 )
 
 type menu struct {
-	Index    int                                 `yaml:"index"`
-	AreaName string                              `yaml:"areaName"`
-	Active   bool                                `yaml:"active"`
-	Lutron   []Lutron                            `yaml:"lutron"`
-	Kasa     []Kasa                              `yaml:"kasa"`
-	Harmony  []Harmony                           `yaml:"harmony"`
-	Hass     []homeassistant.HomeAssistantDevice `yaml:"hass"`
-	Custom   []Custom                            `yaml:"custom"`
+	Index    int          `yaml:"index"`
+	AreaName string       `yaml:"areaName"`
+	Active   bool         `yaml:"active"`
+	Devices  []menuDevice `yaml:"devices"`
 }
 
 type Custom struct {
@@ -191,20 +186,47 @@ var menuType = graphql.NewObject(
 			"active": &graphql.Field{
 				Type: graphql.Boolean,
 			},
-			"lutron": &graphql.Field{
-				Type: graphql.NewList(lutronType),
+			"devices": &graphql.Field{
+				Type: graphql.NewList(menuDeviceType),
 			},
-			"kasa": &graphql.Field{
-				Type: graphql.NewList(kasaType),
+		},
+	},
+)
+
+type menuDevice struct {
+	Id          string `json:"id"`
+	Type        string `json:"type"`
+	Integration string `json:"integration"`
+	Name        string `json:"name"`
+	State       string `json:"state"`
+	AreaName    string `json:"areaName"`
+	Value       string `json:"value"`
+}
+
+var menuDeviceType = graphql.NewObject(
+	graphql.ObjectConfig{
+		Name: "Device",
+		Fields: graphql.Fields{
+			"id": &graphql.Field{
+				Type: graphql.String,
 			},
-			"harmony": &graphql.Field{
-				Type: graphql.NewList(harmonyType),
+			"type": &graphql.Field{
+				Type: graphql.String,
 			},
-			"hass": &graphql.Field{
-				Type: graphql.NewList(hassType),
+			"integration": &graphql.Field{
+				Type: graphql.String,
 			},
-			"custom": &graphql.Field{
-				Type: graphql.NewList(customType),
+			"name": &graphql.Field{
+				Type: graphql.String,
+			},
+			"state": &graphql.Field{
+				Type: graphql.String,
+			},
+			"areaName": &graphql.Field{
+				Type: graphql.String,
+			},
+			"value": &graphql.Field{
+				Type: graphql.Float,
 			},
 		},
 	},
