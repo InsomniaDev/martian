@@ -106,5 +106,24 @@ var rootMutation = graphql.NewObject(graphql.ObjectConfig{
 			Description: "Turn off a Kasa plug",
 			Resolve:     changeHassDeviceStatusResolver,
 		},
+		"changeDeviceStatus": &graphql.Field{
+			Type: graphql.Boolean,
+			Args: graphql.FieldConfigArgument{
+				"id": &graphql.ArgumentConfig{
+					Type: graphql.NewNonNull(graphql.String),
+				},
+				"status": &graphql.ArgumentConfig{
+					Type: graphql.NewNonNull(graphql.String),
+				},
+				"level": &graphql.ArgumentConfig{
+					Type: graphql.NewNonNull(graphql.String),
+				},
+				"integration": &graphql.ArgumentConfig{
+					Type: graphql.NewNonNull(graphql.String),
+				},
+			},
+			Description: "Change the device status independent of it's integration type",
+			Resolve:     changeDeviceStatus,
+		},
 	},
 })

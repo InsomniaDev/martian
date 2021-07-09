@@ -81,11 +81,12 @@ func (h *HomeAssistant) listen() {
 			h.getStates()
 		case "event":
 			for i := range h.Devices {
-				if h.Devices[i].EntityId == message.Event.Data.EntityID {
+				if h.Devices[i].EntityId == message.Event.Data.EntityID && h.Devices[i].State != message.Event.Data.NewState.State {
 					h.Devices[i].State = message.Event.Data.NewState.State
+
+					redispub.Service.Publish("subscriptions", h.Devices[i].EntityId)
 				}
 			}
-			redispub.Service.Publish("subscriptions", "changed")
 			// default:
 			// 	println(string(incoming))
 		}
