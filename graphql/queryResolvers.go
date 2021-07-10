@@ -118,7 +118,7 @@ func menuConfiguration(params graphql.ResolveParams) (interface{}, error) {
 							State:       lutronID.State,
 							Integration: "lutron",
 						}
-						if lutronID.State == "on" {
+						if strings.ToLower(lutronID.State) != "off" {
 							menuItem.Active = true
 						}
 						menuItem.Devices = append(menuItem.Devices, newDev)

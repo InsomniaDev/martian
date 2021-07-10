@@ -29,51 +29,74 @@ harmony:
 menu:
   - index: 1
     areaName:  "Family Room"
-    lutron:
-      - 6
-      - 7
-      - 8
+    hass:
+      - "light.family_room_ceiling_fan_light"
+      - "light.family_room_cove_lights"
   - index: 2
     areaName:  "Kitchen"
-    lutron:
-      - 4
-      - 5
+    hass:
+      - "light.kitchen_main_lights"
+      - "light.kitchen_table_chandelier"
   - index: 3
     areaName:  "Dining Room"
-    lutron:
-      - 11
+    hass:
+      - "light.dining_room_chandelier"
   - index: 4
     areaName:  "Living Room"
-    lutron:
-      - 12
-      - 13
+    hass:
+      - "light.living_room_ceiling_fan_light"
   - index: 5
     areaName:  "Basement"
-    lutron:
-      - 16
-      - 18
+    hass:
+      - "light.basement_stairs_step_lights"
+      - "light.basement_stairs_main_lights"
   - index: 6
     areaName:  "Playroom"
-    lutron:
-      - 2
-      - 3
+    hass:
+      - "light.playroom_main_lights_1"
+      - "light.playroom_main_lights_2"
     kasa:
       - "192.168.1.156"
   - index: 7
     areaName:  "Master Bedroom"
-    lutron:
-      - 14
-      - 15
+    hass:
+      - "light.master_bedroom_ceiling_fan_light"
     kasa:
       - "192.168.1.161"
   - index: 8
     areaName:  "Kids Bathroom"
-    lutron:
-      - 19
+    hass:
+      - "light.kids_bathroom_main_lights"
   - index: 9
     areaName:  "Office"
-    lutron:
-      - 9
-      - 10
+    hass:
+      - "light.office_sconces"
+      - "light.office_main_lights"
     kasa:
       - "192.168.1.151"
+  # - index: 10
+  #   areaName: "Main"
+  #   harmony: 
+  #     - activities:
+  #         - state: "off"
+  #           activity: "-1"
+  #         - state: "on"
+  #           activity: "40771265"
+    # custom:
+    #   - type: "lutron"
+    #     name: "All Lights"
+    #     devices:
+    #       - "2"
+    #       - "3"
+    #       - "4"
+    #       - "5"
+    #       - "6"
+    #       - "7"
+    #       - "9"
+    #       - "10"
+    #       - "11"
+    #       - "12"
+    #       - "14"
+    #       - "16"
+    #       - "18"
+    #       - "19"
