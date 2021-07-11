@@ -1,9 +1,11 @@
 package graphql
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/graphql-go/graphql"
+	"github.com/insomniadev/martian/integrations/area"
 	"github.com/insomniadev/martian/integrations/homeassistant"
 )
 
@@ -97,6 +99,22 @@ func homeAssistantDevices(params graphql.ResolveParams) (interface{}, error) {
 }
 
 func menuConfiguration(params graphql.ResolveParams) (interface{}, error) {
-	
+	Integrations.Menu = nil
+	for _, k := range Integrations.Integrations {
+		switch k {
+		case "lutron":
+			Integrations.Menu = area.LutronIntegration(Integrations.Menu, Integrations.LutronData.Inventory)
+		case "harmony":
+			fmt.Println("Not implemented")
+		case "kasa":
+			Integrations.Menu = area.KasaIntegration(Integrations.Menu, Integrations.KasaData)
+		case "life360":
+			fmt.Println("Not implemented")
+		case "hass":
+			fmt.Println("Not implemented")
+		default:
+			fmt.Println("This integration doesn't exist yet", k)
+		}
+	}
 	return Integrations.Menu, nil
 }
