@@ -2,6 +2,7 @@ package graphql
 
 import (
 	"github.com/graphql-go/graphql"
+	"github.com/insomniadev/martian/integrations/area"
 )
 
 var rootSubscription = graphql.NewObject(graphql.ObjectConfig{
@@ -18,7 +19,7 @@ var rootSubscription = graphql.NewObject(graphql.ObjectConfig{
 			Resolve:     getCurrentHarmonyActivity,
 		},
 		"menuChange": &graphql.Field{
-			Type:        graphql.NewList(menuType),
+			Type:        graphql.NewList(area.AreaType),
 			Description: "Retrieve menu configuration changes",
 			Resolve:     menuConfiguration,
 		},

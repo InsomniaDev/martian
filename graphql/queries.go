@@ -2,6 +2,7 @@ package graphql
 
 import (
 	"github.com/graphql-go/graphql"
+	"github.com/insomniadev/martian/integrations/area"
 )
 
 var rootQuery = graphql.NewObject(graphql.ObjectConfig{
@@ -38,7 +39,7 @@ var rootQuery = graphql.NewObject(graphql.ObjectConfig{
 			Resolve:     getKasaDevices,
 		},
 		"menuConfiguration": &graphql.Field{
-			Type:        graphql.NewList(menuType),
+			Type:        graphql.NewList(area.AreaType),
 			Description: "The configuration that is returned for the UI to display",
 			Resolve:     menuConfiguration,
 		},

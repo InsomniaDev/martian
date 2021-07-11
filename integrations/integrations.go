@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/insomniadev/martian/integrations/config"
+	"github.com/insomniadev/martian/integrations/area"
 	"github.com/insomniadev/martian/integrations/harmony"
 	"github.com/insomniadev/martian/integrations/homeassistant"
 	"github.com/insomniadev/martian/integrations/kasa"
@@ -14,7 +14,7 @@ import (
 )
 
 type Integrations struct {
-	Menu        []config.Menu
+	Menu        []area.Area
 	LutronData  lutron.Lutron
 	HarmonyData harmony.Device
 	Hass        homeassistant.HomeAssistant
@@ -42,11 +42,16 @@ func (i *Integrations) Init() {
 		case "harmony":
 			fmt.Println("Not implemented")
 		case "kasa":
-			fmt.Println("Not implemented")
+			i.KasaData.Init(storedIntegrations[k])
+			if len(i.KasaData.Plugs) == 0 {
+				i.KasaData.Discover()
+			}
+			i.Menu = area.KasaIntegration(i.Menu, i.KasaData)
 		case "life360":
-			fmt.Println("Not implemented")
+			i.Life3.Authenticate()
+			go i.Life3.SyncMemberStatus()
 		case "hass":
-			fmt.Println("Not implemented")
+			go i.Hass.Init()
 		default:
 			fmt.Println("This integration doesn't exist yet", k)
 		}
@@ -55,11 +60,10 @@ func (i *Integrations) Init() {
 
 	// TODO: This needs to load up each based on if it is available, there is no point in loading up all of them
 	i.HarmonyData.Init()
-	i.KasaData.Init()
-	i.Menu = config.LoadMenu()
-	// i.Life3.Authenticate()
-	// go i.Life3.SyncMemberStatus()
 
-	go i.Hass.Init()
 	// i.Zwave.ConnectToTopic()
+}
+
+func AddAreas() {
+
 }

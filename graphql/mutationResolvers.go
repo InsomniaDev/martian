@@ -209,7 +209,8 @@ func updateIntegration(params graphql.ResolveParams) (interface{}, error) {
 	case "harmony":
 		fmt.Println("Not implemented")
 	case "kasa":
-		fmt.Println("Not implemented")
+		Integrations.Database.PutIntegrationValue(integrationType, "")
+		newIntegration = true
 	case "life360":
 		fmt.Println("Not implemented")
 	case "hass":

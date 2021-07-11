@@ -3,18 +3,22 @@ package kasa
 // https://github.com/python-kasa/python-kasa
 
 import (
+	"encoding/json"
 	"fmt"
 	"net"
 	"strings"
 	"sync"
 	"time"
 
+	"github.com/insomniadev/martian/modules/database"
 	"github.com/insomniadev/martian/modules/redispub"
 )
 
 // Init initializes the instance of kasa for devices on the network
-func (d *Devices) Init() {
-	d.Discover()
+func (d *Devices) Init(configuration string) {
+	var devices []Plug
+	json.Unmarshal([]byte(configuration), &devices)
+	d.Plugs = devices
 	// d.Plugs = RetrieveKasaNodes()
 	// devices := config.LoadKasa()
 
@@ -110,14 +114,14 @@ func (h *Plug) PowerState() (PowerState, error) {
 func (d *Devices) Discover() {
 	ifaces, err := net.Interfaces()
 	if err != nil {
-		fmt.Print(fmt.Errorf("localAddresses: %+v\n", err.Error()))
+		fmt.Print(fmt.Errorf("localAddresses: %+v", err.Error()))
 		return
 	}
 	found := false
 	for _, i := range ifaces {
 		addrs, err := i.Addrs()
 		if err != nil {
-			fmt.Print(fmt.Errorf("localAddresses: %+v\n", err.Error()))
+			fmt.Print(fmt.Errorf("localAddresses: %+v", err.Error()))
 			continue
 		}
 		for _, a := range addrs {
@@ -139,7 +143,10 @@ func (d *Devices) Discover() {
 							// d.Plugs = append(d.Plugs, plug)
 							if info != nil {
 								plug.Name = plug.PlugInfo.Alias
-								plug.Type = plug.PlugInfo.DeviceName
+								switch plug.PlugInfo.Model {
+								case "HS105(US)":
+									plug.Type = "plug"
+								}
 								alreadyUsedPlug := false
 								for i := range d.Plugs {
 									if d.Plugs[i].IPAddress == plug.IPAddress {
@@ -156,6 +163,8 @@ func (d *Devices) Discover() {
 					}
 					wg.Wait()
 					found = true
+					var db database.Database
+					db.PutIntegrationValue("kasa", d.Plugs)
 				}
 			case *net.IPAddr:
 				fmt.Printf("%v : %s (%s)\n", i.Name, v, v.IP.DefaultMask())
