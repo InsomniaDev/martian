@@ -5,12 +5,17 @@ import (
 	"fmt"
 	"os"
 
-	config "github.com/insomniadev/martian/integrations/config"
+	"github.com/insomniadev/martian/modules/database"
 )
 
 // Init starts up the lutron instance
-func Init() Lutron {
-	lutron := config.LoadLutron()
+func Init(configuration string) Lutron {
+	var lutron database.LutronConfig
+	err := json.Unmarshal([]byte(configuration), &lutron)
+	if err != nil {
+		// TODO: Change this away from being a panic
+		panic(err)
+	}
 	inventory := RetrieveLutronNodes()
 	if len(inventory) == 0 {
 		// Load the lutron configuration file
@@ -32,7 +37,7 @@ func Init() Lutron {
 	return *l
 }
 
-func loadIntegrationFile(config config.LutronConfig) CasetaIntegrationFile {
+func loadIntegrationFile(config database.LutronConfig) CasetaIntegrationFile {
 	jsonfile, err := os.Open("./config/" + config.File)
 
 	fileContents := CasetaIntegrationFile{}

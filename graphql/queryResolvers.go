@@ -139,7 +139,7 @@ func menuConfiguration(params graphql.ResolveParams) (interface{}, error) {
 							AreaName:    kasaDev.AreaName,
 							Id:          kasaDev.IPAddress,
 							Name:        kasaDev.Name,
-							Type:        "UKN",
+							Type:        "UKN", //TODO: Need to work on discovering what type of device the kasa device is for the UI
 							State:       state,
 							Integration: "kasa",
 						}

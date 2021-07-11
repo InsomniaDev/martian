@@ -4,6 +4,7 @@ go 1.13
 
 require (
 	github.com/barnybug/go-cast v0.0.0-20201201064555-a87ccbc26692 // indirect
+	github.com/boltdb/bolt v1.3.1 // indirect
 	github.com/dgraph-io/ristretto v0.0.3
 	github.com/evalphobia/google-home-client-go v0.2.1
 	github.com/evalphobia/google-tts-go v0.3.0 // indirect

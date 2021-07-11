@@ -1,11 +1,13 @@
 package graphql
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
 	"strings"
 
 	"github.com/graphql-go/graphql"
+	"github.com/insomniadev/martian/modules/database"
 )
 
 // lutronTurnOffResolver turns off a lutron device by setting value to zero
@@ -189,4 +191,29 @@ func hassDevice(id string, status string) {
 			Integrations.Hass.CallService(d, activated)
 		}
 	}
+}
+
+func updateIntegration(params graphql.ResolveParams) (interface{}, error) {
+	integrationType := params.Args["type"].(string)
+	integrationValue := params.Args["value"].(string)
+	switch integrationType {
+	case "lutron":
+		var lutron database.LutronConfig
+		err := json.Unmarshal([]byte(integrationValue), &lutron)
+		if err != nil {
+			return false, err
+		}
+		Integrations.Database.PutIntegrationValue(integrationType, lutron)
+	case "harmony":
+		fmt.Println("Not implemented")
+	case "kasa":
+		fmt.Println("Not implemented")
+	case "life360":
+		fmt.Println("Not implemented")
+	case "hass":
+		fmt.Println("Not implemented")
+	default:
+		fmt.Println("This integration doesn't exist yet", integrationType)
+	}
+	return true, nil
 }

@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"net"
 
-	config "github.com/insomniadev/martian/integrations/config"
+	"github.com/insomniadev/martian/modules/database"
 	"github.com/insomniadev/martian/modules/pubsub"
 )
 
@@ -36,7 +36,7 @@ const (
 )
 
 type Lutron struct {
-	Config    config.LutronConfig
+	Config    database.LutronConfig
 	conn      net.Conn
 	reader    *bufio.Reader
 	done      chan bool

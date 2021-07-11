@@ -7,39 +7,6 @@ import (
 var rootMutation = graphql.NewObject(graphql.ObjectConfig{
 	Name: "RootMutation",
 	Fields: graphql.Fields{
-		"turnDeviceOn": &graphql.Field{
-			Type: lutronType,
-			Args: graphql.FieldConfigArgument{
-				"id": &graphql.ArgumentConfig{
-					Type: graphql.NewNonNull(graphql.ID),
-				},
-			},
-			Description: "Turn on a Lutron Device",
-			Resolve:     lutronTurnOnResolver,
-		},
-		"turnDeviceOff": &graphql.Field{
-			Type: lutronType,
-			Args: graphql.FieldConfigArgument{
-				"id": &graphql.ArgumentConfig{
-					Type: graphql.NewNonNull(graphql.ID),
-				},
-			},
-			Description: "Turn off a Lutron Device",
-			Resolve:     lutronTurnOffResolver,
-		},
-		"setLutronDeviceToLevel": &graphql.Field{
-			Type: lutronType,
-			Args: graphql.FieldConfigArgument{
-				"id": &graphql.ArgumentConfig{
-					Type: graphql.NewNonNull(graphql.ID),
-				},
-				"level": &graphql.ArgumentConfig{
-					Type: graphql.NewNonNull(graphql.Float),
-				},
-			},
-			Description: "Turn off a Lutron Device",
-			Resolve:     lutronChangeDeviceToLevel,
-		},
 		"turnAllLightsOn": &graphql.Field{
 			Type: graphql.Boolean,
 			Description: "Turn all Lutron lights on",
@@ -60,52 +27,6 @@ var rootMutation = graphql.NewObject(graphql.ObjectConfig{
 			Description: "Start a Harmony Activity",
 			Resolve: harmonyStartActivityResolver,
 		},
-		"updateKasaArea": &graphql.Field{
-			Type: graphql.Boolean,
-			Args: graphql.FieldConfigArgument{
-				"ipAddress": &graphql.ArgumentConfig{
-					Type: graphql.NewNonNull(graphql.String),
-				},
-				"areaName": &graphql.ArgumentConfig{
-					Type: graphql.NewNonNull(graphql.String),
-				},
-			},
-			Description: "Updates the area for a kasa device",
-			Resolve: updateAreaForKasaDevice,
-		},
-		"turnKasaOn": &graphql.Field{
-			Type: graphql.Boolean,
-			Args: graphql.FieldConfigArgument{
-				"ipAddress": &graphql.ArgumentConfig{
-					Type: graphql.NewNonNull(graphql.String),
-				},
-			},
-			Description: "Turn on a Kasa plug",
-			Resolve:     kasaTurnOnResolver,
-		},
-		"turnKasaOff": &graphql.Field{
-			Type: graphql.Boolean,
-			Args: graphql.FieldConfigArgument{
-				"ipAddress": &graphql.ArgumentConfig{
-					Type: graphql.NewNonNull(graphql.String),
-				},
-			},
-			Description: "Turn off a Kasa plug",
-			Resolve:     kasaTurnOffResolver,
-		},
-		"changeHassDeviceStatus": &graphql.Field{
-			Type: graphql.Boolean,
-			Args: graphql.FieldConfigArgument{
-				"entityId": &graphql.ArgumentConfig{
-					Type: graphql.NewNonNull(graphql.String),
-				},
-				"activated": &graphql.ArgumentConfig{
-					Type: graphql.NewNonNull(graphql.Boolean),
-				},
-			},
-			Description: "Turn off a Kasa plug",
-			Resolve:     changeHassDeviceStatusResolver,
-		},
 		"changeDeviceStatus": &graphql.Field{
 			Type: graphql.Boolean,
 			Args: graphql.FieldConfigArgument{
@@ -124,6 +45,19 @@ var rootMutation = graphql.NewObject(graphql.ObjectConfig{
 			},
 			Description: "Change the device status independent of it's integration type",
 			Resolve:     changeDeviceStatus,
+		},
+		"updateIntegration": &graphql.Field{
+			Type: graphql.Boolean,
+			Args: graphql.FieldConfigArgument{
+				"type": &graphql.ArgumentConfig{
+					Type: graphql.NewNonNull(graphql.String),
+				},
+				"value": &graphql.ArgumentConfig{
+					Type: graphql.NewNonNull(graphql.String),
+				},
+			},
+			Description: "Create or update an integration with the Martian API",
+			Resolve:     updateIntegration,
 		},
 	},
 })
