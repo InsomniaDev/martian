@@ -196,6 +196,7 @@ func hassDevice(id string, status string) {
 func updateIntegration(params graphql.ResolveParams) (interface{}, error) {
 	integrationType := params.Args["type"].(string)
 	integrationValue := params.Args["value"].(string)
+	newIntegration := false
 	switch integrationType {
 	case "lutron":
 		var lutron database.LutronConfig
@@ -204,6 +205,7 @@ func updateIntegration(params graphql.ResolveParams) (interface{}, error) {
 			return false, err
 		}
 		Integrations.Database.PutIntegrationValue(integrationType, lutron)
+		newIntegration = true
 	case "harmony":
 		fmt.Println("Not implemented")
 	case "kasa":
@@ -215,5 +217,10 @@ func updateIntegration(params graphql.ResolveParams) (interface{}, error) {
 	default:
 		fmt.Println("This integration doesn't exist yet", integrationType)
 	}
+
+	if newIntegration {
+		Integrations.Init()
+	}
+	// TODO: Need to refresh the integrations when we run this so that it takes effect immediately 
 	return true, nil
 }
