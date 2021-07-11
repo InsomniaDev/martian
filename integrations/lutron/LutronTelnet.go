@@ -130,19 +130,19 @@ func (l *Lutron) Connect() error {
 							} else {
 								l.Inventory[index].State = "ON"
 							}
-						case 75.3:
+						case 75:
 							if strings.ToUpper(l.Inventory[index].Type) == "FAN" {
 								l.Inventory[index].State = "MEDIUM_HIGH"
 							} else {
 								l.Inventory[index].State = "DIMMED"
 							}
-						case 50.2:
+						case 50:
 							if strings.ToUpper(l.Inventory[index].Type) == "FAN" {
 								l.Inventory[index].State = "MEDIUM"
 							} else {
 								l.Inventory[index].State = "DIMMED"
 							}
-						case 25.1:
+						case 25:
 							if strings.ToUpper(l.Inventory[index].Type) == "FAN" {
 								l.Inventory[index].State = "LOW"
 							} else {
