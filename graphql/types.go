@@ -133,6 +133,7 @@ type Kasa struct {
 	IPAddress string `json:"ipAddress"`
 	Name      string `json:"name"`
 	AreaName  string `json:"areaName"`
+	Type      string `json:"type"`
 	IsOn      bool   `json:"on"`
 }
 
@@ -150,6 +151,9 @@ var kasaType = graphql.NewObject(
 				Type: graphql.String,
 			},
 			"areaName": &graphql.Field{
+				Type: graphql.String,
+			},
+			"type": &graphql.Field{
 				Type: graphql.String,
 			},
 			"on": &graphql.Field{

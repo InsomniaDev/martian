@@ -45,6 +45,7 @@ type Plug struct {
 	PlugInfo  Info
 	Name      string
 	AreaName  string
+	Type      string
 
 	port          int
 	cryptKey      byte
@@ -60,7 +61,7 @@ func NewPlug(ip string) Plug {
 		IPAddress:     ip,
 		port:          9999,
 		cryptKey:      byte(0xAB),
-		connTimeout:   1 * time.Second,
+		connTimeout:   400 * time.Millisecond,
 		writeDeadline: 2,
 		readDeadline:  2,
 	}

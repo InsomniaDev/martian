@@ -1,38 +1,43 @@
 package kasa
 
+// https://github.com/python-kasa/python-kasa
+
 import (
 	"fmt"
+	"net"
+	"strings"
+	"sync"
 	"time"
 
-	"github.com/insomniadev/martian/integrations/config"
 	"github.com/insomniadev/martian/modules/redispub"
 )
 
 // Init initializes the instance of kasa for devices on the network
 func (d *Devices) Init() {
-	d.Plugs = RetrieveKasaNodes()
-	devices := config.LoadKasa()
+	d.Discover()
+	// d.Plugs = RetrieveKasaNodes()
+	// devices := config.LoadKasa()
 
-	for _, ipAdd := range devices {
-		found := false
-		for _, dev := range d.Plugs {
-			if ipAdd == dev.IPAddress {
-				found = true
-				dev.PowerState()
-			}
-		}
-		if !found {
-			plug := NewPlug(ipAdd)
-			plug.PowerOff()
-			plug.Name = plug.PlugInfo.Alias
-			InsertKasaGraph(ipAdd, plug.Name)
-			d.Plugs = append(d.Plugs, plug)
-		}
-	}
+	// for _, ipAdd := range devices {
+	// 	found := false
+	// 	for _, dev := range d.Plugs {
+	// 		if ipAdd == dev.IPAddress {
+	// 			found = true
+	// 			dev.PowerState()
+	// 		}
+	// 	}
+	// 	if !found {
+	// 		plug := NewPlug(ipAdd)
+	// 		plug.PowerOff()
+	// 		plug.Name = plug.PlugInfo.Alias
+	// 		InsertKasaGraph(ipAdd, plug.Name)
+	// 		d.Plugs = append(d.Plugs, plug)
+	// 	}
+	// }
 
-	for i := range d.Plugs {
-		go d.Plugs[i].WatchForChanges()
-	}
+	// for i := range d.Plugs {
+	// 	go d.Plugs[i].WatchForChanges()
+	// }
 }
 
 // WatchForChanges will constantly check to assert plug state
@@ -100,4 +105,75 @@ func (h *Plug) PowerState() (PowerState, error) {
 	}
 
 	return state.RelayState, nil
+}
+
+func (d *Devices) Discover() {
+	ifaces, err := net.Interfaces()
+	if err != nil {
+		fmt.Print(fmt.Errorf("localAddresses: %+v\n", err.Error()))
+		return
+	}
+	found := false
+	for _, i := range ifaces {
+		addrs, err := i.Addrs()
+		if err != nil {
+			fmt.Print(fmt.Errorf("localAddresses: %+v\n", err.Error()))
+			continue
+		}
+		for _, a := range addrs {
+			switch v := a.(type) {
+			case *net.IPNet:
+				addr := v.String()
+				if strings.Contains(addr, "192.168") || strings.Contains(addr, "10.10") {
+					ip, ipnet, err := net.ParseCIDR(a.String())
+					if err != nil {
+						panic(err)
+					}
+					var wg sync.WaitGroup
+					for ip := ip.Mask(ipnet.Mask); ipnet.Contains(ip); inc(ip) {
+						plug := NewPlug(ip.String())
+						wg.Add(1)
+						go func() {
+							defer wg.Done()
+							info, _ := plug.Info()
+							// d.Plugs = append(d.Plugs, plug)
+							if info != nil {
+								plug.Name = plug.PlugInfo.Alias
+								plug.Type = plug.PlugInfo.DeviceName
+								alreadyUsedPlug := false
+								for i := range d.Plugs {
+									if d.Plugs[i].IPAddress == plug.IPAddress {
+										d.Plugs[i] = plug
+										alreadyUsedPlug = true
+									}
+								}
+								if !alreadyUsedPlug {
+									d.Plugs = append(d.Plugs, plug)
+								}
+								fmt.Println(ip.String(), info)
+							}
+						}()
+					}
+					wg.Wait()
+					found = true
+				}
+			case *net.IPAddr:
+				fmt.Printf("%v : %s (%s)\n", i.Name, v, v.IP.DefaultMask())
+			}
+			if found {
+				break
+			}
+		}
+		if found {
+			break
+		}
+	}
+}
+func inc(ip net.IP) {
+	for j := len(ip) - 1; j >= 0; j-- {
+		ip[j]++
+		if ip[j] > 0 {
+			break
+		}
+	}
 }

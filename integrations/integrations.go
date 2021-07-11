@@ -55,7 +55,7 @@ func (i *Integrations) Init() {
 
 	// TODO: This needs to load up each based on if it is available, there is no point in loading up all of them
 	i.HarmonyData.Init()
-	// i.KasaData.Init()
+	i.KasaData.Init()
 	i.Menu = config.LoadMenu()
 	// i.Life3.Authenticate()
 	// go i.Life3.SyncMemberStatus()

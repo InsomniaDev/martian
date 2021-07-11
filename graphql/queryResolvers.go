@@ -45,6 +45,7 @@ func getKasaDevices(params graphql.ResolveParams) (interface{}, error) {
 			IPAddress: data.IPAddress,
 			IsOn:      data.PlugInfo.On,
 			Name:      data.Name,
+			Type:      data.Type,
 		}
 		devices = append(devices, dev)
 	}
@@ -139,7 +140,7 @@ func menuConfiguration(params graphql.ResolveParams) (interface{}, error) {
 							AreaName:    kasaDev.AreaName,
 							Id:          kasaDev.IPAddress,
 							Name:        kasaDev.Name,
-							Type:        "UKN", //TODO: Need to work on discovering what type of device the kasa device is for the UI
+							Type:        kasaDev.Type,
 							State:       state,
 							Integration: "kasa",
 						}
