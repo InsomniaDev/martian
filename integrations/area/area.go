@@ -11,18 +11,19 @@ import (
 func LutronIntegration(areas []Area, devices []*lutron.LDevice) []Area {
 	for _, lutronDev := range devices {
 		foundArea := false
-		if lutronDev.AreaName == "" {
-			lutronDev.AreaName = "UKN"
+		areaName := strings.TrimSpace(lutronDev.AreaName)
+		if areaName == "" {
+			areaName = "UKN"
 		}
 		for area := range areas {
-			if strings.EqualFold(areas[area].AreaName, lutronDev.AreaName) {
+			if strings.EqualFold(areas[area].AreaName, areaName) {
 				areas[area].addLutron(lutronDev)
 				foundArea = true
 			}
 		}
 		if !foundArea {
 			newArea := Area{
-				AreaName: lutronDev.AreaName,
+				AreaName: areaName,
 			}
 			newArea.addLutron(lutronDev)
 			areas = append(areas, newArea)
@@ -50,18 +51,19 @@ func (a *Area) addLutron(device *lutron.LDevice) {
 func KasaIntegration(areas []Area, devices kasa.Devices) []Area {
 	for _, kasaDev := range devices.Plugs {
 		foundArea := false
-		if kasaDev.AreaName == "" {
-			kasaDev.AreaName = "UKN"
+		areaName := strings.TrimSpace(kasaDev.AreaName)
+		if areaName == "" {
+			areaName = "UKN"
 		}
 		for area := range areas {
-			if strings.EqualFold(areas[area].AreaName, kasaDev.AreaName) {
+			if strings.EqualFold(areas[area].AreaName, areaName) {
 				areas[area].addKasa(kasaDev)
 				foundArea = true
 			}
 		}
 		if !foundArea {
 			newArea := Area{
-				AreaName: kasaDev.AreaName,
+				AreaName: areaName,
 			}
 			newArea.addKasa(kasaDev)
 			areas = append(areas, newArea)

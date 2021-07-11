@@ -222,6 +222,14 @@ func updateIntegration(params graphql.ResolveParams) (interface{}, error) {
 	if newIntegration {
 		Integrations.Init()
 	}
-	// TODO: Need to refresh the integrations when we run this so that it takes effect immediately 
+	return true, nil
+}
+
+func changeKasaDeviceArea(params graphql.ResolveParams) (interface{}, error) {
+	ipAddress := params.Args["ipAddress"].(string)
+	areaName := params.Args["area"].(string)
+
+	Integrations.KasaData.ChangeAreaForKasaDevice(ipAddress, areaName)
+	// Integrations.Init()
 	return true, nil
 }

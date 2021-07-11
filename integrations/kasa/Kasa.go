@@ -43,6 +43,16 @@ func (d *Devices) Init(configuration string) {
 	// }
 }
 
+func (d *Devices) ChangeAreaForKasaDevice(ipAddress, area string) {
+	for i := range d.Plugs {
+		if d.Plugs[i].IPAddress == ipAddress {
+			d.Plugs[i].AreaName = area
+		}
+	}
+	var db database.Database
+	db.PutIntegrationValue("kasa", d.Plugs)
+}
+
 // WatchForChanges will constantly check to assert plug state
 func (h *Plug) WatchForChanges() {
 	for {

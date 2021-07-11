@@ -46,6 +46,19 @@ var rootMutation = graphql.NewObject(graphql.ObjectConfig{
 			Description: "Change the device status independent of it's integration type",
 			Resolve:     changeDeviceStatus,
 		},
+		"changeAreaForKasaDevice": &graphql.Field{
+			Type: graphql.Boolean,
+			Args: graphql.FieldConfigArgument{
+				"ipAddress": &graphql.ArgumentConfig{
+					Type: graphql.NewNonNull(graphql.String),
+				},
+				"area": &graphql.ArgumentConfig{
+					Type: graphql.NewNonNull(graphql.String),
+				},
+			},
+			Description: "Create or update an integration with the Martian API",
+			Resolve:     changeKasaDeviceArea,
+		},
 		"updateIntegration": &graphql.Field{
 			Type: graphql.Boolean,
 			Args: graphql.FieldConfigArgument{
