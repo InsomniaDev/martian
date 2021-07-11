@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net"
-	"strings"
 	"sync"
 	"time"
 
@@ -112,71 +111,70 @@ func (h *Plug) PowerState() (PowerState, error) {
 }
 
 func (d *Devices) Discover() {
-	ifaces, err := net.Interfaces()
+	// ifaces, err := net.Interfaces()
+	// if err != nil {
+	// 	fmt.Print(fmt.Errorf("localAddresses: %+v", err.Error()))
+	// 	return
+	// }
+	// found := false
+	// for _, i := range ifaces {
+	// 	addrs, err := i.Addrs()
+	// 	if err != nil {
+	// 		fmt.Print(fmt.Errorf("localAddresses: %+v", err.Error()))
+	// 		continue
+	// 	}
+	// 	for _, a := range addrs {
+	// 		switch v := a.(type) {
+	// 		case *net.IPNet:
+	addr := "192.168.1.1/24"
+	// if strings.Contains(addr, "192.168") || strings.Contains(addr, "10.10") {
+	ip, ipnet, err := net.ParseCIDR(addr)
 	if err != nil {
-		fmt.Print(fmt.Errorf("localAddresses: %+v", err.Error()))
-		return
+		panic(err)
 	}
-	found := false
-	for _, i := range ifaces {
-		addrs, err := i.Addrs()
-		if err != nil {
-			fmt.Print(fmt.Errorf("localAddresses: %+v", err.Error()))
-			continue
-		}
-		for _, a := range addrs {
-			switch v := a.(type) {
-			case *net.IPNet:
-				addr := v.String()
-				if strings.Contains(addr, "192.168") || strings.Contains(addr, "10.10") {
-					ip, ipnet, err := net.ParseCIDR(a.String())
-					if err != nil {
-						panic(err)
-					}
-					var wg sync.WaitGroup
-					for ip := ip.Mask(ipnet.Mask); ipnet.Contains(ip); inc(ip) {
-						plug := NewPlug(ip.String())
-						wg.Add(1)
-						go func() {
-							defer wg.Done()
-							info, _ := plug.Info()
-							// d.Plugs = append(d.Plugs, plug)
-							if info != nil {
-								plug.Name = plug.PlugInfo.Alias
-								switch plug.PlugInfo.Model {
-								case "HS105(US)":
-									plug.Type = "plug"
-								}
-								alreadyUsedPlug := false
-								for i := range d.Plugs {
-									if d.Plugs[i].IPAddress == plug.IPAddress {
-										d.Plugs[i] = plug
-										alreadyUsedPlug = true
-									}
-								}
-								if !alreadyUsedPlug {
-									d.Plugs = append(d.Plugs, plug)
-								}
-								fmt.Println(ip.String(), info)
-							}
-						}()
-					}
-					wg.Wait()
-					found = true
-					var db database.Database
-					db.PutIntegrationValue("kasa", d.Plugs)
+	var wg sync.WaitGroup
+	for ip := ip.Mask(ipnet.Mask); ipnet.Contains(ip); inc(ip) {
+		plug := NewPlug(ip.String())
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			info, _ := plug.Info()
+			// d.Plugs = append(d.Plugs, plug)
+			if info != nil {
+				plug.Name = plug.PlugInfo.Alias
+				switch plug.PlugInfo.Model {
+				case "HS105(US)":
+					plug.Type = "plug"
 				}
-			case *net.IPAddr:
-				fmt.Printf("%v : %s (%s)\n", i.Name, v, v.IP.DefaultMask())
+				alreadyUsedPlug := false
+				for i := range d.Plugs {
+					if d.Plugs[i].IPAddress == plug.IPAddress {
+						d.Plugs[i] = plug
+						alreadyUsedPlug = true
+					}
+				}
+				if !alreadyUsedPlug {
+					d.Plugs = append(d.Plugs, plug)
+				}
+				fmt.Println(ip.String(), info)
 			}
-			if found {
-				break
-			}
-		}
-		if found {
-			break
-		}
+		}()
 	}
+	wg.Wait()
+	var db database.Database
+	db.PutIntegrationValue("kasa", d.Plugs)
+	// 	}
+	// case *net.IPAddr:
+	// 	fmt.Printf("%v : %s (%s)\n", i.Name, v, v.IP.DefaultMask())
+	// }
+	// 	if found {
+	// 		break
+	// 	}
+	// }
+	// if found {
+	// 	break
+	// }
+	// }
 }
 func inc(ip net.IP) {
 	for j := len(ip) - 1; j >= 0; j-- {
