@@ -36,6 +36,12 @@ const (
 
 	// PowerOn represents the off state on the plug
 	PowerOn PowerState = 1
+
+	port          = 9999
+	cryptKey      = byte(0xAB)
+	connTimeout   = 400 * time.Millisecond
+	writeDeadline = 2
+	readDeadline  = 2
 )
 
 // Plug represents a management interface for a plug
@@ -46,24 +52,13 @@ type Plug struct {
 	Name      string
 	AreaName  string
 	Type      string
-
-	port          int
-	cryptKey      byte
-	connTimeout   time.Duration
-	writeDeadline time.Duration
-	readDeadline  time.Duration
 }
 
 // NewPlug creates a new management interface for the TP Link HS1xx plug
 func NewPlug(ip string) Plug {
 	return Plug{
-		ID:            ip,
-		IPAddress:     ip,
-		port:          9999,
-		cryptKey:      byte(0xAB),
-		connTimeout:   400 * time.Millisecond,
-		writeDeadline: 2,
-		readDeadline:  2,
+		ID:        ip,
+		IPAddress: ip,
 	}
 }
 

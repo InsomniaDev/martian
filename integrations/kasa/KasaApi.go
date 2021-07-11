@@ -21,7 +21,7 @@ func (h *Plug) encrypt(plaintext string) []byte {
 	binary.Write(buf, binary.BigEndian, uint32(n))
 
 	ciphertext := []byte(buf.Bytes())
-	key := byte(h.cryptKey)
+	key := byte(cryptKey)
 	payload := make([]byte, n)
 
 	for i := 0; i < n; i++ {
@@ -36,7 +36,7 @@ func (h *Plug) encrypt(plaintext string) []byte {
 func (h *Plug) decrypt(in []byte) string {
 	ciphertext := in[4:]
 	n := len(ciphertext)
-	key := byte(h.cryptKey)
+	key := byte(cryptKey)
 	var nextKey byte
 
 	for i := 0; i < n; i++ {
@@ -102,14 +102,14 @@ func (h *Plug) extractError(body string, expected string) (code int64, msg strin
 }
 
 func (h *Plug) sendRecv(payload []byte) (data []byte, err error) {
-	conn, err := net.DialTimeout("tcp", fmt.Sprintf("%s:%d", h.IPAddress, h.port), h.connTimeout)
+	conn, err := net.DialTimeout("tcp", fmt.Sprintf("%s:%d", h.IPAddress, port), connTimeout)
 	if err != nil {
 		return nil, fmt.Errorf("connection failed: %s", err)
 	}
 	defer conn.Close()
 
-	conn.SetReadDeadline(time.Now().Add(h.readDeadline * time.Second))
-	conn.SetWriteDeadline(time.Now().Add(h.writeDeadline * time.Second))
+	conn.SetReadDeadline(time.Now().Add(readDeadline * time.Second))
+	conn.SetWriteDeadline(time.Now().Add(writeDeadline * time.Second))
 
 	_, err = conn.Write(payload)
 	if err != nil {

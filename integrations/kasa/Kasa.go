@@ -38,19 +38,24 @@ func (d *Devices) Init(configuration string) {
 	// 	}
 	// }
 
-	// for i := range d.Plugs {
-	// 	go d.Plugs[i].WatchForChanges()
-	// }
+	// Check every second for a change in the connected kasa devices and then update on that change
+	for i := range d.Plugs {
+		go d.Plugs[i].WatchForChanges()
+	}
 }
 
-func (d *Devices) ChangeAreaForKasaDevice(ipAddress, area string) {
+func (d *Devices) ChangeAreaForKasaDevice(ipAddress, area string) error {
 	for i := range d.Plugs {
 		if d.Plugs[i].IPAddress == ipAddress {
 			d.Plugs[i].AreaName = area
 		}
 	}
 	var db database.Database
-	db.PutIntegrationValue("kasa", d.Plugs)
+	err := db.PutIntegrationValue("kasa", d.Plugs)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // WatchForChanges will constantly check to assert plug state

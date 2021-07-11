@@ -229,7 +229,7 @@ func changeKasaDeviceArea(params graphql.ResolveParams) (interface{}, error) {
 	ipAddress := params.Args["ipAddress"].(string)
 	areaName := params.Args["area"].(string)
 
-	Integrations.KasaData.ChangeAreaForKasaDevice(ipAddress, areaName)
-	// Integrations.Init()
-	return true, nil
+	err := Integrations.KasaData.ChangeAreaForKasaDevice(ipAddress, areaName)
+	Integrations.Init()
+	return true, err
 }

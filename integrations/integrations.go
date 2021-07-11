@@ -26,6 +26,7 @@ type Integrations struct {
 
 func (i *Integrations) Init() {
 
+	i.Integrations = []string{}
 	// Get all the created integrations
 	storedIntegrations, err := i.Database.RetrieveAllValuesInBucket(database.IntegrationBucket)
 	if err != nil {
