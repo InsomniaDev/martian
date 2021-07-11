@@ -1,7 +1,6 @@
 package integrations
 
 import (
-	"encoding/json"
 	"fmt"
 
 	"github.com/insomniadev/martian/integrations/area"
@@ -37,8 +36,7 @@ func (i *Integrations) Init() {
 		switch k {
 		case "lutron":
 			i.LutronData = lutron.Init(storedIntegrations[k])
-			jsonValue, _ := json.Marshal(i.LutronData)
-			fmt.Println(string(jsonValue))
+			i.Menu = area.LutronIntegration(i.Menu, i.LutronData.Inventory)
 		case "harmony":
 			fmt.Println("Not implemented")
 		case "kasa":

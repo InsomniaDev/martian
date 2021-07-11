@@ -1,13 +1,50 @@
 package area
 
 import (
+	"strconv"
 	"strings"
 
 	"github.com/insomniadev/martian/integrations/kasa"
+	"github.com/insomniadev/martian/integrations/lutron"
 )
 
-func (a *Area) AddLutron() {
+func LutronIntegration(areas []Area, devices []*lutron.LDevice) []Area {
+	for _, lutronDev := range devices {
+		foundArea := false
+		if lutronDev.AreaName == "" {
+			lutronDev.AreaName = "UKN"
+		}
+		for area := range areas {
+			if strings.EqualFold(areas[area].AreaName, lutronDev.AreaName) {
+				areas[area].addLutron(lutronDev)
+				foundArea = true
+			}
+		}
+		if !foundArea {
+			newArea := Area{
+				AreaName: lutronDev.AreaName,
+			}
+			newArea.addLutron(lutronDev)
+			areas = append(areas, newArea)
+		}
+	}
+	return areas
+}
 
+func (a *Area) addLutron(device *lutron.LDevice) {
+	newDev := AreaDevice{
+		AreaName:    device.AreaName,
+		Id:          strconv.Itoa(device.ID),
+		Name:        device.Name,
+		Type:        device.Type,
+		Value:       strconv.FormatFloat(device.Value, 'E', -1, 64),
+		State:       device.State,
+		Integration: "lutron",
+	}
+	if strings.ToLower(device.State) != "off" {
+		a.Active = true
+	}
+	a.Devices = append(a.Devices, newDev)
 }
 
 func KasaIntegration(areas []Area, devices kasa.Devices) []Area {
@@ -18,7 +55,7 @@ func KasaIntegration(areas []Area, devices kasa.Devices) []Area {
 		}
 		for area := range areas {
 			if strings.EqualFold(areas[area].AreaName, kasaDev.AreaName) {
-				areas[area].AddKasa(kasaDev)
+				areas[area].addKasa(kasaDev)
 				foundArea = true
 			}
 		}
@@ -26,14 +63,14 @@ func KasaIntegration(areas []Area, devices kasa.Devices) []Area {
 			newArea := Area{
 				AreaName: kasaDev.AreaName,
 			}
-			newArea.AddKasa(kasaDev)
+			newArea.addKasa(kasaDev)
 			areas = append(areas, newArea)
 		}
 	}
 	return areas
 }
 
-func (a *Area) AddKasa(device kasa.Plug) {
+func (a *Area) addKasa(device kasa.Plug) {
 	state := "off"
 	if device.PlugInfo.On {
 		state = "on"
