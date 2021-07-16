@@ -9,3 +9,12 @@
 - [ ] Add base authentication
 - [ ] Add caching layer with a UUID that we can use to tie calls and communication together
 - [ ] Need to decide what incoming calls are going to look like
+
+## Brain and Graph data
+- Keys between two instances will be concatenated together with a determined symbol
+  - For example: `light.office_main&&&light.office_sconces`
+  - They will need to be sorted alphabetically so that the alphabetical one appears first
+  - The value for this will be the weight that the two of them have
+  - This will provide in the future for there to also be more stored in the value
+    - Possible things would be what state each device is in and the weight for those 
+      - ie. When the `office_main` is `on`, then the `office_sconces` are `off`
