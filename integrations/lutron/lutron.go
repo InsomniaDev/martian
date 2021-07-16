@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/insomniadev/martian/modules/database"
+	"github.com/insomniadev/martian/database"
 )
 
 // Init starts up the lutron instance

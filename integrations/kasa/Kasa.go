@@ -9,7 +9,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/insomniadev/martian/modules/database"
+	"github.com/insomniadev/martian/database"
 	"github.com/insomniadev/martian/modules/redispub"
 )
 

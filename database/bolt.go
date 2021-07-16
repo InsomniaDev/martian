@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"log"
 
-	"github.com/boltdb/bolt"
+	bolt "go.etcd.io/bbolt"
 )
 
 type Database struct {
@@ -24,7 +24,7 @@ func (d *Database) Init() {
 	defer d.Connection.Close()
 }
 
-// RetrieveAllValuesInBucket will retrieve all of the values in the provided bucket 
+// RetrieveAllValuesInBucket will retrieve all of the values in the provided bucket
 func (d *Database) RetrieveAllValuesInBucket(bucket []byte) (value map[string]string, err error) {
 	db, err := bolt.Open("./config/martian.db", 0600, nil)
 	if err != nil {

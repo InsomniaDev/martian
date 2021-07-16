@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/graphql-go/graphql"
-	"github.com/insomniadev/martian/modules/database"
+	"github.com/insomniadev/martian/database"
 )
 
 // lutronTurnOffResolver turns off a lutron device by setting value to zero

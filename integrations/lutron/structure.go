@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"net"
 
-	"github.com/insomniadev/martian/modules/database"
+	"github.com/insomniadev/martian/database"
 	"github.com/insomniadev/martian/modules/pubsub"
 )
 

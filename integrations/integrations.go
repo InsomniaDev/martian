@@ -3,13 +3,13 @@ package integrations
 import (
 	"fmt"
 
+	"github.com/insomniadev/martian/database"
 	"github.com/insomniadev/martian/integrations/area"
 	"github.com/insomniadev/martian/integrations/harmony"
 	"github.com/insomniadev/martian/integrations/homeassistant"
 	"github.com/insomniadev/martian/integrations/kasa"
 	"github.com/insomniadev/martian/integrations/life360"
 	"github.com/insomniadev/martian/integrations/lutron"
-	"github.com/insomniadev/martian/modules/database"
 )
 
 type Integrations struct {
