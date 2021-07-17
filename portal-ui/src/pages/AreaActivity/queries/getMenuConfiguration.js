@@ -6,6 +6,7 @@ export const getMenuConfiguration = gql`
     menuConfiguration {
       active
       areaName
+      index
       devices {
         id
         areaName

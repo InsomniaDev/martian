@@ -12,6 +12,7 @@ import ReactCardFlip from 'react-card-flip';
 import { LightComponent } from "../../componentLibrary/Light/LightComponent";
 import { PlugComponent } from "../../componentLibrary/Plug/PlugComponent";
 import { FanComponent } from "../../componentLibrary/Fan/FanComponent";
+import AreaMenu from "../AreaMenu/AreaMenu";
 
 const useStyles = makeStyles({
     rootOn: {
@@ -38,6 +39,10 @@ const useStyles = makeStyles({
     pos: {
         marginBottom: 12,
     },
+    ellipsis: {
+        float: 'right',
+        position: 'absolute'
+    }
 });
 
 export function Area({ refetch, area }) {
@@ -241,6 +246,7 @@ export function Area({ refetch, area }) {
                         )
                     }
                 })}
+                <AreaMenu area={area} className={classes.ellipsis}></AreaMenu>
             </Card>
         </ReactCardFlip>
     );
