@@ -44,7 +44,7 @@ func (i *Integrations) Init() {
 			i.Menu = area.LutronIntegration(i.Menu, i.LutronData.Inventory)
 			i.Integrations = append(i.Integrations, "lutron")
 		case "harmony":
-			fmt.Println("Not implemented")
+			i.HarmonyData.Init(storedIntegrations[k])
 			i.Integrations = append(i.Integrations, "harmony")
 		case "kasa":
 			i.KasaData.Init(storedIntegrations[k])
@@ -71,7 +71,7 @@ func (i *Integrations) Init() {
 	}
 
 	// TODO: This needs to load up each based on if it is available, there is no point in loading up all of them
-	i.HarmonyData.Init()
+	// i.HarmonyData.Init()
 
 	// i.Zwave.ConnectToTopic()
 }

@@ -208,7 +208,8 @@ func updateIntegration(params graphql.ResolveParams) (interface{}, error) {
 		Integrations.Database.PutIntegrationValue(integrationType, lutron)
 		newIntegration = true
 	case "harmony":
-		fmt.Println("Not implemented")
+		Integrations.Database.PutIntegrationValue(integrationType, "")
+		newIntegration = true
 	case "kasa":
 		currentDevices := len(Integrations.KasaData.Plugs)
 		Integrations.KasaData.Discover()

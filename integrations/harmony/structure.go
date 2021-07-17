@@ -6,12 +6,12 @@ import (
 
 // Device type
 type Device struct {
-	Name            string `redis:"name"`
-	ActivityID      string `redis:"activityId"`
-	Activities      []Activity
+	Name            string     `json:"name"`
+	ActivityID      string     `json:"activityId"`
+	Activities      []Activity `json:"activities"`
 	Actions         string
 	Connection      *websocket.Conn
-	IPAddress       string
+	IPAddress       string `json:"ipAddress"`
 	CurrentActivity string
 	ActiveRemoteID  int
 	HostName        string
@@ -106,36 +106,36 @@ type Command struct {
 
 // StateDigestNotify is the structure for notifications from hub
 type StateDigestNotify struct {
-    Type string `json:"type"`
-    Data StateDigestNotifyData   `json:"data"`
+	Type string                `json:"type"`
+	Data StateDigestNotifyData `json:"data"`
 }
 
 // StateDigestNotifyData is the data returned from the StateDigestNotify notification
 type StateDigestNotifyData struct {
-    SleepTimerID        int         `json:"sleepTimerId"`       
-    RunningZoneList     []interface{} `json:"runningZoneList"`    
-    DiscoveryServerCF   string        `json:"discoveryServerCF"`  
-    ActivityID          string        `json:"activityId"`         
-    SyncStatus          int         `json:"syncStatus"`         
-    DiscoveryServer     string        `json:"discoveryServer"`    
-    StateVersion        int         `json:"stateVersion"`       
-    TzOffset            string        `json:"tzOffset"`           
-    Mode                int         `json:"mode"`               
-    Sequence            bool          `json:"sequence"`           
-    HubSwVersion        string        `json:"hubSwVersion"`       
-    DeviceSetupState    []interface{} `json:"deviceSetupState"`   
-    Tzoffset            string        `json:"tzoffset"`           
-    IsSetupComplete     bool          `json:"isSetupComplete"`    
-    RunningActivityList string        `json:"runningActivityList"`
-    ContentVersion      int         `json:"contentVersion"`     
-    ConfigVersion       int         `json:"configVersion"`      
-    Updates             []interface{} `json:"updates"`            
-    ActivityStatus      int         `json:"activityStatus"`     
-    WifiStatus          int         `json:"wifiStatus"`         
-    Tz                  string        `json:"tz"`                 
-    Time                int         `json:"time"`               
-    IPIRConversionDate  string        `json:"IPIRConversionDate"` 
-    HubUpdate           bool          `json:"hubUpdate"`          
-    ActivitySetupState  bool          `json:"activitySetupState"` 
-    AccountID           string        `json:"accountId"`          
+	SleepTimerID        int           `json:"sleepTimerId"`
+	RunningZoneList     []interface{} `json:"runningZoneList"`
+	DiscoveryServerCF   string        `json:"discoveryServerCF"`
+	ActivityID          string        `json:"activityId"`
+	SyncStatus          int           `json:"syncStatus"`
+	DiscoveryServer     string        `json:"discoveryServer"`
+	StateVersion        int           `json:"stateVersion"`
+	TzOffset            string        `json:"tzOffset"`
+	Mode                int           `json:"mode"`
+	Sequence            bool          `json:"sequence"`
+	HubSwVersion        string        `json:"hubSwVersion"`
+	DeviceSetupState    []interface{} `json:"deviceSetupState"`
+	Tzoffset            string        `json:"tzoffset"`
+	IsSetupComplete     bool          `json:"isSetupComplete"`
+	RunningActivityList string        `json:"runningActivityList"`
+	ContentVersion      int           `json:"contentVersion"`
+	ConfigVersion       int           `json:"configVersion"`
+	Updates             []interface{} `json:"updates"`
+	ActivityStatus      int           `json:"activityStatus"`
+	WifiStatus          int           `json:"wifiStatus"`
+	Tz                  string        `json:"tz"`
+	Time                int           `json:"time"`
+	IPIRConversionDate  string        `json:"IPIRConversionDate"`
+	HubUpdate           bool          `json:"hubUpdate"`
+	ActivitySetupState  bool          `json:"activitySetupState"`
+	AccountID           string        `json:"accountId"`
 }

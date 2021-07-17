@@ -3,15 +3,18 @@ package harmony
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
+	"net"
 	"net/http"
 	"net/url"
 	"strconv"
+	"sync"
 	"time"
 
 	"github.com/gorilla/websocket"
-	"github.com/insomniadev/martian/integrations/config"
+	"github.com/insomniadev/martian/database"
 	"github.com/insomniadev/martian/modules/redispub"
 )
 
@@ -20,12 +23,67 @@ var (
 )
 
 // Init the harmony hub communication
-func (d *Device) Init() {
-	ipaddress := config.LoadHarmony()
-	d.IPAddress = ipaddress + ":" + strconv.Itoa(defaultHubPort)
-	host := "http://" + d.IPAddress
+func (d *Device) Init(configuration string) error {
+	// Load up the configuration as the device itself
+	var device Device
+	json.Unmarshal([]byte(configuration), &device)
+	d = &device
+
+	// IF the IPAddress doesn't exist, then we need to find the endpoint
+	if d.IPAddress == "" {
+		d.discover()
+	}
+
+	d.connect()
+	var db database.Database
+	err := db.PutIntegrationValue("harmony", d)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// discover will find the harmony device on the network
+func (d *Device) discover() {
+	addr := "192.168.1.1/24"
+	ip, ipnet, err := net.ParseCIDR(addr)
+	if err != nil {
+		panic(err)
+	}
+	var wg sync.WaitGroup
+	for ip := ip.Mask(ipnet.Mask); ipnet.Contains(ip); inc(ip) {
+		wg.Add(1)
+		go func(ipdad string) {
+			defer wg.Done()
+			fmt.Println(ipdad)
+			message, err := checkIpAddress(ipdad)
+			if err != nil {
+				return
+			}
+			d.IPAddress = ipdad + ":" + strconv.Itoa(defaultHubPort)
+			d.ActiveRemoteID = message.Data.ActiveRemoteID
+			u, err := url.Parse(message.Data.DiscoveryServer)
+			if err != nil {
+				log.Fatal(err)
+			}
+			d.HostName = u.Hostname()
+
+		}(ip.String())
+	}
+	wg.Wait()
+}
+func inc(ip net.IP) {
+	for j := len(ip) - 1; j >= 0; j-- {
+		ip[j]++
+		if ip[j] > 0 {
+			break
+		}
+	}
+}
+func checkIpAddress(ipAddress string) (HTTPMessage, error) {
+	host := "http://" + ipAddress + ":" + strconv.Itoa(defaultHubPort)
 	jsonBody := []byte(`{"id":1,"cmd":"setup.account?getProvisionInfo","params":{}}`)
-	client := &http.Client{}
+	client := &http.Client{Timeout: 500 * time.Millisecond}
 	req, err := http.NewRequest("Post", host, bytes.NewBuffer(jsonBody))
 	if err != nil {
 		log.Fatal(err)
@@ -36,23 +94,18 @@ func (d *Device) Init() {
 	req.Header.Add("Accept-Charset", "utf-8")
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Println("harmony err:", err)
+		return HTTPMessage{}, err
 	}
+
 	defer resp.Body.Close()
 
 	body, _ := ioutil.ReadAll(resp.Body)
 	message := HTTPMessage{}
 	if err = json.Unmarshal(body, &message); err != nil {
 		log.Fatal(err)
+		return HTTPMessage{}, err
 	}
-	d.ActiveRemoteID = message.Data.ActiveRemoteID
-	u, err := url.Parse(message.Data.DiscoveryServer)
-	if err != nil {
-		log.Fatal(err)
-	}
-	d.HostName = u.Hostname()
-
-	d.connect()
+	return message, nil
 }
 
 func (d *Device) connect() {
@@ -120,6 +173,9 @@ func (d *Device) listen() {
 					activitiesRecorded = append(activitiesRecorded, nextActivity)
 				}
 				d.Activities = activitiesRecorded
+
+				var db database.Database
+				db.PutIntegrationValue("harmony", d)
 			} else if receivedMessage.Type == "connect.stateDigest?notify" {
 				receivedResult := StateDigestNotify{}
 				err = json.Unmarshal(message, &receivedResult)

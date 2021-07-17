@@ -83,7 +83,7 @@ func ParseEntry(recordData string) ([]string, []string) {
 	for _, symbol := range symbolsToRemove {
 		recordData = strings.ReplaceAll(recordData, symbol, "")
 	}
-	
+
 	// Make sure that we are always checking against lowercase entries
 	// recordData = strings.ToLower(recordData)
 
@@ -98,7 +98,7 @@ func ParseEntry(recordData string) ([]string, []string) {
 	fmt.Println("\n\ntokens/words", doc.Tokens())
 	fmt.Println("\n\nentities", doc.Entities())
 
-	fmt.Println("\n\nsentences",doc.Sentences())
+	fmt.Println("\n\nsentences", doc.Sentences())
 
 	var tags []string
 	var words []string
