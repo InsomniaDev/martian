@@ -102,6 +102,8 @@ func menuConfiguration(params graphql.ResolveParams) (interface{}, error) {
 	Integrations.Menu = nil
 	for _, k := range Integrations.Integrations {
 		switch k {
+		case "area":
+			Integrations.Menu = area.CheckIndexForAreas(Integrations.Menu, Integrations.AreaIndexes)
 		case "lutron":
 			Integrations.Menu = area.LutronIntegration(Integrations.Menu, Integrations.LutronData.Inventory)
 		case "harmony":
@@ -116,5 +118,9 @@ func menuConfiguration(params graphql.ResolveParams) (interface{}, error) {
 			fmt.Println("This integration doesn't exist yet", k)
 		}
 	}
+
+	// Cycle through the integrations and update indexes if there are any
+	Integrations.Menu = area.CheckIndexForAreas(Integrations.Menu, Integrations.AreaIndexes)
+
 	return Integrations.Menu, nil
 }

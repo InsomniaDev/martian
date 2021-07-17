@@ -8,6 +8,7 @@ import (
 
 	"github.com/graphql-go/graphql"
 	"github.com/insomniadev/martian/database"
+	"github.com/insomniadev/martian/integrations/area"
 )
 
 // lutronTurnOffResolver turns off a lutron device by setting value to zero
@@ -230,6 +231,21 @@ func changeKasaDeviceArea(params graphql.ResolveParams) (interface{}, error) {
 	areaName := params.Args["area"].(string)
 
 	err := Integrations.KasaData.ChangeAreaForKasaDevice(ipAddress, areaName)
+	Integrations.Init()
+	return true, err
+}
+
+// updateIndexForArea will update the index for the provided areaname
+func updateIndexForArea(params graphql.ResolveParams) (interface{}, error) {
+	areaName := params.Args["areaName"].(string)
+	index := params.Args["index"].(int)
+ 
+	udpatedAreaIndex := area.Area{AreaName: areaName, Index: index}
+	menuValues, err := area.InsertAreaIndex(Integrations.Menu, udpatedAreaIndex)
+	if err != nil {
+		return false, err
+	}
+	Integrations.Menu = menuValues
 	Integrations.Init()
 	return true, err
 }

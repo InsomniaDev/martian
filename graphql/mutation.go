@@ -72,5 +72,18 @@ var rootMutation = graphql.NewObject(graphql.ObjectConfig{
 			Description: "Create or update an integration with the Martian API",
 			Resolve:     updateIntegration,
 		},
+		"updateIndexForArea": &graphql.Field{
+			Type: graphql.Boolean,
+			Args: graphql.FieldConfigArgument{
+				"areaName": &graphql.ArgumentConfig{
+					Type: graphql.NewNonNull(graphql.String),
+				},
+				"index": &graphql.ArgumentConfig{
+					Type: graphql.NewNonNull(graphql.Int),
+				},
+			},
+			Description: "Create or update an integration with the Martian API",
+			Resolve:     updateIndexForArea,
+		},
 	},
 })

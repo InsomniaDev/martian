@@ -15,6 +15,7 @@ import (
 type Integrations struct {
 	Integrations []string
 	Menu         []area.Area
+	AreaIndexes  []area.Area
 	LutronData   lutron.Lutron
 	HarmonyData  harmony.Device
 	Hass         homeassistant.HomeAssistant
@@ -36,6 +37,8 @@ func (i *Integrations) Init() {
 
 	for k := range storedIntegrations {
 		switch k {
+		case "area":
+			i.AreaIndexes = area.Init(storedIntegrations[k])
 		case "lutron":
 			i.LutronData = lutron.Init(storedIntegrations[k])
 			i.Menu = area.LutronIntegration(i.Menu, i.LutronData.Inventory)
@@ -62,6 +65,10 @@ func (i *Integrations) Init() {
 		}
 	}
 	// Cycle through the integrations
+	if len(i.AreaIndexes) > 0 {
+		fmt.Println("Devices have been found")
+		i.Menu = area.CheckIndexForAreas(i.Menu, i.AreaIndexes)
+	}
 
 	// TODO: This needs to load up each based on if it is available, there is no point in loading up all of them
 	i.HarmonyData.Init()

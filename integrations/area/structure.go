@@ -3,10 +3,10 @@ package area
 import "github.com/graphql-go/graphql"
 
 type Area struct {
-	Index    int          `yaml:"index"`
+	Index    int          `yaml:"index,omitempty"`
 	AreaName string       `yaml:"areaName"`
-	Active   bool         `yaml:"active"`
-	Devices  []AreaDevice `yaml:"devices"`
+	Active   bool         `yaml:"active,omitempty"`
+	Devices  []AreaDevice `yaml:"devices,omitempty"`
 }
 
 var AreaType = graphql.NewObject(

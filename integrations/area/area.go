@@ -1,12 +1,76 @@
 package area
 
 import (
+	"encoding/json"
+	"sort"
 	"strconv"
 	"strings"
 
+	"github.com/insomniadev/martian/database"
 	"github.com/insomniadev/martian/integrations/kasa"
 	"github.com/insomniadev/martian/integrations/lutron"
 )
+
+func Init(configuration string) []Area {
+	var areas []Area
+	json.Unmarshal([]byte(configuration), &areas)
+	return areas
+}
+
+// InsertAreaIndex will insert an index or priority number for the area
+func InsertAreaIndex(areas []Area, areaIndex Area) ([]Area, error) {
+	found := false
+	var storedAreas []Area
+	for i := range areas {
+		if areas[i].AreaName == areaIndex.AreaName {
+			newArea := Area{
+				AreaName: areaIndex.AreaName,
+				Index:    areaIndex.Index,
+			}
+			areas[i].Index = areaIndex.Index
+			storedAreas = append(storedAreas, newArea)
+			found = true
+		} else {
+			newArea := Area{
+				AreaName: areas[i].AreaName,
+				Index:    areas[i].Index,
+			}
+			storedAreas = append(storedAreas, newArea)
+		}
+	}
+	if !found {
+		areas = append(areas, areaIndex)
+	}
+	var db database.Database
+	err := db.PutIntegrationValue("area", storedAreas)
+	if err != nil {
+		return nil, err
+	}
+	return areas, nil
+}
+
+// CheckIndexForAreas will go through the available areas and apply indexes to those that have them
+func CheckIndexForAreas(areas []Area, areaWithIndexes []Area) []Area {
+	for _, areaIndex := range areaWithIndexes {
+		for i := range areas {
+			if areas[i].AreaName == areaIndex.AreaName {
+				areas[i].Index = areaIndex.Index
+				break
+			}
+		}
+	}
+	for i := range areas {
+		if areas[i].Index == 0 {
+			areas[i].Index = 999
+		}
+	}
+	// Sort by index here and then return the sorted indexes
+	// TODO: determine which way this is sorting
+	sort.Slice(areas[:], func(i, j int) bool {
+		return areas[i].Index < areas[j].Index
+	})
+	return areas
+}
 
 func LutronIntegration(areas []Area, devices []*lutron.LDevice) []Area {
 	for _, lutronDev := range devices {
