@@ -36,6 +36,7 @@ func Init(configuration string) Lutron {
 }
 
 func loadIntegrationFile(config database.LutronConfig) CasetaIntegrationFile {
+	// TODO: Need to add setup screen in the UI to determine what type the device is, currently it is manually being put in
 	jsonfile, err := os.Open("./config/" + config.File)
 
 	fileContents := CasetaIntegrationFile{}

@@ -480,122 +480,137 @@
         "Name" : "Main Lights 1",
         "Area" : {
           "Name" : "Playroom"
-        }
+        },
+        "Type":"light"
       },
       {
         "ID" : 3,
         "Name" : "Main Lights 2",
         "Area" : {
           "Name" : "Playroom"
-        }
+        },
+        "Type":"light"
       },
       {
         "ID" : 5,
         "Name" : "Table Chandelier",
         "Area" : {
           "Name" : "Kitchen"
-        }
+        },
+        "Type":"light"
       },
       {
         "ID" : 7,
         "Name" : "Ceiling Fan Light",
         "Area" : {
           "Name" : "Family Room"
-        }
+        },
+        "Type":"light"
       },
       {
         "ID" : 8,
         "Name" : "Ceiling Fan",
         "Area" : {
           "Name" : "Family Room"
-        }
+        },
+        "Type":"fan"
       },
       {
         "ID" : 9,
         "Name" : "Sconces",
         "Area" : {
           "Name" : "Office"
-        }
+        },
+        "Type":"light"
       },
       {
         "ID" : 10,
         "Name" : "Main Lights",
         "Area" : {
           "Name" : "Office"
-        }
+        },
+        "Type":"light"
       },
       {
         "ID" : 11,
         "Name" : "Chandelier",
         "Area" : {
           "Name" : "Dining Room"
-        }
+        },
+        "Type":"light"
       },
       {
         "ID" : 12,
         "Name" : "Ceiling Fan Light",
         "Area" : {
           "Name" : "Living Room"
-        }
+        },
+        "Type":"light"
       },
       {
         "ID" : 13,
         "Name" : "Ceiling Fan",
         "Area" : {
           "Name" : "Living Room"
-        }
+        },
+        "Type":"fan"
       },
       {
         "ID" : 14,
         "Name" : "Ceiling Fan Light",
         "Area" : {
           "Name" : "Master Bedroom"
-        }
+        },
+        "Type":"light"
       },
       {
         "ID" : 15,
         "Name" : "Ceiling Fan",
         "Area" : {
           "Name" : "Master Bedroom"
-        }
+        },
+        "Type":"fan"
       },
       {
         "ID" : 16,
         "Name" : "Step Lights",
         "Area" : {
           "Name" : "Basement Stairs"
-        }
+        },
+        "Type":"light"
       },
       {
         "ID" : 18,
         "Name" : "Main Lights",
         "Area" : {
           "Name" : "Basement Stairs"
-        }
+        },
+        "Type":"light"
       },
       {
         "ID" : 19,
         "Name" : "Bathroom",
         "Area" : {
           "Name" : "Kids"
-        }
+        },
+        "Type":"light"
       },
       {
         "ID" : 4,
         "Name" : "Main Lights",
         "Area" : {
           "Name" : "Kitchen"
-        }
+        },
+        "Type":"light"
       },
       {
         "ID" : 6,
         "Name" : "Cove Lights",
         "Area" : {
           "Name" : "Family Room"
-        }
+        },
+        "Type":"light"
       }
     ]
   }
  }
- 
- 
