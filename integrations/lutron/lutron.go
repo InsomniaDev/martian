@@ -10,31 +10,29 @@ import (
 
 // Init starts up the lutron instance
 func Init(configuration string) Lutron {
-	var lutron database.LutronConfig
+	var lutron Lutron
 	err := json.Unmarshal([]byte(configuration), &lutron)
 	if err != nil {
 		// TODO: Change this away from being a panic
 		panic(err)
 	}
-	inventory := RetrieveLutronNodes()
-	if len(inventory) == 0 {
-		// Load the lutron configuration file
-		fileContents := loadIntegrationFile(lutron)
-		// insert into the database
-		for _, name := range fileContents.LIPIDList.Zones {
-			InsertLutronGraph(name.Name, name.ID, name.Area.Name, name.Type)
+
+	if len(lutron.Inventory) == 0 {
+		fileContents := loadIntegrationFile(lutron.Config)
+		for _, device := range fileContents.LIPIDList.Zones {
+			lutron.Inventory = append(lutron.Inventory, &LDevice{
+				Name: device.Name,
+				ID: device.ID,
+				AreaName: device.Area.Name,
+				Type: device.Type,
+			})
 		}
-		inventory = RetrieveLutronNodes()
-	}
-	l := &Lutron{
-		Config: lutron,
-		// Responses: make(chan string, 5),
-		done:      make(chan bool),
-		Inventory: inventory,
 	}
 
-	l.Connect()
-	return *l
+	lutron.done = make(chan bool)
+
+	lutron.Connect()
+	return lutron
 }
 
 func loadIntegrationFile(config database.LutronConfig) CasetaIntegrationFile {

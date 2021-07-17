@@ -575,9 +575,9 @@
       },
       {
         "ID" : 19,
-        "Name" : "Main Lights",
+        "Name" : "Bathroom",
         "Area" : {
-          "Name" : "Kids Bathroom"
+          "Name" : "Kids"
         }
       },
       {
@@ -597,3 +597,5 @@
     ]
   }
  }
+ 
+ 

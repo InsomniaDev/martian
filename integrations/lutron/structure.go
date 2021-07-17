@@ -36,11 +36,11 @@ const (
 )
 
 type Lutron struct {
-	Config    database.LutronConfig
+	Config    database.LutronConfig `json:"config"`
 	conn      net.Conn
 	reader    *bufio.Reader
 	done      chan bool
-	Inventory []*LDevice
+	Inventory []*LDevice `json:"inventory"`
 	broker    *pubsub.PubSub
 	Changed   bool
 }

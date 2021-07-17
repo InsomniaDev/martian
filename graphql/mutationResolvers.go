@@ -7,8 +7,8 @@ import (
 	"strings"
 
 	"github.com/graphql-go/graphql"
-	"github.com/insomniadev/martian/database"
 	"github.com/insomniadev/martian/integrations/area"
+	"github.com/insomniadev/martian/integrations/lutron"
 )
 
 // lutronTurnOffResolver turns off a lutron device by setting value to zero
@@ -200,7 +200,7 @@ func updateIntegration(params graphql.ResolveParams) (interface{}, error) {
 	newIntegration := false
 	switch integrationType {
 	case "lutron":
-		var lutron database.LutronConfig
+		var lutron lutron.Lutron
 		err := json.Unmarshal([]byte(integrationValue), &lutron)
 		if err != nil {
 			return false, err
