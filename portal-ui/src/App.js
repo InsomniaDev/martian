@@ -24,16 +24,16 @@ const useStyles = makeStyles((theme) => ({
 
 const rustyServer = "http://192.168.1.19:30919/graphql";
 const rustyWs = "ws://192.168.1.19:30919/subscriptions";
-const localServer = "http://localhost:4000/graphql";
-const localWs = "ws://localhost:4000/subscriptions";
+// const localServer = "http://localhost:4000/graphql";
+// const localWs = "ws://localhost:4000/subscriptions";
 
 const httpLink = new HttpLink({
-  uri: localServer,
+  uri: rustyServer,
 });
 
 // Create a WebSocket link:
 const wsLink = new WebSocketLink({
-  uri: localWs,
+  uri: rustyWs,
   options: {
     reconnect: true,
   },
