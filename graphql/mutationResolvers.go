@@ -210,7 +210,13 @@ func updateIntegration(params graphql.ResolveParams) (interface{}, error) {
 	case "harmony":
 		fmt.Println("Not implemented")
 	case "kasa":
-		Integrations.Database.PutIntegrationValue(integrationType, "")
+		currentDevices := len(Integrations.KasaData.Plugs)
+		Integrations.KasaData.Discover()
+		if len(Integrations.KasaData.Plugs) > currentDevices {
+			Integrations.Database.PutIntegrationValue(integrationType, Integrations.KasaData.Plugs)
+		} else {
+			Integrations.Database.PutIntegrationValue(integrationType, "")
+		}
 		newIntegration = true
 	case "life360":
 		fmt.Println("Not implemented")
@@ -239,7 +245,7 @@ func changeKasaDeviceArea(params graphql.ResolveParams) (interface{}, error) {
 func updateIndexForArea(params graphql.ResolveParams) (interface{}, error) {
 	areaName := params.Args["areaName"].(string)
 	index := params.Args["index"].(int)
- 
+
 	udpatedAreaIndex := area.Area{AreaName: areaName, Index: index}
 	menuValues, err := area.InsertAreaIndex(Integrations.Menu, udpatedAreaIndex)
 	if err != nil {

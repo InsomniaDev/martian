@@ -160,6 +160,8 @@ func (d *Devices) Discover() {
 				switch plug.PlugInfo.Model {
 				case "HS105(US)":
 					plug.Type = "plug"
+				case "HS200(US)":
+					plug.Type = "light"
 				}
 				alreadyUsedPlug := false
 				for i := range d.Plugs {
