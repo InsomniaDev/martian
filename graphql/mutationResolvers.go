@@ -8,6 +8,7 @@ import (
 
 	"github.com/graphql-go/graphql"
 	"github.com/insomniadev/martian/integrations/area"
+	"github.com/insomniadev/martian/integrations/harmony"
 	"github.com/insomniadev/martian/integrations/lutron"
 )
 
@@ -208,7 +209,12 @@ func updateIntegration(params graphql.ResolveParams) (interface{}, error) {
 		Integrations.Database.PutIntegrationValue(integrationType, lutron)
 		newIntegration = true
 	case "harmony":
-		Integrations.Database.PutIntegrationValue(integrationType, "")
+		var harmony harmony.Device
+		err := json.Unmarshal([]byte(integrationValue), &harmony)
+		if err != nil {
+			return false, err
+		}
+		Integrations.Database.PutIntegrationValue(integrationType, harmony)
 		newIntegration = true
 	case "kasa":
 		currentDevices := len(Integrations.KasaData.Plugs)

@@ -9,6 +9,7 @@ type Device struct {
 	Name            string     `json:"name"`
 	ActivityID      string     `json:"activityId"`
 	Activities      []Activity `json:"activities"`
+	AreaName        string     `json:"areaName"`
 	Actions         string
 	Connection      *websocket.Conn
 	IPAddress       string `json:"ipAddress"`

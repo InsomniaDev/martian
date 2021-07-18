@@ -3,7 +3,6 @@ package harmony
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net"
@@ -25,10 +24,8 @@ var (
 // Init the harmony hub communication
 func (d *Device) Init(configuration string) error {
 	// Load up the configuration as the device itself
-	var device Device
-	json.Unmarshal([]byte(configuration), &device)
-	d = &device
-
+	json.Unmarshal([]byte(configuration), d)
+	
 	// IF the IPAddress doesn't exist, then we need to find the endpoint
 	if d.IPAddress == "" {
 		d.discover()
@@ -55,7 +52,6 @@ func (d *Device) discover() {
 		wg.Add(1)
 		go func(ipdad string) {
 			defer wg.Done()
-			fmt.Println(ipdad)
 			message, err := checkIpAddress(ipdad)
 			if err != nil {
 				return

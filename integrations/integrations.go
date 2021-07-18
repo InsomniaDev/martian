@@ -45,6 +45,7 @@ func (i *Integrations) Init() {
 			i.Integrations = append(i.Integrations, "lutron")
 		case "harmony":
 			i.HarmonyData.Init(storedIntegrations[k])
+			i.Menu = area.HarmonyIntegration(i.Menu, i.HarmonyData)
 			i.Integrations = append(i.Integrations, "harmony")
 		case "kasa":
 			i.KasaData.Init(storedIntegrations[k])

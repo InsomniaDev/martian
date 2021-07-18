@@ -107,7 +107,7 @@ func menuConfiguration(params graphql.ResolveParams) (interface{}, error) {
 		case "lutron":
 			Integrations.Menu = area.LutronIntegration(Integrations.Menu, Integrations.LutronData.Inventory)
 		case "harmony":
-			fmt.Println("Not implemented")
+			Integrations.Menu = area.HarmonyIntegration(Integrations.Menu, Integrations.HarmonyData)
 		case "kasa":
 			Integrations.Menu = area.KasaIntegration(Integrations.Menu, Integrations.KasaData)
 		case "life360":

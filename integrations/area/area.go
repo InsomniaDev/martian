@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/insomniadev/martian/database"
+	"github.com/insomniadev/martian/integrations/harmony"
 	"github.com/insomniadev/martian/integrations/kasa"
 	"github.com/insomniadev/martian/integrations/lutron"
 )
@@ -149,6 +150,56 @@ func (a *Area) addKasa(device kasa.Plug) {
 		Type:        device.Type,
 		State:       state,
 		Integration: "kasa",
+	}
+	a.Devices = append(a.Devices, newDev)
+}
+
+// HarmonyIntegration will grab the harmony integration and return it to the calling application
+func HarmonyIntegration(areas []Area, device harmony.Device) []Area {
+	foundArea := false
+	areaName := strings.TrimSpace(device.AreaName)
+	if areaName == "" {
+		areaName = "UKN"
+	}
+	for area := range areas {
+		if strings.EqualFold(areas[area].AreaName, areaName) {
+			areas[area].addHarmony(device)
+			foundArea = true
+		}
+	}
+	if !foundArea {
+		newArea := Area{
+			AreaName: areaName,
+		}
+		newArea.addHarmony(device)
+		areas = append(areas, newArea)
+	}
+	return areas
+}
+
+// addHarmony will attach the harmony instance to the room
+func (a *Area) addHarmony(device harmony.Device) {
+	// TODO: Will need to replace this once we have something more concrete in the future, or we do actions against harmony
+	type Activities struct {
+		ActivityID string `json:"activityID"`
+		Name string `json:"name"`
+	}
+	var activities []Activities
+	for i := range device.Activities{
+		newDev := Activities{
+			ActivityID: device.Activities[i].ActivityID,
+			Name: device.Activities[i].Name,
+		}
+		activities = append(activities, newDev)
+	}
+	jsonActivities, _ := json.Marshal(activities)
+	newDev := AreaDevice{
+		AreaName:    device.AreaName,
+		Id:          device.IPAddress,
+		Name:        string(jsonActivities),
+		Type:        "tv",
+		State:       device.CurrentActivity,
+		Integration: "harmony",
 	}
 	a.Devices = append(a.Devices, newDev)
 }
