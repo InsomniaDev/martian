@@ -5,7 +5,7 @@ import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import Icon from "@mdi/react";
-import { mdiLightbulbOn, mdiLightbulbOff, mdiPowerPlug, mdiPowerPlugOff, mdiFan, mdiFanOff } from "@mdi/js";
+import { mdiLightbulbOn, mdiLightbulbOff, mdiPowerPlug, mdiPowerPlugOff, mdiFan, mdiFanOff, mdiTelevision, mdiTelevisionOff } from "@mdi/js";
 import { useMutation } from "@apollo/client";
 import { changeDeviceStatus } from "../../componentLibrary/mutations/changeDeviceState";
 import ReactCardFlip from 'react-card-flip';
@@ -13,6 +13,7 @@ import { LightComponent } from "../../componentLibrary/Light/LightComponent";
 import { PlugComponent } from "../../componentLibrary/Plug/PlugComponent";
 import { FanComponent } from "../../componentLibrary/Fan/FanComponent";
 import AreaMenu from "../AreaMenu/AreaMenu";
+import { HarmonyComponent } from "../../componentLibrary/Harmony/harmony";
 
 const useStyles = makeStyles({
     rootOn: {
@@ -51,11 +52,13 @@ export function Area({ refetch, area }) {
     const [lightActive, changeLightActive] = useState(false);
     const [plugActive, changePlugActive] = useState(false);
     const [fanActive, changeFanActive] = useState(false);
+    const [harmonyActive, changeHarmonyActive] = useState(false);
     const [flipped, changeFace] = useState(false);
 
     const [lightExists, changeLightExists] = useState(false);
     const [plugExists, changePlugExists] = useState(false);
     const [fanExists, changeFanExists] = useState(false);
+    const [harmonyExists, changeHarmonyExists] = useState(false);
 
     const [changeAreaStatus] = useMutation(changeDeviceStatus);
 
@@ -84,6 +87,7 @@ export function Area({ refetch, area }) {
     var lightOn = false;
     var plugOn = false;
     var fanOn = false;
+    var tvOn = false;
     area.devices.forEach(device => {
         if (device.type.toLowerCase() === "light") {
             if (lightExists !== true) {
@@ -106,6 +110,13 @@ export function Area({ refetch, area }) {
             if (device.state.toLowerCase() !== "off") {
                 fanOn = true;
             }
+        } else if (device.type.toLowerCase() === "tv") {
+            if (harmonyExists !== true) {
+                changeHarmonyExists(true);
+            }
+            if (device.state.toLowerCase() !== "-1") {
+                tvOn = true;
+            }
         }
     })
     if (lightOn !== lightActive) {
@@ -116,6 +127,9 @@ export function Area({ refetch, area }) {
     }
     if (fanOn !== fanActive) {
         changeFanActive(fanOn);
+    }
+    if (tvOn !== harmonyActive) {
+        changeHarmonyActive(tvOn);
     }
 
     const bulkChangeAreaStatus = (type) => {
@@ -130,13 +144,21 @@ export function Area({ refetch, area }) {
             case "fan":
                 typeStatusForArea = fanOn;
                 break;
+            case "harmony":
+                setTimeout(() => changeAreaStatus({
+                    variables: {
+                        id: "-1",
+                        integration: "harmony",
+                        status: "",
+                        level: "",
+                    }
+                }), 10);
+                return;
         }
         area.devices.forEach(device => {
             if (device.type.toLowerCase() === type) {
                 var status = device.state.toLowerCase() === "off" ? false : true;
                 var value = device.value === 100 ? 0 : 100;
-                console.log({device})
-                console.log({typeStatusForArea})
                 if (status === typeStatusForArea) {
                     // Need to set this as a timeout so that we don't write to the websocket at the same time
                     setTimeout(() => changeAreaStatus({
@@ -217,6 +239,22 @@ export function Area({ refetch, area }) {
                             )}
                         </IconButton>
                     </div>) : (<div></div>)}
+                    {harmonyExists ? (<div onClick={() => {
+                        if (harmonyActive) {
+                            changeHarmonyActive(false);
+                            return bulkChangeAreaStatus("harmony");
+                        } else {
+                            alert("You Must Select Activity In Area Menu")
+                        }
+                    }}>
+                        <IconButton key={area.areaName + "_cardFanButton"} >
+                            {harmonyActive ? (
+                                <Icon key={area.areaName + "_cardIcon"} path={mdiTelevision} className={classes.lightOn} size={iconSize} />
+                            ) : (
+                                <Icon key={area.areaName + "_cardIcon"} path={mdiTelevisionOff} size={iconSize} />
+                            )}
+                        </IconButton>
+                    </div>) : (<div></div>)}
                 </CardActions>
             </Card>
             <Card className={classes.root} key={area.areaName + "_card"} >
@@ -239,6 +277,10 @@ export function Area({ refetch, area }) {
                     } else if (device.type.toLowerCase() === "fan") {
                         return (
                             <FanComponent key={device.id} fan={device} />
+                        )
+                    } else if (device.type.toLowerCase() === "tv") {
+                        return (
+                            <HarmonyComponent key={device.id} harmony={device} />
                         )
                     } else {
                         return (

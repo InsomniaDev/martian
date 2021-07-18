@@ -182,15 +182,18 @@ func (a *Area) addHarmony(device harmony.Device) {
 	// TODO: Will need to replace this once we have something more concrete in the future, or we do actions against harmony
 	type Activities struct {
 		ActivityID string `json:"activityID"`
-		Name string `json:"name"`
+		Name       string `json:"name"`
 	}
 	var activities []Activities
-	for i := range device.Activities{
+	for i := range device.Activities {
 		newDev := Activities{
 			ActivityID: device.Activities[i].ActivityID,
-			Name: device.Activities[i].Name,
+			Name:       device.Activities[i].Name,
 		}
 		activities = append(activities, newDev)
+	}
+	if device.CurrentActivity != "-1" {
+		a.Active = true
 	}
 	jsonActivities, _ := json.Marshal(activities)
 	newDev := AreaDevice{
