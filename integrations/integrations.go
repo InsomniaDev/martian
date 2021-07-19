@@ -59,7 +59,7 @@ func (i *Integrations) Init() {
 			go i.Life3.SyncMemberStatus()
 			i.Integrations = append(i.Integrations, "life360")
 		case "hass":
-			go i.Hass.Init()
+			go i.Hass.Init(storedIntegrations[k])
 			i.Integrations = append(i.Integrations, "hass")
 		default:
 			fmt.Println("This integration doesn't exist yet", k)

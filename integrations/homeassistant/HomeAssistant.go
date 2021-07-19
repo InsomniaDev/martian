@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"github.com/gorilla/websocket"
-	"github.com/insomniadev/martian/integrations/config"
 	"github.com/insomniadev/martian/modules/redispub"
 )
 
@@ -37,14 +36,18 @@ var (
 	callServiceId int = 9
 )
 
-func (h *HomeAssistant) Init() {
+func (h *HomeAssistant) Init(configuration string) error {
+	err := json.Unmarshal([]byte(configuration), &h)
+	if err != nil {
+		return err
+	}
 	h.connect()
+	return nil
 }
 
 func (h *HomeAssistant) connect() {
 	// host := "ws://" + h.Url
-	h.Config = config.LoadHomeAssistant()
-	host := "ws://" + h.Config.URL + "/api/websocket"
+	host := "ws://" + h.Url + "/api/websocket"
 
 	conn, _, err := websocket.DefaultDialer.Dial(host, nil)
 	h.Connection = conn
@@ -67,7 +70,7 @@ func (h *HomeAssistant) listen() {
 		}
 		switch message.Type {
 		case "auth_required":
-			authMessage := AuthEvent{Type: "auth", AccessToken: h.Config.Token}
+			authMessage := AuthEvent{Type: "auth", AccessToken: h.Token}
 			authEvent, err := json.Marshal(authMessage)
 			println(string(authEvent))
 			if err != nil {

@@ -2,15 +2,13 @@ package homeassistant
 
 import (
 	"github.com/gorilla/websocket"
-	"github.com/insomniadev/martian/integrations/config"
 )
 
 type HomeAssistant struct {
-	Url        string
-	Token      string
-	Config     config.Hass
+	Url        string `json:"url"`
+	Token      string `json:"token"`
 	Connection *websocket.Conn
-	Devices    []HomeAssistantDevice
+	Devices    []HomeAssistantDevice `json:"devices"`
 }
 
 type HomeAssistantDevice struct {

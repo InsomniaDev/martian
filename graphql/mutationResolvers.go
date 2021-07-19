@@ -9,6 +9,7 @@ import (
 	"github.com/graphql-go/graphql"
 	"github.com/insomniadev/martian/integrations/area"
 	"github.com/insomniadev/martian/integrations/harmony"
+	"github.com/insomniadev/martian/integrations/homeassistant"
 	"github.com/insomniadev/martian/integrations/lutron"
 )
 
@@ -195,6 +196,7 @@ func hassDevice(id string, status string) {
 	}
 }
 
+// updateIntegration will create new integrations that will be stored in the local database
 func updateIntegration(params graphql.ResolveParams) (interface{}, error) {
 	integrationType := params.Args["type"].(string)
 	integrationValue := params.Args["value"].(string)
@@ -228,7 +230,13 @@ func updateIntegration(params graphql.ResolveParams) (interface{}, error) {
 	case "life360":
 		fmt.Println("Not implemented")
 	case "hass":
-		fmt.Println("Not implemented")
+		// Will pass in {"url":"","token":""}
+		var hass homeassistant.HomeAssistant
+		err := json.Unmarshal([]byte(integrationValue), &hass)
+		if err != nil {
+			return false, err
+		}
+		Integrations.Database.PutIntegrationValue(integrationType, hass)
 	default:
 		fmt.Println("This integration doesn't exist yet", integrationType)
 	}
