@@ -17,6 +17,7 @@ type HomeAssistantDevice struct {
 	Group    string `json:"group"`
 	Type     string `json:"type"`
 	State    string `json:"state"`
+	AreaName string `json:"areaName"`
 }
 
 type AuthEvent struct {
@@ -33,11 +34,15 @@ type Event struct {
 }
 
 type Results struct {
-	EntityId    string      `json:"entity_id"`
-	State       string      `json:"state"`
-	Attributes  interface{} `json:"attributes"`
-	LastChanged string      `json:"last_changed"`
-	LastUpdated string      `json:"last_updated"`
+	EntityId    string     `json:"entity_id"`
+	State       string     `json:"state"`
+	Attributes  Attributes `json:"attributes"`
+	LastChanged string     `json:"last_changed"`
+	LastUpdated string     `json:"last_updated"`
+}
+
+type Attributes struct {
+	FriendlyName string `json:"friendly_name"`
 }
 
 type EventClass struct {

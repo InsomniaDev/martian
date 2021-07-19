@@ -99,14 +99,19 @@ func (h *HomeAssistant) listen() {
 				s := strings.Split(result.EntityId, ".")
 				deviceType, name := s[0], s[1]
 				name = strings.Replace(name, "_", " ", -1)
-				newDevice := HomeAssistantDevice{EntityId: result.EntityId, Name: name, Type: deviceType, State: result.State}
+				areaName := ""
+				friendlyName := strings.Split(result.Attributes.FriendlyName, "_")
+				if len(friendlyName) > 1 {
+					areaName = friendlyName[0]
+				}
+				newDevice := HomeAssistantDevice{EntityId: result.EntityId, Name: name, Type: deviceType, State: result.State, AreaName: areaName}
 				h.Devices = append(h.Devices, newDevice)
 			}
-			for _, dev := range h.Devices {
-				if dev.Type == "light" {
-					fmt.Println(dev.Name)
-				}
-			}
+			// for _, dev := range h.Devices {
+			// 	if dev.Type == "light" {
+			// 		fmt.Println(dev.Name)
+			// 	}
+			// }
 		}
 	}
 }

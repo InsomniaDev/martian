@@ -259,6 +259,9 @@ var homeAssistantType = graphql.NewObject(
 			"state": &graphql.Field{
 				Type: graphql.String,
 			},
+			"areaName": &graphql.Field{
+				Type: graphql.String,
+			},
 		},
 	},
 )

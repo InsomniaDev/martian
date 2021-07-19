@@ -237,6 +237,7 @@ func updateIntegration(params graphql.ResolveParams) (interface{}, error) {
 			return false, err
 		}
 		Integrations.Database.PutIntegrationValue(integrationType, hass)
+		newIntegration = true
 	default:
 		fmt.Println("This integration doesn't exist yet", integrationType)
 	}
