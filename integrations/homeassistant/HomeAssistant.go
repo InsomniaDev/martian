@@ -2,7 +2,7 @@ package homeassistant
 
 import (
 	"encoding/json"
-	"fmt"
+	"errors"
 	"log"
 	"strconv"
 	"strings"
@@ -174,4 +174,22 @@ func (h *HomeAssistant) getServices() {
 	if err != nil {
 		log.Println("hass write:", err)
 	}
+}
+
+// UpdateSelectedDevices will go through and update the selected 
+func (h *HomeAssistant) UpdateSelectedDevices(selectedDevices []string) error {
+	h.SelectedDevices = []HomeAssistantDevice{}
+	for _, deviceName := range selectedDevices {
+		found := false
+		for i := range h.Devices {
+			if h.Devices[i].Name == deviceName {
+				found = true
+				h.SelectedDevices = append(h.SelectedDevices, h.Devices[i])
+			}
+		}
+		if !found {
+			return errors.New(deviceName + " was not found in the integrated Hass devices")
+		}
+	}
+	return nil
 }

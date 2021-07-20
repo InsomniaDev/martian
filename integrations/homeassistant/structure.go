@@ -5,10 +5,11 @@ import (
 )
 
 type HomeAssistant struct {
-	Url        string `json:"url"`
-	Token      string `json:"token"`
-	Connection *websocket.Conn
-	Devices    []HomeAssistantDevice `json:"devices"`
+	Url             string `json:"url"`
+	Token           string `json:"token"`
+	Connection      *websocket.Conn
+	Devices         []HomeAssistantDevice `json:"devices"`
+	SelectedDevices []HomeAssistantDevice `json:"selectedDevices"`
 }
 
 type HomeAssistantDevice struct {

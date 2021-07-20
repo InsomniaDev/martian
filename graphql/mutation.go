@@ -8,12 +8,12 @@ var rootMutation = graphql.NewObject(graphql.ObjectConfig{
 	Name: "RootMutation",
 	Fields: graphql.Fields{
 		"turnAllLightsOn": &graphql.Field{
-			Type: graphql.Boolean,
+			Type:        graphql.Boolean,
 			Description: "Turn all Lutron lights on",
 			Resolve:     lutronTurnAllLightsOn,
 		},
 		"turnAllLightsOff": &graphql.Field{
-			Type: graphql.Boolean,
+			Type:        graphql.Boolean,
 			Description: "Turn all Lutron lights off",
 			Resolve:     lutronTurnAllLightsOff,
 		},
@@ -25,7 +25,7 @@ var rootMutation = graphql.NewObject(graphql.ObjectConfig{
 				},
 			},
 			Description: "Start a Harmony Activity",
-			Resolve: harmonyStartActivityResolver,
+			Resolve:     harmonyStartActivityResolver,
 		},
 		"changeDeviceStatus": &graphql.Field{
 			Type: graphql.Boolean,
@@ -84,6 +84,19 @@ var rootMutation = graphql.NewObject(graphql.ObjectConfig{
 			},
 			Description: "Create or update an integration with the Martian API",
 			Resolve:     updateIndexForArea,
+		},
+		"selectDevicesForIntegration": &graphql.Field{
+			Type: graphql.Boolean,
+			Args: graphql.FieldConfigArgument{
+				"integration": &graphql.ArgumentConfig{
+					Type: graphql.NewNonNull(graphql.String),
+				},
+				"devices": &graphql.ArgumentConfig{
+					Type: graphql.NewNonNull(graphql.NewList(graphql.String)),
+				},
+			},
+			Description: "Create or update an integration with the Martian API",
+			Resolve:     selectDevicesForIntegration,
 		},
 	},
 })

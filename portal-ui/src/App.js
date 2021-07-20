@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useLayoutEffect, useState } from "react";
 import {
   ApolloClient,
   InMemoryCache,
@@ -12,14 +12,28 @@ import './App.css';
 import { render } from "react-dom";
 import { AreaActivity } from "./pages/AreaActivity/AreaActivity";
 import { makeStyles } from '@material-ui/core/styles';
+import Icon from "@mdi/react";
+import SideNav, { Toggle, Nav, NavItem, NavIcon, NavText } from '@trendmicro/react-sidenav';
+import './index.css';
+import { mdiCog, mdiHome, mdiLightbulb } from '@mdi/js';
+import ClickOutside from "./componentLibrary/ClickOutside/click-outside";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     backgroundColor: "#02464d",
-    width: "100%", 
+    width: "100%",
     height: "100%",
+    paddingLeft: '2rem'
     // position: "absolute",
   },
+  tablet: {
+    backgroundColor: "#02464d",
+    width: "100%",
+    height: "100%"
+    // position: "absolute",
+  },
+  important: {
+  }
 }));
 
 const rustyServer = "http://192.168.1.19:30919/graphql";
@@ -57,12 +71,76 @@ const client = new ApolloClient({
   link,
 });
 
+function useWindowSize() {
+  const [size, setSize] = useState([0, 0]);
+  useLayoutEffect(() => {
+    function updateSize() {
+      setSize([window.innerWidth, window.innerHeight]);
+    }
+    window.addEventListener('resize', updateSize);
+    updateSize();
+    return () => window.removeEventListener('resize', updateSize);
+  }, []);
+  return size;
+}
+
 const App = () => {
   const classes = useStyles();
+  const [width, height] = useWindowSize();
+  const [expanded, changeExpanded] = useState(false);
 
+  console.log({width})
   return (
-    <div className={classes.root}>
+    <div className={width > 1000 ? classes.root : classes.tablet}>
       <ApolloProvider client={client}>
+        { width > 1000 ? (
+          <ClickOutside onClickOutside={() => {
+            changeExpanded(false);
+          }}>
+            <SideNav
+              expanded={expanded}
+              onToggle={(expanded) => {
+                changeExpanded(expanded);
+              }}
+              onSelect={(selected) => {
+                // Add your code here
+              }}
+            >
+              <SideNav.Toggle />
+              <SideNav.Nav defaultSelected="home">
+                <NavItem eventKey="home">
+                  <NavIcon>
+                    <Icon path={mdiHome} size={2} />
+                  </NavIcon>
+                  <NavText>
+                    Home
+                  </NavText>
+                </NavItem>
+                <NavItem eventKey="charts">
+                  <NavIcon>
+                    <Icon path={mdiCog} size={2} />
+                  </NavIcon>
+                  <NavText>
+                    Settings
+                  </NavText>
+                  <NavItem eventKey="charts/linechart">
+                    <NavText>
+                      Integrations
+                    </NavText>
+                  </NavItem>
+                  <NavItem eventKey="charts/barchart">
+                    <NavText>
+                      Bar Chart
+                    </NavText>
+                  </NavItem>
+                </NavItem>
+              </SideNav.Nav>
+            </SideNav>
+          </ClickOutside>) : (<div></div>)
+
+
+        }
+
         <AreaActivity></AreaActivity>
       </ApolloProvider>
     </div>

@@ -69,3 +69,26 @@
     }
   }
 }
+
+
+
+{
+  "entity_id": "light.playroom_main_lights_1",
+  "state": "off",
+  "attributes": {
+      "supported_color_modes": [
+          "brightness"
+      ],
+      "device_id": "2",
+      "zone_id": "1",
+      "friendly_name": "Playroom_Main Lights 1",
+      "supported_features": 33
+  },
+  "last_changed": "2021-07-18T18:00:18.035721+00:00",
+  "last_updated": "2021-07-18T18:00:18.035721+00:00",
+  "context": {
+      "id": "b248b3adede1dbd1a0a0637f6280f5b9",
+      "parent_id": "a71b20b0071a76d98065b8c45f855936",
+      "user_id": null
+  }
+}

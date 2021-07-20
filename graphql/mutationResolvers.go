@@ -271,3 +271,18 @@ func updateIndexForArea(params graphql.ResolveParams) (interface{}, error) {
 	Integrations.Init()
 	return true, err
 }
+
+// selectDevicesForIntegration will add in the selected devices for the provided integration type
+func selectDevicesForIntegration(params graphql.ResolveParams) (interface{}, error) {
+	integration := params.Args["integration"].(string)
+	devices := params.Args["devices"].([]string)
+
+	switch integration{
+	case "hass":
+		err := Integrations.Hass.UpdateSelectedDevices(devices)
+		if err != nil {
+			return false, err
+		}
+	}
+	return true, nil
+}

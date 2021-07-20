@@ -6,6 +6,7 @@ import { Area } from "../../components/Area/Area";
 import { subscriptionForMenu } from './subscriptions/menuChangesSubscription';
 import { getMenuConfiguration } from './queries/getMenuConfiguration';
 
+
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
