@@ -66,9 +66,21 @@ const link = split(
   httpLink
 );
 
+const defaultOptions = {
+  watchQuery: {
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'ignore',
+  },
+  query: {
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+  },
+}
+
 const client = new ApolloClient({
   cache: new InMemoryCache(),
   link,
+  defaultOptions: defaultOptions,
 });
 
 function useWindowSize() {
@@ -91,9 +103,9 @@ const App = () => {
 
   console.log({width})
   return (
-    <div className={width > 1000 ? classes.root : classes.tablet}>
+    <div className={width > 1100 ? classes.root : classes.tablet}>
       <ApolloProvider client={client}>
-        { width > 1000 ? (
+        { width > 1100 ? (
           <ClickOutside onClickOutside={() => {
             changeExpanded(false);
           }}>
