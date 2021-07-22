@@ -20,6 +20,7 @@ import SideNav, { NavItem, NavIcon, NavText } from '@trendmicro/react-sidenav';
 import './index.css';
 import { mdiCog, mdiHome } from '@mdi/js';
 import ClickOutside from "./componentLibrary/ClickOutside/click-outside";
+import { BrowserRouter as Router, Route } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -96,7 +97,7 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
   link: ApolloLink.from([
     onError((error) => {
-      console.log({error})
+      console.log({ error })
     }),
     linkToRetry,
     link
@@ -125,55 +126,64 @@ const App = () => {
   return (
     <div className={width > 1100 ? classes.root : classes.tablet}>
       <ApolloProvider client={client}>
-        { width > 1100 ? (
-          <ClickOutside onClickOutside={() => {
-            changeExpanded(false);
-          }}>
-            <SideNav
-              expanded={expanded}
-              onToggle={(expanded) => {
-                changeExpanded(expanded);
-              }}
-              onSelect={(selected) => {
-                // Add your code here
-              }}
-            >
-              <SideNav.Toggle />
-              <SideNav.Nav defaultSelected="home">
-                <NavItem eventKey="home">
-                  <NavIcon>
-                    <Icon path={mdiHome} size={2} />
-                  </NavIcon>
-                  <NavText>
-                    Home
-                  </NavText>
-                </NavItem>
-                <NavItem eventKey="charts">
-                  <NavIcon>
-                    <Icon path={mdiCog} size={2} />
-                  </NavIcon>
-                  <NavText>
-                    Settings
-                  </NavText>
-                  <NavItem eventKey="charts/linechart">
-                    <NavText>
-                      Integrations
-                    </NavText>
-                  </NavItem>
-                  <NavItem eventKey="charts/barchart">
-                    <NavText>
-                      About
-                    </NavText>
-                  </NavItem>
-                </NavItem>
-              </SideNav.Nav>
-            </SideNav>
-          </ClickOutside>) : (<div></div>)
-
-
+        {width > 1100 ? (
+          <Router>
+            <Route render={({ location, history }) => (
+              <React.Fragment>
+                <ClickOutside onClickOutside={() => {
+                  changeExpanded(false);
+                }}>
+                  <SideNav
+                    expanded={expanded}
+                    onToggle={(expanded) => {
+                      changeExpanded(expanded);
+                    }}
+                    onSelect={(selected) => {
+                      // Add your code here
+                    }}
+                  >
+                    {/* <SideNav.Toggle /> */}
+                    <SideNav.Nav defaultSelected="home">
+                      <NavItem eventKey="home">
+                        <NavIcon>
+                          <Icon path={mdiHome} size={2} />
+                        </NavIcon>
+                        <NavText>
+                          Home
+                        </NavText>
+                      </NavItem>
+                      <NavItem eventKey="settings">
+                        <NavIcon>
+                          <Icon path={mdiCog} size={2} />
+                        </NavIcon>
+                        <NavText>
+                          Settings
+                        </NavText>
+                        <NavItem eventKey="settings/integrations">
+                          <NavText>
+                            Integrations
+                          </NavText>
+                        </NavItem>
+                        <NavItem eventKey="settings/about">
+                          <NavText>
+                            About
+                          </NavText>
+                        </NavItem>
+                      </NavItem>
+                    </SideNav.Nav>
+                  </SideNav>
+                </ClickOutside>
+                <menu>
+                  <Route path="/" exact component={props => <AreaActivity></AreaActivity>} />
+                  <Route path="/home" component={props => <AreaActivity></AreaActivity>} />
+                  <Route path="/settings" component={props => <div />} />
+                  <Route path="/settings/integrations" component={props => <div />} />
+                  <Route path="/settings/about" component={props => <div />} />
+                </menu>
+              </React.Fragment>
+            )} />
+          </Router>) : (<div></div>)
         }
-
-        <AreaActivity></AreaActivity>
       </ApolloProvider>
     </div>
   );
@@ -182,3 +192,48 @@ const App = () => {
 render(<App />, document.getElementById("root"));
 
 export default App;
+
+
+// React Router v4 with React v16
+// https://reactrouter.com/web/api/Route
+
+{/* <Router>
+    <Route render={({ location, history }) => (
+        <React.Fragment>
+            <SideNav
+                onSelect={(selected) => {
+                    const to = '/' + selected;
+                    if (location.pathname !== to) {
+                        history.push(to);
+                    }
+                }}
+            >
+                <SideNav.Toggle />
+                <SideNav.Nav defaultSelected="home">
+                    <NavItem eventKey="home">
+                        <NavIcon>
+                            <i className="fa fa-fw fa-home" style={{ fontSize: '1.75em' }} />
+                        </NavIcon>
+                        <NavText>
+                            Home
+                        </NavText>
+                    </NavItem>
+                    <NavItem eventKey="devices">
+                        <NavIcon>
+                            <i className="fa fa-fw fa-device" style={{ fontSize: '1.75em' }} />
+                        </NavIcon>
+                        <NavText>
+                            Devices
+                        </NavText>
+                    </NavItem>
+                </SideNav.Nav>
+            </SideNav>
+            <main>
+                <Route path="/" exact component={props => <RootComponent />} />
+                <Route path="/home" component={props => <Home />} />
+                <Route path="/devices" component={props => <Devices />} />
+            </main>
+        </React.Fragment>
+    )}
+    />
+</Router> */}
