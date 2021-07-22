@@ -21,6 +21,7 @@ import './index.css';
 import { mdiCog, mdiHome } from '@mdi/js';
 import ClickOutside from "./componentLibrary/ClickOutside/click-outside";
 import { BrowserRouter as Router, Route } from "react-router-dom";
+import { Integration } from "./pages/Integration/Integration";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -177,10 +178,10 @@ const App = () => {
                   </SideNav>
                 </ClickOutside>
                 <main>
-                  <Route path="/" exact component={props => <AreaActivity></AreaActivity>} />
-                  <Route path="/home" component={props => <AreaActivity></AreaActivity>} />
+                  <Route path="/" exact component={() => <AreaActivity></AreaActivity>} />
+                  <Route path="/home" component={() => <AreaActivity></AreaActivity>} />
                   <Route path="/settings" component={props => <div />} />
-                  <Route path="/settings/integrations" component={props => <div />} />
+                  <Route path="/settings/integrations" component={props => <Integration />} />
                   <Route path="/settings/about" component={props => <div />} />
                 </main>
               </React.Fragment>
