@@ -13,9 +13,9 @@ import { render } from "react-dom";
 import { AreaActivity } from "./pages/AreaActivity/AreaActivity";
 import { makeStyles } from '@material-ui/core/styles';
 import Icon from "@mdi/react";
-import SideNav, { Toggle, Nav, NavItem, NavIcon, NavText } from '@trendmicro/react-sidenav';
+import SideNav, { NavItem, NavIcon, NavText } from '@trendmicro/react-sidenav';
 import './index.css';
-import { mdiCog, mdiHome, mdiLightbulb } from '@mdi/js';
+import { mdiCog, mdiHome } from '@mdi/js';
 import ClickOutside from "./componentLibrary/ClickOutside/click-outside";
 
 const useStyles = makeStyles((theme) => ({
@@ -98,10 +98,9 @@ function useWindowSize() {
 
 const App = () => {
   const classes = useStyles();
-  const [width, height] = useWindowSize();
+  const [width] = useWindowSize();
   const [expanded, changeExpanded] = useState(false);
 
-  console.log({width})
   return (
     <div className={width > 1100 ? classes.root : classes.tablet}>
       <ApolloProvider client={client}>

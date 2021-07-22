@@ -83,15 +83,15 @@ export function HarmonyComponent({ harmony }) {
                 </IconButton>
             </div>
             <form autoComplete='off'>
-                <FormControl className={classes.formControl}>
-                    <InputLabel >Activity</InputLabel>
+                <FormControl key={harmony.id + "_form_control"} className={classes.formControl}>
+                    <InputLabel key={harmony.id + "_input_label"}>Activity</InputLabel>
                     <Select
                         id="harmony-selection"
                         value={harmonyValue}
                         onChange={handleHarmonySelection}>
                             {
                                 JSON.parse(harmony.name).map(a => (
-                                    <MenuItem value={a.activityID}>{a.name}</MenuItem>
+                                    <MenuItem key={harmony.id + a.activityID} value={a.activityID}>{a.name}</MenuItem>
                                 ))
                             }
                     </Select>

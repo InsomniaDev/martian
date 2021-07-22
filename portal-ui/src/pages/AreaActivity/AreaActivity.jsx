@@ -3,7 +3,6 @@ import React from "react";
 import { useQuery } from "@apollo/client";
 import Grid from "@material-ui/core/Grid";
 import { Area } from "../../components/Area/Area";
-import { subscriptionForMenu } from './subscriptions/menuChangesSubscription';
 import { getMenuConfiguration } from './queries/getMenuConfiguration';
 
 
@@ -41,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 export function AreaActivity() {
-  const { loading, error, data, refetch } = useQuery(getMenuConfiguration, {
+  const { loading, error, data, refetch,  } = useQuery(getMenuConfiguration, {
     pollInterval: 500,
     fetchPolicy: "no-cache"
   });
