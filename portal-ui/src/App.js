@@ -5,7 +5,10 @@ import {
   ApolloProvider,
   HttpLink,
   split,
+  ApolloLink,
 } from "@apollo/client";
+import { onError } from "@apollo/client/link/error";
+import { RetryLink } from "@apollo/client/link/retry";
 import { getMainDefinition } from "@apollo/client/utilities";
 import { WebSocketLink } from "@apollo/link-ws";
 import './App.css';
@@ -77,9 +80,27 @@ const defaultOptions = {
   },
 }
 
+const linkToRetry = new RetryLink({
+  delay: {
+    initial: 300,
+    max: Infinity,
+    jitter: true
+  },
+  attempts: {
+    max: 5,
+    retryIf: (error, _operation) => !!error
+  }
+});
+
 const client = new ApolloClient({
   cache: new InMemoryCache(),
-  link,
+  link: ApolloLink.from([
+    onError((error) => {
+      console.log({error})
+    }),
+    linkToRetry,
+    link
+  ]),
   defaultOptions: defaultOptions,
 });
 
@@ -141,7 +162,7 @@ const App = () => {
                   </NavItem>
                   <NavItem eventKey="charts/barchart">
                     <NavText>
-                      Bar Chart
+                      About
                     </NavText>
                   </NavItem>
                 </NavItem>
