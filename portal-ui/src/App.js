@@ -139,7 +139,10 @@ const App = () => {
                       changeExpanded(expanded);
                     }}
                     onSelect={(selected) => {
-                      // Add your code here
+                      const to = '/' + selected;
+                      if (location.pathname !== to) {
+                        history.push(to);
+                      }
                     }}
                   >
                     {/* <SideNav.Toggle /> */}
@@ -173,13 +176,13 @@ const App = () => {
                     </SideNav.Nav>
                   </SideNav>
                 </ClickOutside>
-                <menu>
+                <main>
                   <Route path="/" exact component={props => <AreaActivity></AreaActivity>} />
                   <Route path="/home" component={props => <AreaActivity></AreaActivity>} />
                   <Route path="/settings" component={props => <div />} />
                   <Route path="/settings/integrations" component={props => <div />} />
                   <Route path="/settings/about" component={props => <div />} />
-                </menu>
+                </main>
               </React.Fragment>
             )} />
           </Router>) : (<div></div>)
