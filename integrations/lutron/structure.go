@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"net"
 
+	"github.com/graphql-go/graphql"
 	"github.com/insomniadev/martian/database"
 	"github.com/insomniadev/martian/modules/pubsub"
 )
@@ -44,6 +45,44 @@ type Lutron struct {
 	broker    *pubsub.PubSub
 	Changed   bool
 }
+
+// GraphqlLutronType is the graphql object for the lutron integration
+var GraphqlLutronType = graphql.NewObject(graphql.ObjectConfig{
+	Name: "LutronType",
+	Fields: graphql.Fields{
+		"config": &graphql.Field{
+			Type: database.GrapqhlLutronConfigType,
+		},
+		"inventory": &graphql.Field{
+			Type: graphql.NewList(GrapqhlLutronInventoryType),
+		},
+	},
+})
+
+// GrapqhlLutronInventoryType is the graphql object for the lutron devices
+var GrapqhlLutronInventoryType = graphql.NewObject(graphql.ObjectConfig{
+	Name: "LutronInventoryType",
+	Fields: graphql.Fields{
+		"name": &graphql.Field{
+			Type: graphql.String,
+		},
+		"id": &graphql.Field{
+			Type: graphql.Int,
+		},
+		"areaName": &graphql.Field{
+			Type: graphql.String,
+		},
+		"type": &graphql.Field{
+			Type: graphql.String,
+		},
+		"value": &graphql.Field{
+			Type: graphql.Float,
+		},
+		"state": &graphql.Field{
+			Type: graphql.String,
+		},
+	},
+})
 
 type LutronMsg struct {
 	// the lutron component number

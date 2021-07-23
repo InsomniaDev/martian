@@ -63,5 +63,10 @@ var rootQuery = graphql.NewObject(graphql.ObjectConfig{
 			Description: "The Home Assistant Device by Name or Type",
 			Resolve:     homeAssistantDevices,
 		},
+		"integrations": &graphql.Field{
+			Type:        integrationsType,
+			Description: "The Integrations that are Setup for Martian",
+			Resolve:     integrationResolver,
+		},
 	},
 })

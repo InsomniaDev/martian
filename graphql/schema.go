@@ -105,6 +105,7 @@ const Schema = `
     group: String
     type: String
     state: String
+    areaName: String
   }
 
   type MyQ {

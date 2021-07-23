@@ -46,12 +46,12 @@ const (
 
 // Plug represents a management interface for a plug
 type Plug struct {
-	ID        string
-	IPAddress string
+	ID        string `json:"id"`
+	IPAddress string `json:"ipAddress"`
 	PlugInfo  Info
-	Name      string
-	AreaName  string
-	Type      string
+	Name      string `json:"name"`
+	AreaName  string `json:"areaName"`
+	Type      string `json:"type"`
 }
 
 // NewPlug creates a new management interface for the TP Link HS1xx plug

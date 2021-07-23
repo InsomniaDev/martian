@@ -2,6 +2,37 @@ package graphql
 
 import (
 	"github.com/graphql-go/graphql"
+	"github.com/insomniadev/martian/integrations/harmony"
+	"github.com/insomniadev/martian/integrations/homeassistant"
+	"github.com/insomniadev/martian/integrations/kasa"
+	"github.com/insomniadev/martian/integrations/lutron"
+)
+
+type IntegrationQueryType struct {
+	Lutron  lutron.Lutron                       `json:"lutron"`
+	Hass    []homeassistant.HomeAssistantDevice `json:"hass"`
+	Harmony harmony.Device                      `json:"harmony"`
+	Kasa    []kasa.Plug                         `json:"kasa"`
+}
+
+var integrationsType = graphql.NewObject(
+	graphql.ObjectConfig{
+		Name: "Integrations",
+		Fields: graphql.Fields{
+			"lutron": &graphql.Field{
+				Type: lutron.GraphqlLutronType,
+			},
+			"hass": &graphql.Field{
+				Type: graphql.NewList(homeAssistantType),
+			},
+			"harmony": &graphql.Field{
+				Type: harmonyType,
+			},
+			"kasa": &graphql.Field{
+				Type: graphql.NewList(kasaType),
+			},
+		},
+	},
 )
 
 //Lutron struct
@@ -163,14 +194,12 @@ var kasaType = graphql.NewObject(
 	},
 )
 
-
 type Custom struct {
 	Type    string   `yaml:"type"`
 	State   string   `yaml:"state"`
 	Name    string   `yaml:"name"`
 	Devices []string `yaml:"devices"`
 }
-
 
 var customType = graphql.NewObject(
 	graphql.ObjectConfig{
