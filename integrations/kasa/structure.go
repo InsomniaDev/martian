@@ -3,14 +3,28 @@ package kasa
 import (
 	"encoding/json"
 	"time"
+
+	"github.com/graphql-go/graphql"
 )
 
 // PowerState represents a state for the plug relay
 type PowerState int
 
 type Devices struct {
-	Plugs []Plug
+	Plugs []Plug `json="plugs"`
 }
+
+// GraphqlKasaType is the object type for the kasa integration
+var GraphqlKasaType = graphql.NewObject(
+	graphql.ObjectConfig{
+		Name: "KasaType",
+		Fields: graphql.Fields{
+			"plugs": &graphql.Field{
+				Type: graphql.NewList(GraphqlKasaDevicesType),
+			},
+		},
+	},
+)
 
 const (
 	// PowerOnCommand is the command sent to turn the relay on
@@ -53,6 +67,30 @@ type Plug struct {
 	AreaName  string `json:"areaName"`
 	Type      string `json:"type"`
 }
+
+// GraphqlKasaDevicesType is the grapqhl object for the Kasa plugs
+var GraphqlKasaDevicesType = graphql.NewObject(
+	graphql.ObjectConfig{
+		Name: "KasaDevicesType",
+		Fields: graphql.Fields{
+			"id": &graphql.Field{
+				Type: graphql.String,
+			},
+			"ipAddress": &graphql.Field{
+				Type: graphql.String,
+			},
+			"name": &graphql.Field{
+				Type: graphql.String,
+			},
+			"areaName": &graphql.Field{
+				Type: graphql.String,
+			},
+			"type": &graphql.Field{
+				Type: graphql.String,
+			},
+		},
+	},
+)
 
 // NewPlug creates a new management interface for the TP Link HS1xx plug
 func NewPlug(ip string) Plug {

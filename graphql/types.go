@@ -12,7 +12,7 @@ type IntegrationQueryType struct {
 	Lutron  lutron.Lutron                       `json:"lutron"`
 	Hass    []homeassistant.HomeAssistantDevice `json:"hass"`
 	Harmony harmony.Device                      `json:"harmony"`
-	Kasa    []kasa.Plug                         `json:"kasa"`
+	Kasa    kasa.Devices                        `json:"kasa"`
 }
 
 var integrationsType = graphql.NewObject(
@@ -29,7 +29,7 @@ var integrationsType = graphql.NewObject(
 				Type: harmonyType,
 			},
 			"kasa": &graphql.Field{
-				Type: graphql.NewList(kasaType),
+				Type: kasa.GraphqlKasaType,
 			},
 		},
 	},
