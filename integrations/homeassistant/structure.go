@@ -2,6 +2,7 @@ package homeassistant
 
 import (
 	"github.com/gorilla/websocket"
+	"github.com/graphql-go/graphql"
 )
 
 type HomeAssistant struct {
@@ -12,6 +13,27 @@ type HomeAssistant struct {
 	SelectedDevices []HomeAssistantDevice `json:"selectedDevices"`
 }
 
+// GraphqlHomeAssistantType is the graphql object for the HomeAssistant integration
+var GraphqlHomeAssistantType = graphql.NewObject(
+	graphql.ObjectConfig{
+		Name: "HomeAssistantType",
+		Fields: graphql.Fields{
+			"url": &graphql.Field{
+				Type: graphql.String,
+			},
+			"token": &graphql.Field{
+				Type: graphql.String,
+			},
+			"devices": &graphql.Field{
+				Type: graphql.NewList(GraphqlHomeAssistantDeviceType),
+			},
+			"selectedDevices": &graphql.Field{
+				Type: graphql.String,
+			},
+		},
+	},
+)
+
 type HomeAssistantDevice struct {
 	EntityId string `json:"entityId"`
 	Name     string `json:"name"`
@@ -20,6 +42,33 @@ type HomeAssistantDevice struct {
 	State    string `json:"state"`
 	AreaName string `json:"areaName"`
 }
+
+// GraphqlHomeAssistantDeviceType is the graphql object for the HomeAssistantDevice type
+var GraphqlHomeAssistantDeviceType = graphql.NewObject(
+	graphql.ObjectConfig{
+		Name: "HomeAssistantDeviceType",
+		Fields: graphql.Fields{
+			"entityId": &graphql.Field{
+				Type: graphql.String,
+			},
+			"name": &graphql.Field{
+				Type: graphql.String,
+			},
+			"group": &graphql.Field{
+				Type: graphql.String,
+			},
+			"type": &graphql.Field{
+				Type: graphql.String,
+			},
+			"state": &graphql.Field{
+				Type: graphql.String,
+			},
+			"areaName": &graphql.Field{
+				Type: graphql.String,
+			},
+		},
+	},
+)
 
 type AuthEvent struct {
 	Type        string `json:"type"`

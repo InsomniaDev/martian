@@ -129,19 +129,16 @@ func integrationResolver(params graphql.ResolveParams) (interface{}, error) {
 	var integration IntegrationQueryType
 	for _, k := range Integrations.Integrations {
 		switch k {
-		case "area":
-			Integrations.Menu = area.CheckIndexForAreas(Integrations.Menu, Integrations.AreaIndexes)
 		case "lutron":
 			integration.Lutron = Integrations.LutronData
-		case "harmony":
-			integration.Harmony = Integrations.HarmonyData
 		case "kasa":
 			integration.Kasa = Integrations.KasaData
+		case "hass":
+			integration.Hass = Integrations.Hass
 		default:
 			fmt.Println("This integration doesn't exist yet", k)
 		}
 	}
-	
 
 	return integration, nil
 }
