@@ -53,7 +53,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 
-export function IntegrationArea() {
+export function IntegrationArea({ integration }) {
     //   const { loading, error, data, refetch,  } = useQuery(getMenuConfiguration, {
     //     pollInterval: 500,
     //     fetchPolicy: "no-cache"
@@ -87,7 +87,7 @@ export function IntegrationArea() {
         <ExpansionPanel >
             <ExpansionPanelSummary >
                 <div className={classes.column}>
-                    <Typography className={classes.heading}>Test</Typography>
+                    <Typography className={classes.heading}>{integration.name}</Typography>
                 </div>
                 <div className={classes.column}>
                     <Typography className={classes.secondaryHeading}>Select Devices</Typography>

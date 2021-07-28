@@ -113,6 +113,7 @@ func menuConfiguration(params graphql.ResolveParams) (interface{}, error) {
 		case "life360":
 			fmt.Println("Not implemented")
 		case "hass":
+			// TODO: Need to update this and implement it to display on the screen and update the devices accordingly
 			fmt.Println("Not implemented")
 		default:
 			fmt.Println("This integration doesn't exist yet", k)

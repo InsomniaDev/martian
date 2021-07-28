@@ -1,6 +1,9 @@
+import { useQuery } from '@apollo/client';
 import { makeStyles } from '@material-ui/core/styles';
 import React from "react";
+import { HomeAssistantIntegration } from '../../components/IntegrationArea/HomeAssistant/HomeAssistant';
 import { IntegrationArea } from '../../components/IntegrationArea/IntegrationArea';
+import { getIntegrations } from './queries/getIntegrations';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -46,41 +49,37 @@ const useStyles = makeStyles((theme) => ({
 
 
 export function Integration() {
-//   const { loading, error, data, refetch,  } = useQuery(getMenuConfiguration, {
-//     pollInterval: 500,
-//     fetchPolicy: "no-cache"
-//   });
+  const { loading, error, data } = useQuery(getIntegrations);
 
   const classes = useStyles();
 
-  // Set up the subscription for the light state
-  // subscribeToMore({
-  //   document: subscriptionForMenu,
-  //   updateQuery: (prev, { subscriptionData: {
-  //     data: { menuChange },
-  //   } }) => {
-  //     if (!menuChange) {
-  //       return prev;
-  //     }
-  //     const newObject = {
-  //       "menuConfiguration": menuChange
-  //     }
-  //     return Object.assign({}, prev, newObject)
-  //   }
-  // });
+  if (loading) return <p>loading ...</p>;
+  if (error) {
+    console.log(error);
+    return <p>Error :( {error}</p>;
+  }
 
-//   if (loading) return <p>loading ...</p>;
-//   if (error) {
-//     console.log(error);
-//     return <p>Error :( {error}</p>;
-//   }
+
 
   return (
     <div className={classes.root}>
-      <IntegrationArea></IntegrationArea>
-      <IntegrationArea></IntegrationArea>
-      <IntegrationArea></IntegrationArea>
-      <IntegrationArea></IntegrationArea>
+      {data.integrations.integrations.map(integration => {
+        var integrationValue = {}
+        switch (integration) {
+          case "hass":
+            integrationValue.name = "Home Assistant";
+            integrationValue.value = data.integrations.hass;
+            return <HomeAssistantIntegration integration={integrationValue} />
+          case "kasa":
+            integrationValue.name = "Kasa Smart Home";
+            integrationValue.value = data.integrations.kasa;
+            return <IntegrationArea integration={integrationValue} />
+          case "lutron":
+            integrationValue.name = "Lutron Lighting";
+            integrationValue.value = data.integrations.lutron;
+            return <IntegrationArea integration={integrationValue} />
+        }
+      })}
     </div>
   )
 }
