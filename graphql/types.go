@@ -9,16 +9,20 @@ import (
 )
 
 type IntegrationQueryType struct {
-	Lutron  lutron.Lutron                       `json:"lutron"`
-	Hass    homeassistant.HomeAssistant `json:"hass"`
-	Harmony harmony.Device                      `json:"harmony"`
-	Kasa    kasa.Devices                        `json:"kasa"`
+	Lutron       lutron.Lutron               `json:"lutron"`
+	Hass         homeassistant.HomeAssistant `json:"hass"`
+	Harmony      harmony.Device              `json:"harmony"`
+	Kasa         kasa.Devices                `json:"kasa"`
+	Integrations []string                    `json:"integrations"`
 }
 
 var integrationsType = graphql.NewObject(
 	graphql.ObjectConfig{
 		Name: "Integrations",
 		Fields: graphql.Fields{
+			"integrations": &graphql.Field{
+				Type: graphql.NewList(graphql.String),
+			},
 			"lutron": &graphql.Field{
 				Type: lutron.GraphqlLutronType,
 			},

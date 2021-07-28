@@ -28,7 +28,7 @@ var GraphqlHomeAssistantType = graphql.NewObject(
 				Type: graphql.NewList(GraphqlHomeAssistantDeviceType),
 			},
 			"selectedDevices": &graphql.Field{
-				Type: graphql.String,
+				Type: graphql.NewList(GraphqlHomeAssistantDeviceType),
 			},
 		},
 	},

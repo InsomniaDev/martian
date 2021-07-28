@@ -127,6 +127,7 @@ func menuConfiguration(params graphql.ResolveParams) (interface{}, error) {
 
 func integrationResolver(params graphql.ResolveParams) (interface{}, error) {
 	var integration IntegrationQueryType
+	integration.Integrations = Integrations.Integrations
 	for _, k := range Integrations.Integrations {
 		switch k {
 		case "lutron":
