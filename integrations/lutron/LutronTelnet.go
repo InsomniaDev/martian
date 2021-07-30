@@ -8,6 +8,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/insomniadev/martian/modules/pubsub"
 	redispub "github.com/insomniadev/martian/modules/redispub"
@@ -172,17 +173,21 @@ func (l *Lutron) Connect() error {
 	}()
 
 	// Get all of the device current states
-	l.getAllDeviceStates()
+	go l.getAllDeviceStates()
 	return nil
 }
 
+// getAllDeviceStates will loop and update fresh every minute, this is to catch if some of the devices didn't actually turn off
 func (l *Lutron) getAllDeviceStates() {
-	for _, device := range l.Inventory {
-		device.State = "OFF"
-		l.SendCommand(&LutronMsg{
-			Id:   device.ID,
-			Type: Get,
-		})
+	for {
+		for _, device := range l.Inventory {
+			// device.State = "OFF" // TODO: Commenting this out for now, if it gives an invalid response, then we will need to change this
+			l.SendCommand(&LutronMsg{
+				Id:   device.ID,
+				Type: Get,
+			})
+		}
+		time.Sleep(1 * time.Minute)
 	}
 }
 
