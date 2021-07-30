@@ -69,6 +69,7 @@ const useStyles = makeStyles((theme) => ({
     button: {
         display: 'block',
         marginTop: theme.spacing(2),
+        backgroundColor: "#153679",
     },
     formControl: {
         margin: theme.spacing(1),

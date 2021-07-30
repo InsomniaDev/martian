@@ -154,6 +154,8 @@ export function Area({ refetch, area }) {
                     }
                 }), 10);
                 return;
+            default:
+                console.log("Not implemented yet");
         }
         area.devices.forEach(device => {
             if (device.type.toLowerCase() === type) {
@@ -178,7 +180,7 @@ export function Area({ refetch, area }) {
     const iconSize = 2.5;
 
     return (
-        <ReactCardFlip isFlipped={flipped} flipDirection="vertical">
+        <ReactCardFlip key={area.areaName + "_reactCardFlip"} isFlipped={flipped} flipDirection="vertical">
             <Card className={areaCurrentlyOn ? classes.rootOn : classes.root} key={area.areaName + "_card"} >
                 <div onClick={() => changeFace(!flipped)}>
                     <CardContent key={area.areaName + "_cardContent"}>
@@ -257,7 +259,7 @@ export function Area({ refetch, area }) {
                     </div>) : (<div></div>)}
                 </CardActions>
             </Card>
-            <Card className={classes.root} key={area.areaName + "_card"} >
+            <Card className={classes.root} key={area.areaName + "_backCard"} >
                 <div onClick={() => changeFace(!flipped)}>
                     <CardContent key={area.areaName + "_cardContent"}>
                         <Typography key={area.areaName + "_cardTitle"} className={classes.backOfCardTitle} color="textSecondary" gutterBottom>
@@ -288,7 +290,7 @@ export function Area({ refetch, area }) {
                         )
                     }
                 })}
-                <AreaMenu area={area} className={classes.ellipsis}></AreaMenu>
+                <AreaMenu key={area.areaName + "_areaMenu"} area={area} className={classes.ellipsis}></AreaMenu>
             </Card>
         </ReactCardFlip>
     );

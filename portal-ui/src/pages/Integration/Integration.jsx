@@ -78,6 +78,8 @@ export function Integration() {
             integrationValue.name = "Lutron Lighting";
             integrationValue.value = data.integrations.lutron;
             return <IntegrationArea integration={integrationValue} />
+          default:
+            return <div />
         }
       })}
     </div>

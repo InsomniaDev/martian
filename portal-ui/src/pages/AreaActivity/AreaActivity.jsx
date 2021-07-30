@@ -70,8 +70,8 @@ export function AreaActivity() {
   }
 
   return (
-    <div key="main" className={classes.root}>
-      <Grid key="main_grid" container spacing={3}>
+    <div key="areaActivity_main" className={classes.root}>
+      <Grid key="areaActivity_main_grid" container spacing={3}>
         {data.menuConfiguration.map(area => (
           <Grid key={area.areaName + "_grid"} item md={4}>
             <Area key={area.areaName} refetch={refetch} area={area}>

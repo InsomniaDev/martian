@@ -43,11 +43,11 @@ const useStyles = makeStyles((theme) => ({
 
 const rustyServer = "http://192.168.1.19:30919/graphql";
 const rustyWs = "ws://192.168.1.19:30919/subscriptions";
-const localServer = "http://localhost:4000/graphql";
+// const localServer = "http://localhost:4000/graphql";
 // const localWs = "ws://localhost:4000/subscriptions";
 
 const httpLink = new HttpLink({
-  uri: localServer,
+  uri: rustyServer,
 });
 
 // Create a WebSocket link:
@@ -178,8 +178,8 @@ const App = () => {
                   </SideNav>
                 </ClickOutside>
                 <main>
-                  <Route path="/" exact component={() => <AreaActivity></AreaActivity>} />
-                  <Route path="/home" component={() => <AreaActivity></AreaActivity>} />
+                  <Route path="/" exact component={() => <AreaActivity key="areaActivityComponent"></AreaActivity>} />
+                  <Route path="/home" component={() => <AreaActivity key="areaActivityComponent"></AreaActivity>} />
                   <Route path="/settings" component={props => <div />} />
                   <Route path="/settings/integrations" component={props => <Integration />} />
                   <Route path="/settings/about" component={props => <div />} />
@@ -196,48 +196,3 @@ const App = () => {
 render(<App />, document.getElementById("root"));
 
 export default App;
-
-
-// React Router v4 with React v16
-// https://reactrouter.com/web/api/Route
-
-{/* <Router>
-    <Route render={({ location, history }) => (
-        <React.Fragment>
-            <SideNav
-                onSelect={(selected) => {
-                    const to = '/' + selected;
-                    if (location.pathname !== to) {
-                        history.push(to);
-                    }
-                }}
-            >
-                <SideNav.Toggle />
-                <SideNav.Nav defaultSelected="home">
-                    <NavItem eventKey="home">
-                        <NavIcon>
-                            <i className="fa fa-fw fa-home" style={{ fontSize: '1.75em' }} />
-                        </NavIcon>
-                        <NavText>
-                            Home
-                        </NavText>
-                    </NavItem>
-                    <NavItem eventKey="devices">
-                        <NavIcon>
-                            <i className="fa fa-fw fa-device" style={{ fontSize: '1.75em' }} />
-                        </NavIcon>
-                        <NavText>
-                            Devices
-                        </NavText>
-                    </NavItem>
-                </SideNav.Nav>
-            </SideNav>
-            <main>
-                <Route path="/" exact component={props => <RootComponent />} />
-                <Route path="/home" component={props => <Home />} />
-                <Route path="/devices" component={props => <Devices />} />
-            </main>
-        </React.Fragment>
-    )}
-    />
-</Router> */}

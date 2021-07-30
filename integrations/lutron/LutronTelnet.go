@@ -46,9 +46,9 @@ func (l *Lutron) Connect() error {
 	loginReader := bufio.NewReader(l.conn)
 	l.reader = loginReader
 	// TODO turn to logging
-	fmt.Printf("Connection established between %s and localhost.\n", l.Config.URL)
-	fmt.Printf("Local Address : %s \n", l.conn.LocalAddr().String())
-	fmt.Printf("Remote Address : %s \n", l.conn.RemoteAddr().String())
+	log.Printf("Connection established between %s and localhost.\n", l.Config.URL)
+	log.Printf("Local Address : %s \n", l.conn.LocalAddr().String())
+	log.Printf("Remote Address : %s \n", l.conn.RemoteAddr().String())
 	message, _ := loginReader.ReadString(':')
 	fmt.Print("Message from server: " + message + "\n")
 	// send to socket
@@ -79,7 +79,7 @@ func (l *Lutron) Connect() error {
 				return
 			// case l.Responses <- scannedMsg:
 			default:
-				fmt.Println(scannedMsg)
+				// 	fmt.Println(scannedMsg)
 			}
 			response := &LutronMsg{}
 			groups := re.FindStringSubmatch(scannedMsg)
@@ -259,6 +259,6 @@ func (l *Lutron) SendCommand(c *LutronMsg) (resp string, err error) {
 	// TODO need to decide how to capture and bubble up either
 	// transport/connection errors, or semantic lighting errors
 	l.Send(cmd)
-	fmt.Println("sent ", cmd)
+	// fmt.Println("sent ", cmd)
 	return "", nil
 }
