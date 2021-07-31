@@ -42,7 +42,6 @@ const useStyles = makeStyles((theme) => ({
 export function AreaActivity() {
   const { loading, error, data, refetch,  } = useQuery(getMenuConfiguration, {
     pollInterval: 500,
-    fetchPolicy: "no-cache"
   });
 
   const classes = useStyles();

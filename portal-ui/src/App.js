@@ -71,16 +71,16 @@ const link = split(
   httpLink
 );
 
-const defaultOptions = {
-  watchQuery: {
-    fetchPolicy: 'no-cache',
-    errorPolicy: 'ignore',
-  },
-  query: {
-    fetchPolicy: 'no-cache',
-    errorPolicy: 'all',
-  },
-}
+// const defaultOptions = {
+//   watchQuery: {
+//     fetchPolicy: 'no-cache',
+//     errorPolicy: 'ignore',
+//   },
+//   query: {
+//     fetchPolicy: 'no-cache',
+//     errorPolicy: 'all',
+//   },
+// }
 
 const linkToRetry = new RetryLink({
   delay: {
@@ -103,7 +103,7 @@ const client = new ApolloClient({
     linkToRetry,
     link
   ]),
-  defaultOptions: defaultOptions,
+  // defaultOptions: defaultOptions,
 });
 
 function useWindowSize() {
