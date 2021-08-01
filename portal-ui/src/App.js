@@ -186,7 +186,7 @@ const App = () => {
                 </main>
               </React.Fragment>
             )} />
-          </Router>) : (<div></div>)
+          </Router>) : (<AreaActivity key="areaActivityComponent"></AreaActivity>)
         }
       </ApolloProvider>
     </div>
