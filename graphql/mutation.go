@@ -92,7 +92,7 @@ var rootMutation = graphql.NewObject(graphql.ObjectConfig{
 					Type: graphql.NewNonNull(graphql.String),
 				},
 				"devices": &graphql.ArgumentConfig{
-					Type: graphql.NewNonNull(graphql.NewList(graphql.String)),
+					Type: graphql.NewList(graphql.String),
 				},
 			},
 			Description: "Create or update an integration with the Martian API",

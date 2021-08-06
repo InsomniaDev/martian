@@ -13,6 +13,8 @@ import Typography from '@material-ui/core/Typography';
 import Chip from '@material-ui/core/Chip';
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
+import { useMutation } from '@apollo/client';
+import { selectDevicesForIntegration } from '../mutations/selectDevicesForIntegration';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -69,7 +71,7 @@ const useStyles = makeStyles((theme) => ({
     button: {
         display: 'block',
         marginTop: theme.spacing(2),
-        backgroundColor: "#153679",
+        backgroundColor: "#1682a3",
     },
     formControl: {
         margin: theme.spacing(1),
@@ -87,9 +89,31 @@ export function HomeAssistantIntegration({ integration }) {
     const classes = useStyles();
 
     const [selectedDevice, changeSelectedDevice] = useState("");
+    const [selectDevicesForIntegrationMutation] = useMutation(selectDevicesForIntegration);
     const handleChange = (event) => {
         changeSelectedDevice(event.target.value);
     };
+
+    const addToSelected = () => {
+        integration.selectedDevices = [selectedDevice]
+        devices = [selectedDevice.entityId];
+        console.log({devices})
+        // TODO: Add mutation here to add the entityID to the selected devices for home assistant
+        selectDevicesForIntegrationMutation({
+            variables: {
+                integration: "hass",
+                devices: devices,
+            }
+        })
+        changeSelectedDevice("");
+    }
+
+    var devices = [...integration.value.devices].sort((a, b) => (a.entityId > b.entityId) ? 1 : ((b.entityId > a.entityId) ? -1 : 0));
+
+    // Remove automations from the provided list
+    devices = devices.filter(function (elem) {
+        return !elem.entityId.includes("automation");
+    });
 
     return (
         <ExpansionPanel >
@@ -115,9 +139,7 @@ export function HomeAssistantIntegration({ integration }) {
                                 <em>None</em>
                             </MenuItem>
                             {
-                                integration.value.devices
-                                    .sort((a, b) => (a.entityId > b.entityId) ? 1 : ((b.entityId > a.entityId) ? -1 : 0))
-                                    .map(device => <MenuItem value={device}>{device.entityId}</MenuItem>)
+                                devices.map(device => <MenuItem value={device}>{device.entityId}</MenuItem>)
                             }
                         </Select>
                     </FormControl>
@@ -128,7 +150,7 @@ export function HomeAssistantIntegration({ integration }) {
                             <Typography className={classes.deviceHeading} align="left"><em className={classes.em}>AREA NAME:</em>     {selectedDevice.areaName}</Typography>
                             <Typography className={classes.deviceHeading} align="left"><em className={classes.em}>NAME:</em>          {selectedDevice.name}</Typography>
                             <Typography className={classes.deviceHeading} align="left"><em className={classes.em}>CURRENT STATE:</em> {selectedDevice.state}</Typography>
-                            <Button className={classes.button}>Add</Button>
+                            <Button className={classes.button} onClick={addToSelected}>Add</Button>
                         </div> : <div></div>}
                 </div>
                 <div className={classNames(classes.column, classes.helper)}>

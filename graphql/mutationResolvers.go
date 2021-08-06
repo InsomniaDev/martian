@@ -224,6 +224,7 @@ func updateIntegration(params graphql.ResolveParams) (interface{}, error) {
 		if len(Integrations.KasaData.Plugs) > currentDevices {
 			Integrations.Database.PutIntegrationValue(integrationType, Integrations.KasaData.Plugs)
 		} else {
+			// TODO: Need to fix this piece, it is constantly assigning it as "", even though there are new ones
 			Integrations.Database.PutIntegrationValue(integrationType, "")
 		}
 		newIntegration = true
@@ -272,14 +273,22 @@ func updateIndexForArea(params graphql.ResolveParams) (interface{}, error) {
 	return true, err
 }
 
+type dataDevices struct {
+	Data string
+}
+
 // selectDevicesForIntegration will add in the selected devices for the provided integration type
 func selectDevicesForIntegration(params graphql.ResolveParams) (interface{}, error) {
 	integration := params.Args["integration"].(string)
-	devices := params.Args["devices"].([]string)
+	devices := params.Args["devices"].([]interface{})
+	var daters []string
+	for a := range devices {
+		daters = append(daters, devices[a].(string))
+	}
 
 	switch integration{
 	case "hass":
-		err := Integrations.Hass.UpdateSelectedDevices(devices)
+		err := Integrations.Hass.UpdateSelectedDevices(daters)
 		if err != nil {
 			return false, err
 		}

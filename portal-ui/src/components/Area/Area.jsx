@@ -201,9 +201,9 @@ export function Area({ refetch, area }) {
                     }}>
                         <IconButton key={area.areaName + "_cardLightButton"} >
                             {lightActive ? (
-                                <Icon key={area.areaName + "_cardIcon"} path={mdiLightbulbOn} className={classes.lightOn} size={iconSize} />
+                                <Icon key={area.areaName + "_cardLightIcon"} path={mdiLightbulbOn} className={classes.lightOn} size={iconSize} />
                             ) : (
-                                <Icon key={area.areaName + "_cardIcon"} path={mdiLightbulbOff} size={iconSize} />
+                                <Icon key={area.areaName + "_cardLightIcon"} path={mdiLightbulbOff} size={iconSize} />
                             )}
                         </IconButton>
                     </div>) : (<div></div>)}
@@ -218,9 +218,9 @@ export function Area({ refetch, area }) {
                     }}>
                         <IconButton key={area.areaName + "_cardPlugButton"} >
                             {plugActive ? (
-                                <Icon key={area.areaName + "_cardIcon"} path={mdiPowerPlug} className={classes.lightOn} size={iconSize} />
+                                <Icon key={area.areaName + "_cardPlugIcon"} path={mdiPowerPlug} className={classes.lightOn} size={iconSize} />
                             ) : (
-                                <Icon key={area.areaName + "_cardIcon"} path={mdiPowerPlugOff} size={iconSize} />
+                                <Icon key={area.areaName + "_cardPlugIcon"} path={mdiPowerPlugOff} size={iconSize} />
                             )}
                         </IconButton>
                     </div>) : (<div></div>)}
@@ -235,9 +235,9 @@ export function Area({ refetch, area }) {
                     }}>
                         <IconButton key={area.areaName + "_cardFanButton"} >
                             {fanActive ? (
-                                <Icon key={area.areaName + "_cardIcon"} path={mdiFan} className={classes.lightOn} size={iconSize} />
+                                <Icon key={area.areaName + "_cardFanIcon"} path={mdiFan} className={classes.lightOn} size={iconSize} />
                             ) : (
-                                <Icon key={area.areaName + "_cardIcon"} path={mdiFanOff} size={iconSize} />
+                                <Icon key={area.areaName + "_cardFanIcon"} path={mdiFanOff} size={iconSize} />
                             )}
                         </IconButton>
                     </div>) : (<div></div>)}
@@ -249,11 +249,11 @@ export function Area({ refetch, area }) {
                             alert("You Must Select Activity In Area Menu")
                         }
                     }}>
-                        <IconButton key={area.areaName + "_cardFanButton"} >
+                        <IconButton key={area.areaName + "_cardHarmonyButton"} >
                             {harmonyActive ? (
-                                <Icon key={area.areaName + "_cardIcon"} path={mdiTelevision} className={classes.lightOn} size={iconSize} />
+                                <Icon key={area.areaName + "_cardHarmonyIcon"} path={mdiTelevision} className={classes.lightOn} size={iconSize} />
                             ) : (
-                                <Icon key={area.areaName + "_cardIcon"} path={mdiTelevisionOff} size={iconSize} />
+                                <Icon key={area.areaName + "_cardHarmonyIcon"} path={mdiTelevisionOff} size={iconSize} />
                             )}
                         </IconButton>
                     </div>) : (<div></div>)}
