@@ -108,11 +108,26 @@ func (h *HomeAssistant) listen() {
 				newDevice := HomeAssistantDevice{EntityId: result.EntityId, Name: name, Type: deviceType, State: result.State, AreaName: areaName}
 				h.Devices = append(h.Devices, newDevice)
 			}
-			// for _, dev := range h.Devices {
-			// 	if dev.Type == "light" {
-			// 		fmt.Println(dev.Name)
-			// 	}
-			// }
+		// for _, dev := range h.Devices {
+		// 	if dev.Type == "light" {
+		// 		fmt.Println(dev.Name)
+		// 	}
+		// }
+		case subscribeEventsId:
+			for _, result := range message.Result {
+				for i, devices := range h.InterfaceDevices {
+					if result.EntityId == devices.EntityId {
+						h.InterfaceDevices[i].State = result.State
+					}
+				}
+
+				for i, devices := range h.AutomatedDevices {
+					if result.EntityId == devices.EntityId {
+						h.AutomatedDevices[i].State = result.State
+						// TODO: Need to do something with the brain piece here since the state was updated for the device
+					}
+				}
+			}
 		}
 	}
 }
@@ -177,8 +192,8 @@ func (h *HomeAssistant) getServices() {
 	}
 }
 
-// UpdateSelectedDevices will go through and update the devices as selected or not selected
-func (h *HomeAssistant) UpdateSelectedDevices(selectedDevices []string, addDevices bool) error {
+// UpdateInterfaceDevices will go through and update the devices as selected or not selected
+func (h *HomeAssistant) UpdateInterfaceDevices(selectedDevices []string, addDevices bool) error {
 	var newlySelectedDevices []HomeAssistantDevice
 
 	// Cycle through all of the available devices for HomeAssistant
@@ -186,7 +201,7 @@ func (h *HomeAssistant) UpdateSelectedDevices(selectedDevices []string, addDevic
 
 		selectedDeviceExists := false
 		// Cycle through all of the already selected devices to see if there is a match
-		for _, selectedDevice := range h.SelectedDevices {
+		for _, selectedDevice := range h.InterfaceDevices {
 
 			// If this available device is already selected, then set selectedDeviceExists as true
 			if availableDevice.EntityId == selectedDevice.EntityId {
@@ -213,7 +228,7 @@ func (h *HomeAssistant) UpdateSelectedDevices(selectedDevices []string, addDevic
 			newlySelectedDevices = append(newlySelectedDevices, availableDevice)
 		}
 	}
-	h.SelectedDevices = newlySelectedDevices
+	h.InterfaceDevices = newlySelectedDevices
 	var db database.Database
 	err := db.PutIntegrationValue("hass", h)
 	if err != nil {

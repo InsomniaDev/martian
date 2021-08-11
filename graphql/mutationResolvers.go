@@ -289,7 +289,7 @@ func selectDevicesForIntegration(params graphql.ResolveParams) (interface{}, err
 
 	switch integration{
 	case "hass":
-		err := Integrations.Hass.UpdateSelectedDevices(daters, addDevices)
+		err := Integrations.Hass.UpdateInterfaceDevices(daters, addDevices)
 		if err != nil {
 			return false, err
 		}

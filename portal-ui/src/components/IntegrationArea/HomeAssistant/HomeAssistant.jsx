@@ -94,9 +94,9 @@ export function HomeAssistantIntegration({ integration, refetchData }) {
         changeSelectedDevice(event.target.value);
     };
 
-    // Add the selected variable to the selectedDevices for Hass
+    // Add the selected variable to the interfaceDevices for Hass
     const addToSelected = () => {
-        integration.selectedDevices = [selectedDevice]
+        integration.interfaceDevices = [selectedDevice]
         devices = [selectedDevice.entityId];
         selectDevicesForIntegrationMutation({
             variables: {
@@ -109,7 +109,7 @@ export function HomeAssistantIntegration({ integration, refetchData }) {
         refetchData();
     }
 
-    // Remove the selected variable from the selectedDevices for Hass
+    // Remove the selected variable from the interfaceDevices for Hass
     const removeSelected = (device) => {
         selectDevicesForIntegrationMutation({
             variables: {
@@ -165,7 +165,7 @@ export function HomeAssistantIntegration({ integration, refetchData }) {
                             <Typography className={classes.deviceHeading} align="left"><em className={classes.em}>NAME:</em>          {selectedDevice.name}</Typography>
                             <Typography className={classes.deviceHeading} align="left"><em className={classes.em}>CURRENT STATE:</em> {selectedDevice.state}</Typography>
                             <div>
-                                <Button className={classes.button} onClick={addToSelected}>Add to selected</Button>
+                                <Button className={classes.button} onClick={addToSelected}>Add to interface</Button>
                                 <Button className={classes.button} onClick={addToSelected}>Add to automated</Button>
                                 <Button className={classes.button} onClick={addToSelected}>edit device</Button>
                                 <Button className={classes.button} onClick={addToSelected}>clear</Button>
@@ -173,8 +173,8 @@ export function HomeAssistantIntegration({ integration, refetchData }) {
                         </div> : <div></div>}
                 </div>
                 <div className={classNames(classes.column, classes.helper)}>
-                    <Typography className={classes.columnHeading}>Selected Devices</Typography>
-                    {integration.value.selectedDevices.map(device =>
+                    <Typography className={classes.columnHeading}>Interface Devices</Typography>
+                    {integration.value.interfaceDevices.map(device =>
                         <Chip label={device.entityId} className={classes.chip} onDelete={() => removeSelected(device)} />
                     )}
                 </div>

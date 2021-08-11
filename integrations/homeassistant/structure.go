@@ -6,11 +6,12 @@ import (
 )
 
 type HomeAssistant struct {
-	Url             string `json:"url"`
-	Token           string `json:"token"`
-	Connection      *websocket.Conn
-	Devices         []HomeAssistantDevice `json:"devices"`
-	SelectedDevices []HomeAssistantDevice `json:"selectedDevices"`
+	Url              string `json:"url"`
+	Token            string `json:"token"`
+	Connection       *websocket.Conn
+	Devices          []HomeAssistantDevice `json:"devices"`
+	InterfaceDevices []HomeAssistantDevice `json:"interfaceDevices"`
+	AutomatedDevices []HomeAssistantDevice `json:"automatedDevices"`
 }
 
 // GraphqlHomeAssistantType is the graphql object for the HomeAssistant integration
@@ -27,7 +28,10 @@ var GraphqlHomeAssistantType = graphql.NewObject(
 			"devices": &graphql.Field{
 				Type: graphql.NewList(GraphqlHomeAssistantDeviceType),
 			},
-			"selectedDevices": &graphql.Field{
+			"interfaceDevices": &graphql.Field{
+				Type: graphql.NewList(GraphqlHomeAssistantDeviceType),
+			},
+			"automatedDevices": &graphql.Field{
 				Type: graphql.NewList(GraphqlHomeAssistantDeviceType),
 			},
 		},
