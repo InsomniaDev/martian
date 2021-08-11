@@ -38,6 +38,7 @@ var (
 
 func (h *HomeAssistant) Init(configuration string) error {
 	err := json.Unmarshal([]byte(configuration), &h)
+	h.Devices = []HomeAssistantDevice{}
 	if err != nil {
 		return err
 	}
@@ -218,6 +219,6 @@ func (h *HomeAssistant) UpdateSelectedDevices(selectedDevices []string, addDevic
 	if err != nil {
 		log.Println(err)
 	}
-	
+
 	return nil
 }
