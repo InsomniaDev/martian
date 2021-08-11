@@ -85,7 +85,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 
-export function HomeAssistantIntegration({ integration }) {
+export function HomeAssistantIntegration({ integration, refetchData }) {
     const classes = useStyles();
 
     const [selectedDevice, changeSelectedDevice] = useState("");
@@ -94,18 +94,32 @@ export function HomeAssistantIntegration({ integration }) {
         changeSelectedDevice(event.target.value);
     };
 
+    // Add the selected variable to the selectedDevices for Hass
     const addToSelected = () => {
         integration.selectedDevices = [selectedDevice]
         devices = [selectedDevice.entityId];
-        console.log({devices})
-        // TODO: Add mutation here to add the entityID to the selected devices for home assistant
         selectDevicesForIntegrationMutation({
             variables: {
                 integration: "hass",
                 devices: devices,
+                addDevices: true,
             }
         })
         changeSelectedDevice("");
+        refetchData();
+    }
+
+    // Remove the selected variable from the selectedDevices for Hass
+    const removeSelected = (device) => {
+        selectDevicesForIntegrationMutation({
+            variables: {
+                integration: "hass",
+                devices: [device.entityId],
+                addDevices: false,
+            }
+        })
+        changeSelectedDevice("");
+        refetchData();
     }
 
     var devices = [...integration.value.devices].sort((a, b) => (a.entityId > b.entityId) ? 1 : ((b.entityId > a.entityId) ? -1 : 0));
@@ -122,7 +136,7 @@ export function HomeAssistantIntegration({ integration }) {
                     <Typography className={classes.heading}>{integration.name}</Typography>
                 </div>
                 <div className={classes.column}>
-                    <Typography className={classes.secondaryHeading}>Select Devices</Typography>
+                    <Typography className={classes.secondaryHeading}>Edit Configuration</Typography>
                 </div>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails className={classes.details}>
@@ -150,13 +164,18 @@ export function HomeAssistantIntegration({ integration }) {
                             <Typography className={classes.deviceHeading} align="left"><em className={classes.em}>AREA NAME:</em>     {selectedDevice.areaName}</Typography>
                             <Typography className={classes.deviceHeading} align="left"><em className={classes.em}>NAME:</em>          {selectedDevice.name}</Typography>
                             <Typography className={classes.deviceHeading} align="left"><em className={classes.em}>CURRENT STATE:</em> {selectedDevice.state}</Typography>
-                            <Button className={classes.button} onClick={addToSelected}>Add</Button>
+                            <div>
+                                <Button className={classes.button} onClick={addToSelected}>Add to selected</Button>
+                                <Button className={classes.button} onClick={addToSelected}>Add to automated</Button>
+                                <Button className={classes.button} onClick={addToSelected}>edit device</Button>
+                                <Button className={classes.button} onClick={addToSelected}>clear</Button>
+                            </div>
                         </div> : <div></div>}
                 </div>
                 <div className={classNames(classes.column, classes.helper)}>
                     <Typography className={classes.columnHeading}>Selected Devices</Typography>
                     {integration.value.selectedDevices.map(device =>
-                        <Chip label={device.entityId} className={classes.chip} onDelete={() => { }} />
+                        <Chip label={device.entityId} className={classes.chip} onDelete={() => removeSelected(device)} />
                     )}
                 </div>
                 <div className={classNames(classes.column, classes.helper)}>
@@ -169,13 +188,6 @@ export function HomeAssistantIntegration({ integration }) {
                     </Typography>
                 </div>
             </ExpansionPanelDetails>
-            <Divider />
-            <ExpansionPanelActions>
-                <Button size="small">Cancel</Button>
-                <Button size="small" color="primary">
-                    Save
-                </Button>
-            </ExpansionPanelActions>
         </ExpansionPanel>
     )
 }

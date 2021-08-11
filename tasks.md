@@ -1,3 +1,14 @@
+# current work
+- hass
+  - persist selectedDevices in bolt
+  - create automatedDevices array
+    - update struct
+    - create mutation to add and remove
+    - update ui
+    - persist in bolt
+  - align buttons horizontally, work on buttons
+
+
 ## Need to do
 - [ ] Need to add unit test coverage
 - [ ] Integrate with BoltDB for the backend rather than using the YAML, then setup through APIs implementing different integrations

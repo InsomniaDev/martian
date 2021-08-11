@@ -281,6 +281,7 @@ type dataDevices struct {
 func selectDevicesForIntegration(params graphql.ResolveParams) (interface{}, error) {
 	integration := params.Args["integration"].(string)
 	devices := params.Args["devices"].([]interface{})
+	addDevices := params.Args["addDevices"].(bool)
 	var daters []string
 	for a := range devices {
 		daters = append(daters, devices[a].(string))
@@ -288,7 +289,7 @@ func selectDevicesForIntegration(params graphql.ResolveParams) (interface{}, err
 
 	switch integration{
 	case "hass":
-		err := Integrations.Hass.UpdateSelectedDevices(daters)
+		err := Integrations.Hass.UpdateSelectedDevices(daters, addDevices)
 		if err != nil {
 			return false, err
 		}

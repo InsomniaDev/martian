@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/gorilla/websocket"
+	"github.com/insomniadev/martian/database"
 	"github.com/insomniadev/martian/modules/redispub"
 )
 
@@ -175,23 +176,48 @@ func (h *HomeAssistant) getServices() {
 	}
 }
 
-// UpdateSelectedDevices will go through and update the selected
-func (h *HomeAssistant) UpdateSelectedDevices(selectedDevices []string) error {
-	// h.SelectedDevices = []HomeAssistantDevice{}
-	for _, entityId := range selectedDevices {
-		for i := range h.Devices {
-			if entityId == h.Devices[i].EntityId {
-				found := false
-				for x := range h.SelectedDevices {
-					if entityId == h.SelectedDevices[x].EntityId {
-						found = true
-					}
-				}
-				if !found {
-					h.SelectedDevices = append(h.SelectedDevices, h.Devices[i])
-				}
+// UpdateSelectedDevices will go through and update the devices as selected or not selected
+func (h *HomeAssistant) UpdateSelectedDevices(selectedDevices []string, addDevices bool) error {
+	var newlySelectedDevices []HomeAssistantDevice
+
+	// Cycle through all of the available devices for HomeAssistant
+	for _, availableDevice := range h.Devices {
+
+		selectedDeviceExists := false
+		// Cycle through all of the already selected devices to see if there is a match
+		for _, selectedDevice := range h.SelectedDevices {
+
+			// If this available device is already selected, then set selectedDeviceExists as true
+			if availableDevice.EntityId == selectedDevice.EntityId {
+				selectedDeviceExists = true
+				break // break out of the selectedDevice cycle since there is a match
 			}
 		}
+
+		availableDeviceIsNowSelected := false
+		// Cycle through the selectedDevices parameter to see if the available device has a match
+		for _, newlySelectedDevice := range selectedDevices {
+
+			// If the available device matches with the newly selected criteria then set as true
+			if availableDevice.EntityId == newlySelectedDevice {
+				availableDeviceIsNowSelected = true
+			}
+		}
+
+		// IF the device is already selected, and is one of the newly selected, and set to be added
+		//			IF addDevices is FALSE, then it will be removed from the selectedDevices slice
+		if availableDeviceIsNowSelected && addDevices {
+			newlySelectedDevices = append(newlySelectedDevices, availableDevice)
+		} else if selectedDeviceExists && !availableDeviceIsNowSelected { // IF it was already selected
+			newlySelectedDevices = append(newlySelectedDevices, availableDevice)
+		}
 	}
+	h.SelectedDevices = newlySelectedDevices
+	var db database.Database
+	err := db.PutIntegrationValue("hass", h)
+	if err != nil {
+		log.Println(err)
+	}
+	
 	return nil
 }

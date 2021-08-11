@@ -49,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 export function Integration() {
-  const { loading, error, data } = useQuery(getIntegrations);
+  const { loading, error, data, refetch } = useQuery(getIntegrations);
 
   const classes = useStyles();
 
@@ -69,7 +69,7 @@ export function Integration() {
           case "hass":
             integrationValue.name = "Home Assistant";
             integrationValue.value = data.integrations.hass;
-            return <HomeAssistantIntegration integration={integrationValue} />
+            return <HomeAssistantIntegration integration={integrationValue} refetchData={() => refetch()} />
           case "kasa":
             integrationValue.name = "Kasa Smart Home";
             integrationValue.value = data.integrations.kasa;
