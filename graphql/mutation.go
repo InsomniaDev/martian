@@ -97,6 +97,9 @@ var rootMutation = graphql.NewObject(graphql.ObjectConfig{
 				"addDevices":  &graphql.ArgumentConfig{
 					Type: graphql.NewNonNull(graphql.Boolean),
 				},
+				"automationDevice":  &graphql.ArgumentConfig{
+					Type: graphql.NewNonNull(graphql.Boolean),
+				},
 			},
 			Description: "Create or update an integration with the Martian API",
 			Resolve:     selectDevicesForIntegration,

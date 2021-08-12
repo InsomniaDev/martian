@@ -68,10 +68,14 @@ const useStyles = makeStyles((theme) => ({
         display: 'block',
         marginTop: theme.spacing(2),
     },
+    buttonDiv: {
+        display: 'flex',
+        flexDirection: 'row',
+    },
     button: {
         display: 'block',
-        marginTop: theme.spacing(2),
-        backgroundColor: "#1682a3",
+        margin: theme.spacing(1),
+        backgroundColor: "#9cdbee",
     },
     formControl: {
         margin: theme.spacing(1),
@@ -95,31 +99,61 @@ export function HomeAssistantIntegration({ integration, refetchData }) {
     };
 
     // Add the selected variable to the interfaceDevices for Hass
-    const addToSelected = () => {
-        integration.interfaceDevices = [selectedDevice]
+    const addToSelectedInterface = () => {
         devices = [selectedDevice.entityId];
         selectDevicesForIntegrationMutation({
             variables: {
                 integration: "hass",
                 devices: devices,
                 addDevices: true,
+                automationDevice: false,
             }
         })
-        changeSelectedDevice("");
         refetchData();
     }
 
     // Remove the selected variable from the interfaceDevices for Hass
-    const removeSelected = (device) => {
+    const removeSelectedInterface = (device) => {
         selectDevicesForIntegrationMutation({
             variables: {
                 integration: "hass",
                 devices: [device.entityId],
                 addDevices: false,
+                automationDevice: false,
             }
         })
-        changeSelectedDevice("");
         refetchData();
+    }
+
+    // Add the selected variable to the interfaceDevices for Hass
+    const addToSelectedAutomation = () => {
+        devices = [selectedDevice.entityId];
+        selectDevicesForIntegrationMutation({
+            variables: {
+                integration: "hass",
+                devices: devices,
+                addDevices: true,
+                automationDevice: true,
+            }
+        })
+        refetchData();
+    }
+
+    // Remove the selected variable from the interfaceDevices for Hass
+    const removeSelectedAutomation = (device) => {
+        selectDevicesForIntegrationMutation({
+            variables: {
+                integration: "hass",
+                devices: [device.entityId],
+                addDevices: false,
+                automationDevice: true,
+            }
+        })
+        refetchData();
+    }
+
+    const clearSelected = () => {
+        changeSelectedDevice("");
     }
 
     var devices = [...integration.value.devices].sort((a, b) => (a.entityId > b.entityId) ? 1 : ((b.entityId > a.entityId) ? -1 : 0));
@@ -164,28 +198,25 @@ export function HomeAssistantIntegration({ integration, refetchData }) {
                             <Typography className={classes.deviceHeading} align="left"><em className={classes.em}>AREA NAME:</em>     {selectedDevice.areaName}</Typography>
                             <Typography className={classes.deviceHeading} align="left"><em className={classes.em}>NAME:</em>          {selectedDevice.name}</Typography>
                             <Typography className={classes.deviceHeading} align="left"><em className={classes.em}>CURRENT STATE:</em> {selectedDevice.state}</Typography>
-                            <div>
-                                <Button className={classes.button} onClick={addToSelected}>Add to interface</Button>
-                                <Button className={classes.button} onClick={addToSelected}>Add to automated</Button>
-                                <Button className={classes.button} onClick={addToSelected}>edit device</Button>
-                                <Button className={classes.button} onClick={addToSelected}>clear</Button>
+                            <div className={classes.buttonDiv}>
+                                <Button className={classes.button} onClick={addToSelectedInterface}>Add to interface</Button>
+                                <Button className={classes.button} onClick={addToSelectedAutomation}>Add to automated</Button>
+                                <Button className={classes.button} onClick={addToSelectedInterface}>edit device</Button>
+                                <Button className={classes.button} onClick={clearSelected}>clear</Button>
                             </div>
                         </div> : <div></div>}
                 </div>
                 <div className={classNames(classes.column, classes.helper)}>
                     <Typography className={classes.columnHeading}>Interface Devices</Typography>
                     {integration.value.interfaceDevices.map(device =>
-                        <Chip label={device.entityId} className={classes.chip} onDelete={() => removeSelected(device)} />
+                        <Chip label={device.entityId} className={classes.chip} onDelete={() => removeSelectedInterface(device)} />
                     )}
                 </div>
                 <div className={classNames(classes.column, classes.helper)}>
-                    <Typography variant="caption">
-                        Select your destination of choice
-                        <br />
-                        <a href="#sub-labels-and-columns" className={classes.link}>
-                            Learn more
-                        </a>
-                    </Typography>
+                    <Typography className={classes.columnHeading}>Automation Devices</Typography>
+                    {integration.value.automatedDevices.map(device =>
+                        <Chip label={device.entityId} className={classes.chip} onDelete={() => removeSelectedAutomation(device)} />
+                    )}
                 </div>
             </ExpansionPanelDetails>
         </ExpansionPanel>

@@ -1,12 +1,6 @@
 # current work
 - hass
-  - persist selectedDevices in bolt
-  - create automatedDevices array
-    - update struct
-    - create mutation to add and remove
-    - update ui
-    - persist in bolt
-  - align buttons horizontally, work on buttons
+  - Create edit screen
 
 
 ## Need to do

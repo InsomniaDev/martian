@@ -193,15 +193,32 @@ func (h *HomeAssistant) getServices() {
 }
 
 // UpdateInterfaceDevices will go through and update the devices as selected or not selected
-func (h *HomeAssistant) UpdateInterfaceDevices(selectedDevices []string, addDevices bool) error {
-	var newlySelectedDevices []HomeAssistantDevice
+func (h *HomeAssistant) UpdateInterfaceDevices(selectedDevices []string, addDevices bool, automationDevice bool) error {
+	
+	// Compare either through the automation or interface selections
+	if automationDevice {
+		h.AutomatedDevices = checkIfDeviceIsInList(h.Devices, h.AutomatedDevices, selectedDevices, addDevices)
+	} else {
+		h.InterfaceDevices = checkIfDeviceIsInList(h.Devices, h.InterfaceDevices, selectedDevices, addDevices)
+	}
+	var db database.Database
+	err := db.PutIntegrationValue("hass", h)
+	if err != nil {
+		log.Println(err)
+	}
 
+	return nil
+}
+
+// checkIfDeviceIsInList is an internal method to see if the value already exists in the list
+func checkIfDeviceIsInList(allDevices []HomeAssistantDevice, alreadyChosenDevices []HomeAssistantDevice, selectedDevices []string, addDevices bool) []HomeAssistantDevice {
+	var newlySelectedDevices []HomeAssistantDevice
 	// Cycle through all of the available devices for HomeAssistant
-	for _, availableDevice := range h.Devices {
+	for _, availableDevice := range allDevices {
 
 		selectedDeviceExists := false
 		// Cycle through all of the already selected devices to see if there is a match
-		for _, selectedDevice := range h.InterfaceDevices {
+		for _, selectedDevice := range alreadyChosenDevices {
 
 			// If this available device is already selected, then set selectedDeviceExists as true
 			if availableDevice.EntityId == selectedDevice.EntityId {
@@ -228,12 +245,5 @@ func (h *HomeAssistant) UpdateInterfaceDevices(selectedDevices []string, addDevi
 			newlySelectedDevices = append(newlySelectedDevices, availableDevice)
 		}
 	}
-	h.InterfaceDevices = newlySelectedDevices
-	var db database.Database
-	err := db.PutIntegrationValue("hass", h)
-	if err != nil {
-		log.Println(err)
-	}
-
-	return nil
+	return newlySelectedDevices
 }

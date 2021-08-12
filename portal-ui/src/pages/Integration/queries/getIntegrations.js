@@ -19,7 +19,15 @@ query integrations {
           type
           group
         }
-        selectedDevices {
+        interfaceDevices {
+          areaName
+          name
+          entityId
+          state
+          type
+          group
+        }
+        automatedDevices {
           areaName
           name
           entityId
