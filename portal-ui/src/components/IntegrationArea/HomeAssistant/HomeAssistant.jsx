@@ -54,7 +54,7 @@ const useStyles = makeStyles((theme) => ({
     },
     helper: {
         borderLeft: `2px solid ${theme.palette.divider}`,
-        padding: `${theme.spacing.unit}px ${theme.spacing.unit * 2}px`,
+        padding: `${theme.spacing()}px ${theme.spacing(2)}px`,
     },
     link: {
         color: theme.palette.primary.main,
@@ -186,11 +186,11 @@ export function HomeAssistantIntegration({ integration, refetchData, areaData })
                             value={selectedDevice}
                             onChange={handleChange}
                         >
-                            <MenuItem key="hassFormControlMenuItem" value="">
+                            <MenuItem key="select_none" key="hassFormControlMenuItem" value="">
                                 <em>None</em>
                             </MenuItem>
                             {
-                                devices.map(device => <MenuItem value={device}>{device.entityId}</MenuItem>)
+                                devices.map(device => <MenuItem key={"select_" + device.entityId} value={device}>{device.entityId}</MenuItem>)
                             }
                         </Select>
                     </FormControl>
@@ -220,31 +220,37 @@ export function HomeAssistantIntegration({ integration, refetchData, areaData })
                                 align="left">
                                 <em className={classes.em}>NAME:</em>          {selectedDevice.name}
                             </Typography>
-                            <Typography className={classes.deviceHeading} align="left"><em className={classes.em}>CURRENT STATE:</em> {selectedDevice.state}</Typography>
-                            <div className={classes.buttonDiv}>
-                                <Button className={classes.button} onClick={addToSelectedInterface}>Add to interface</Button>
-                                <Button className={classes.button} onClick={addToSelectedAutomation}>Add to automated</Button>
+                            <Typography
+                                key="selectedDeviceCurrentState"
+                                className={classes.deviceHeading}
+                                align="left">
+                                <em className={classes.em}>CURRENT STATE:</em> {selectedDevice.state}
+                            </Typography>
+                            <div key="selectedDeviceDiv" className={classes.buttonDiv}>
+                                <Button key="selectedDeviceInterfaceButton" className={classes.button} onClick={addToSelectedInterface}>Add to interface</Button>
+                                <Button key="selectedDeviceAutomatedButton" className={classes.button} onClick={addToSelectedAutomation}>Add to automated</Button>
                                 <HomeAssistantEditMenu
+                                    key="selectedDeviceEditButton" 
                                     device={selectedDevice}
                                     buttonStyle={classes.button}
                                     buttonText="edit device"
                                     areaData={areaData}
                                     refetchData={refetchData}
                                     updateSelected={updateSelected} />
-                                <Button className={classes.button} onClick={clearSelected}>clear</Button>
+                                <Button key="selectedDeviceClearButton" className={classes.button} onClick={clearSelected}>clear</Button>
                             </div>
                         </div> : <div></div>}
                 </div>
-                <div className={classNames(classes.column, classes.helper)}>
-                    <Typography className={classes.columnHeading}>Interface Devices</Typography>
+                <div key="hassInterfaceSelection" className={classNames(classes.column, classes.helper)}>
+                    <Typography key="hassInterfaceSelectionTypography" className={classes.columnHeading}>Interface Devices</Typography>
                     {integration.value.interfaceDevices.map(device =>
-                        <Chip label={device.entityId} className={classes.chip} onDelete={() => removeSelectedInterface(device)} />
+                        <Chip key={"interface_chip_"+device.entityId} label={device.entityId} className={classes.chip} onDelete={() => removeSelectedInterface(device)} />
                     )}
                 </div>
-                <div className={classNames(classes.column, classes.helper)}>
-                    <Typography className={classes.columnHeading}>Automation Devices</Typography>
+                <div key="hassAutomationSelection" className={classNames(classes.column, classes.helper)}>
+                    <Typography key="hassAutomationSelectionTypography" className={classes.columnHeading}>Automation Devices</Typography>
                     {integration.value.automatedDevices.map(device =>
-                        <Chip label={device.entityId} className={classes.chip} onDelete={() => removeSelectedAutomation(device)} />
+                        <Chip key={"automation_chip_"+device.entityId} label={device.entityId} className={classes.chip} onDelete={() => removeSelectedAutomation(device)} />
                     )}
                 </div>
             </ExpansionPanelDetails>
