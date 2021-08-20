@@ -39,7 +39,7 @@ query integrations {
         url
       }
       kasa {
-        plugs {
+        devices {
           areaName
           id
           ipAddress

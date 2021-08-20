@@ -114,7 +114,7 @@ func (a *Area) addLutron(device *lutron.LDevice) {
 }
 
 func KasaIntegration(areas []Area, devices kasa.Devices) []Area {
-	for _, kasaDev := range devices.Plugs {
+	for _, kasaDev := range devices.Devices {
 		foundArea := false
 		areaName := strings.TrimSpace(kasaDev.AreaName)
 		if areaName == "" {
@@ -137,7 +137,7 @@ func KasaIntegration(areas []Area, devices kasa.Devices) []Area {
 	return areas
 }
 
-func (a *Area) addKasa(device kasa.Plug) {
+func (a *Area) addKasa(device kasa.KasaDevice) {
 	state := "off"
 	if device.PlugInfo.On {
 		state = "on"

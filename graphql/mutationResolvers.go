@@ -84,9 +84,9 @@ func harmonyStartActivityResolver(params graphql.ResolveParams) (interface{}, er
 func updateAreaForKasaDevice(params graphql.ResolveParams) (interface{}, error) {
 	argID, _ := params.Args["ipAddress"].(string)
 	areaName, _ := params.Args["areaName"].(string)
-	for i, dev := range Integrations.KasaData.Plugs {
+	for i, dev := range Integrations.KasaData.Devices {
 		if dev.IPAddress == argID {
-			Integrations.KasaData.Plugs[i].UpdateArea(areaName)
+			Integrations.KasaData.Devices[i].UpdateArea(areaName)
 		}
 	}
 	return true, nil
@@ -95,9 +95,9 @@ func updateAreaForKasaDevice(params graphql.ResolveParams) (interface{}, error) 
 // kasaTurnOffResolver turns off a kasa device by setting value to zero
 func kasaTurnOffResolver(params graphql.ResolveParams) (interface{}, error) {
 	argString := params.Args["ipAddress"].(string)
-	for i, d := range Integrations.KasaData.Plugs {
+	for i, d := range Integrations.KasaData.Devices {
 		if d.IPAddress == argString {
-			Integrations.KasaData.Plugs[i].PowerOff()
+			Integrations.KasaData.Devices[i].PowerOff()
 		}
 	}
 	return true, nil
@@ -106,9 +106,9 @@ func kasaTurnOffResolver(params graphql.ResolveParams) (interface{}, error) {
 // kasaTurnOnResolver turns on a kasa device by setting value to one hundred
 func kasaTurnOnResolver(params graphql.ResolveParams) (interface{}, error) {
 	argString := params.Args["ipAddress"].(string)
-	for i, d := range Integrations.KasaData.Plugs {
+	for i, d := range Integrations.KasaData.Devices {
 		if d.IPAddress == argString {
-			Integrations.KasaData.Plugs[i].PowerOn()
+			Integrations.KasaData.Devices[i].PowerOn()
 		}
 	}
 	return true, nil
@@ -173,12 +173,12 @@ func changeLutronDevice(id int, level float64) {
 }
 
 func changeKasaDevice(id string, status string) {
-	for i, d := range Integrations.KasaData.Plugs {
+	for i, d := range Integrations.KasaData.Devices {
 		if d.IPAddress == id {
 			if status == "on" {
-				Integrations.KasaData.Plugs[i].PowerOn()
+				Integrations.KasaData.Devices[i].PowerOn()
 			} else {
-				Integrations.KasaData.Plugs[i].PowerOff()
+				Integrations.KasaData.Devices[i].PowerOff()
 			}
 		}
 	}
@@ -219,10 +219,10 @@ func updateIntegration(params graphql.ResolveParams) (interface{}, error) {
 		Integrations.Database.PutIntegrationValue(integrationType, harmony)
 		newIntegration = true
 	case "kasa":
-		currentDevices := len(Integrations.KasaData.Plugs)
+		currentDevices := len(Integrations.KasaData.Devices)
 		Integrations.KasaData.Discover()
-		if len(Integrations.KasaData.Plugs) > currentDevices {
-			Integrations.Database.PutIntegrationValue(integrationType, Integrations.KasaData.Plugs)
+		if len(Integrations.KasaData.Devices) > currentDevices {
+			Integrations.Database.PutIntegrationValue(integrationType, Integrations.KasaData.Devices)
 		} else {
 			// TODO: Need to fix this piece, it is constantly assigning it as "", even though there are new ones
 			Integrations.Database.PutIntegrationValue(integrationType, "")

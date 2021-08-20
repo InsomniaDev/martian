@@ -14,7 +14,7 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-func (h *Plug) encrypt(plaintext string) []byte {
+func (h *KasaDevice) encrypt(plaintext string) []byte {
 	n := len(plaintext)
 	buf := new(bytes.Buffer)
 
@@ -33,7 +33,7 @@ func (h *Plug) encrypt(plaintext string) []byte {
 	return ciphertext
 }
 
-func (h *Plug) decrypt(in []byte) string {
+func (h *KasaDevice) decrypt(in []byte) string {
 	ciphertext := in[4:]
 	n := len(ciphertext)
 	key := byte(cryptKey)
@@ -48,7 +48,7 @@ func (h *Plug) decrypt(in []byte) string {
 	return string(ciphertext)
 }
 
-func (h *Plug) do(command string, expected string) (data []byte, err error) {
+func (h *KasaDevice) do(command string, expected string) (data []byte, err error) {
 	ciphertext, err := h.sendRecv(h.encrypt(command))
 	if err != nil {
 		return nil, err
@@ -73,7 +73,7 @@ func (h *Plug) do(command string, expected string) (data []byte, err error) {
 	return nil, fmt.Errorf("unknown body received")
 }
 
-func (h *Plug) extractError(body string, expected string) (code int64, msg string) {
+func (h *KasaDevice) extractError(body string, expected string) (code int64, msg string) {
 	code = -1
 	msg = ""
 	key := ""
@@ -101,7 +101,7 @@ func (h *Plug) extractError(body string, expected string) (code int64, msg strin
 	return code, ""
 }
 
-func (h *Plug) sendRecv(payload []byte) (data []byte, err error) {
+func (h *KasaDevice) sendRecv(payload []byte) (data []byte, err error) {
 	conn, err := net.DialTimeout("tcp", fmt.Sprintf("%s:%d", h.IPAddress, port), connTimeout)
 	if err != nil {
 		return nil, fmt.Errorf("connection failed: %s", err)
@@ -168,7 +168,7 @@ func secondsToHuman(input int) (result string) {
 }
 
 // Info retrieves the system information of the plug
-func (h *Plug) Info() (info *Info, err error) {
+func (h *KasaDevice) Info() (info *Info, err error) {
 	infoj, err := h.do(InfoCommand, "get_sysinfo")
 	if err != nil {
 		return nil, err

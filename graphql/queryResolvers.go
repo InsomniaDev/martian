@@ -40,7 +40,7 @@ func getCurrentHarmonyActivity(params graphql.ResolveParams) (interface{}, error
 
 func getKasaDevices(params graphql.ResolveParams) (interface{}, error) {
 	var devices []Kasa
-	for _, data := range Integrations.KasaData.Plugs {
+	for _, data := range Integrations.KasaData.Devices {
 		dev := Kasa{
 			AreaName:  data.AreaName,
 			IPAddress: data.IPAddress,

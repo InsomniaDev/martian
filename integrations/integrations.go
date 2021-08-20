@@ -49,7 +49,7 @@ func (i *Integrations) Init() {
 			i.Integrations = append(i.Integrations, "harmony")
 		case "kasa":
 			i.KasaData.Init(storedIntegrations[k])
-			if len(i.KasaData.Plugs) == 0 {
+			if len(i.KasaData.Devices) == 0 {
 				i.KasaData.Discover()
 			}
 			i.Menu = area.KasaIntegration(i.Menu, i.KasaData)

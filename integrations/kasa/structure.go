@@ -11,7 +11,7 @@ import (
 type PowerState int
 
 type Devices struct {
-	Plugs []Plug `json="plugs"`
+	Devices []KasaDevice `json="devices"`
 }
 
 // GraphqlKasaType is the object type for the kasa integration
@@ -19,7 +19,7 @@ var GraphqlKasaType = graphql.NewObject(
 	graphql.ObjectConfig{
 		Name: "KasaType",
 		Fields: graphql.Fields{
-			"plugs": &graphql.Field{
+			"devices": &graphql.Field{
 				Type: graphql.NewList(GraphqlKasaDevicesType),
 			},
 		},
@@ -59,7 +59,7 @@ const (
 )
 
 // Plug represents a management interface for a plug
-type Plug struct {
+type KasaDevice struct {
 	ID        string `json:"id"`
 	IPAddress string `json:"ipAddress"`
 	PlugInfo  Info
@@ -93,8 +93,8 @@ var GraphqlKasaDevicesType = graphql.NewObject(
 )
 
 // NewPlug creates a new management interface for the TP Link HS1xx plug
-func NewPlug(ip string) Plug {
-	return Plug{
+func NewPlug(ip string) KasaDevice {
+	return KasaDevice{
 		ID:        ip,
 		IPAddress: ip,
 	}

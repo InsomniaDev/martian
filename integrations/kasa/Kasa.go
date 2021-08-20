@@ -15,9 +15,9 @@ import (
 
 // Init initializes the instance of kasa for devices on the network
 func (d *Devices) Init(configuration string) {
-	var devices []Plug
+	var devices []KasaDevice
 	json.Unmarshal([]byte(configuration), &devices)
-	d.Plugs = devices
+	d.Devices = devices
 	// d.Plugs = RetrieveKasaNodes()
 	// devices := config.LoadKasa()
 
@@ -39,19 +39,19 @@ func (d *Devices) Init(configuration string) {
 	// }
 
 	// Check every second for a change in the connected kasa devices and then update on that change
-	for i := range d.Plugs {
-		go d.Plugs[i].WatchForChanges()
+	for i := range d.Devices {
+		go d.Devices[i].WatchForChanges()
 	}
 }
 
 func (d *Devices) ChangeAreaForKasaDevice(ipAddress, area string) error {
-	for i := range d.Plugs {
-		if d.Plugs[i].IPAddress == ipAddress {
-			d.Plugs[i].AreaName = area
+	for i := range d.Devices {
+		if d.Devices[i].IPAddress == ipAddress {
+			d.Devices[i].AreaName = area
 		}
 	}
 	var db database.Database
-	err := db.PutIntegrationValue("kasa", d.Plugs)
+	err := db.PutIntegrationValue("kasa", d.Devices)
 	if err != nil {
 		return err
 	}
@@ -59,7 +59,7 @@ func (d *Devices) ChangeAreaForKasaDevice(ipAddress, area string) error {
 }
 
 // WatchForChanges will constantly check to assert plug state
-func (h *Plug) WatchForChanges() {
+func (h *KasaDevice) WatchForChanges() {
 	for {
 		time.Sleep(1 * time.Second)
 		previousState := h.PlugInfo.On
@@ -71,13 +71,13 @@ func (h *Plug) WatchForChanges() {
 }
 
 // UpdateArea assigns the plug to an area
-func (h *Plug) UpdateArea(areaName string) {
+func (h *KasaDevice) UpdateArea(areaName string) {
 	UpdateAreaForKasaDevice(h.IPAddress, areaName)
 	h.AreaName = areaName
 }
 
 // PowerOff turns the plug off
-func (h *Plug) PowerOff() error {
+func (h *KasaDevice) PowerOff() error {
 	_, err := h.do(PowerOffCommand, "set_relay_state")
 	if err != nil {
 		return err
@@ -96,7 +96,7 @@ func (h *Plug) PowerOff() error {
 }
 
 // PowerOn turns the plug on
-func (h *Plug) PowerOn() error {
+func (h *KasaDevice) PowerOn() error {
 	data, err := h.do(PowerOnCommand, "set_relay_state")
 	fmt.Println(string(data))
 	if err != nil {
@@ -116,7 +116,7 @@ func (h *Plug) PowerOn() error {
 }
 
 // PowerState retrieves the current power state of the plug, PowerUnknown when request failed
-func (h *Plug) PowerState() (PowerState, error) {
+func (h *KasaDevice) PowerState() (PowerState, error) {
 	state, err := h.Info()
 	if err != nil {
 		return PowerUnknown, fmt.Errorf("could not determine if plug was turned on: %s", err)
@@ -164,14 +164,14 @@ func (d *Devices) Discover() {
 					plug.Type = "light"
 				}
 				alreadyUsedPlug := false
-				for i := range d.Plugs {
-					if d.Plugs[i].IPAddress == plug.IPAddress {
-						d.Plugs[i] = plug
+				for i := range d.Devices {
+					if d.Devices[i].IPAddress == plug.IPAddress {
+						d.Devices[i] = plug
 						alreadyUsedPlug = true
 					}
 				}
 				if !alreadyUsedPlug {
-					d.Plugs = append(d.Plugs, plug)
+					d.Devices = append(d.Devices, plug)
 				}
 				fmt.Println(ip.String(), info)
 			}
@@ -179,7 +179,7 @@ func (d *Devices) Discover() {
 	}
 	wg.Wait()
 	var db database.Database
-	db.PutIntegrationValue("kasa", d.Plugs)
+	db.PutIntegrationValue("kasa", d.Devices)
 	// 	}
 	// case *net.IPAddr:
 	// 	fmt.Printf("%v : %s (%s)\n", i.Name, v, v.IP.DefaultMask())

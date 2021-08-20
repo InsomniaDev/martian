@@ -60,13 +60,13 @@ func UpdateAreaForKasaDevice(ipAddress string, areaName string) {
 }
 
 // RetrieveKasaNodes will retrieve all of the nodes in the graph
-func RetrieveKasaNodes() []Plug {
+func RetrieveKasaNodes() []KasaDevice {
 	url, port := config.LoadRedis()
 
 	conn, _ := redis.Dial("tcp", url+":"+port)
 	defer conn.Close()
 	graph := rg.GraphNew(kasaGraph, conn)
-	var plugs []Plug
+	var plugs []KasaDevice
 
 	query := "MATCH (device:kasa) -[:OF_TYPE]-> (devicetype{name:'plug'}) "
 	query += "RETURN device.ipAddress, device.name "
