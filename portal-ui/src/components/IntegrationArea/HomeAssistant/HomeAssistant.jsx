@@ -160,6 +160,8 @@ export function HomeAssistantIntegration({ integration, refetchData, areaData })
     }
 
     var devices = [...integration.value.devices].sort((a, b) => (a.entityId > b.entityId) ? 1 : ((b.entityId > a.entityId) ? -1 : 0));
+    var interfaceDevices = [...integration.value.interfaceDevices].sort((a, b) => (a.entityId > b.entityId) ? 1 : ((b.entityId > a.entityId) ? -1 : 0));
+    var automatedDevices = [...integration.value.automatedDevices].sort((a, b) => (a.entityId > b.entityId) ? 1 : ((b.entityId > a.entityId) ? -1 : 0));
 
     // Remove automations from the provided list
     devices = devices.filter(function (elem) {
@@ -243,13 +245,13 @@ export function HomeAssistantIntegration({ integration, refetchData, areaData })
                 </div>
                 <div key="hassInterfaceSelection" className={classNames(classes.column, classes.helper)}>
                     <Typography key="hassInterfaceSelectionTypography" className={classes.columnHeading}>Interface Devices</Typography>
-                    {integration.value.interfaceDevices.map(device =>
+                    {interfaceDevices.map(device =>
                         <Chip key={"interface_chip_"+device.entityId} label={device.entityId} className={classes.chip} onDelete={() => removeSelectedInterface(device)} />
                     )}
                 </div>
                 <div key="hassAutomationSelection" className={classNames(classes.column, classes.helper)}>
                     <Typography key="hassAutomationSelectionTypography" className={classes.columnHeading}>Automation Devices</Typography>
-                    {integration.value.automatedDevices.map(device =>
+                    {automatedDevices.map(device =>
                         <Chip key={"automation_chip_"+device.entityId} label={device.entityId} className={classes.chip} onDelete={() => removeSelectedAutomation(device)} />
                     )}
                 </div>

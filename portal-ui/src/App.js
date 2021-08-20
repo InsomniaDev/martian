@@ -4,13 +4,10 @@ import {
   InMemoryCache,
   ApolloProvider,
   HttpLink,
-  split,
   ApolloLink,
 } from "@apollo/client";
 import { onError } from "@apollo/client/link/error";
 import { RetryLink } from "@apollo/client/link/retry";
-import { getMainDefinition } from "@apollo/client/utilities";
-import { WebSocketLink } from "@apollo/link-ws";
 import './App.css';
 import { render } from "react-dom";
 import { AreaActivity } from "./pages/AreaActivity/AreaActivity";
@@ -42,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const rustyServer = "http://192.168.1.19:30919/graphql";
-const rustyWs = "ws://192.168.1.19:30919/subscriptions";
+// const rustyWs = "ws://192.168.1.19:30919/subscriptions";
 const localServer = "http://localhost:4000/graphql";
 // const localWs = "ws://localhost:4000/subscriptions";
 
@@ -50,26 +47,6 @@ const httpLink = new HttpLink({
   uri: localServer,
 });
 
-// Create a WebSocket link:
-const wsLink = new WebSocketLink({
-  uri: rustyWs,
-  options: {
-    reconnect: true,
-  },
-});
-
-const link = split(
-  // split based on operation type
-  ({ query }) => {
-    const definition = getMainDefinition(query);
-    return (
-      definition.kind === "OperationDefinition" &&
-      definition.operation === "subscription"
-    );
-  },
-  wsLink,
-  httpLink
-);
 
 // const defaultOptions = {
 //   watchQuery: {
@@ -101,7 +78,7 @@ const client = new ApolloClient({
       console.log({ error })
     }),
     linkToRetry,
-    link
+    httpLink
   ]),
   // defaultOptions: defaultOptions,
 });
