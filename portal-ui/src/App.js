@@ -44,7 +44,7 @@ const localServer = "http://localhost:4000/graphql";
 // const localWs = "ws://localhost:4000/subscriptions";
 
 const httpLink = new HttpLink({
-  uri: localServer,
+  uri: rustyServer,
 });
 
 
