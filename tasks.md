@@ -1,6 +1,6 @@
 # current work
 - hass
-  - Create edit screen
+  - Create edit screen, and allow for updating variables
 
 
 ## Need to do

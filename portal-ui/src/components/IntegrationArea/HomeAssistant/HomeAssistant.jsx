@@ -4,7 +4,6 @@ import classNames from 'classnames';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
@@ -12,9 +11,9 @@ import Select from '@material-ui/core/Select';
 import Typography from '@material-ui/core/Typography';
 import Chip from '@material-ui/core/Chip';
 import Button from '@material-ui/core/Button';
-import Divider from '@material-ui/core/Divider';
 import { useMutation } from '@apollo/client';
 import { selectDevicesForIntegration } from '../mutations/selectDevicesForIntegration';
+import HomeAssistantEditMenu from './HomeAssistantEditMenu';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -89,7 +88,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 
-export function HomeAssistantIntegration({ integration, refetchData }) {
+export function HomeAssistantIntegration({ integration, refetchData, areaData }) {
     const classes = useStyles();
 
     const [selectedDevice, changeSelectedDevice] = useState("");
@@ -156,6 +155,10 @@ export function HomeAssistantIntegration({ integration, refetchData }) {
         changeSelectedDevice("");
     }
 
+    const updateSelected = (newDevice) => {
+        changeSelectedDevice(newDevice);
+    }
+
     var devices = [...integration.value.devices].sort((a, b) => (a.entityId > b.entityId) ? 1 : ((b.entityId > a.entityId) ? -1 : 0));
 
     // Remove automations from the provided list
@@ -164,26 +167,26 @@ export function HomeAssistantIntegration({ integration, refetchData }) {
     });
 
     return (
-        <ExpansionPanel >
-            <ExpansionPanelSummary >
-                <div className={classes.column}>
-                    <Typography className={classes.heading}>{integration.name}</Typography>
+        <ExpansionPanel key="hassExpansionPanel">
+            <ExpansionPanelSummary key="hass" >
+                <div key="hassTypographyNameDiv" className={classes.column}>
+                    <Typography key="hassTypographyName" className={classes.heading}>{integration.name}</Typography>
                 </div>
-                <div className={classes.column}>
-                    <Typography className={classes.secondaryHeading}>Edit Configuration</Typography>
+                <div key="hassTypographyHeadingDiv" className={classes.column}>
+                    <Typography key="hassTypographyHeading" className={classes.secondaryHeading}>Edit Configuration</Typography>
                 </div>
             </ExpansionPanelSummary>
-            <ExpansionPanelDetails className={classes.details}>
-                <div className={classes.column}>
-                    <FormControl className={classes.formControl}>
-                        <InputLabel id="demo-controlled-open-select-label">HomeAssistant Devices</InputLabel>
+            <ExpansionPanelDetails key="hassExpansionPanelDetails" className={classes.details}>
+                <div key="hassExpansionPanelDetailsDiv" className={classes.column}>
+                    <FormControl key="hassFormControl" className={classes.formControl}>
+                        <InputLabel key="hassFormControlInputLabel" id="demo-controlled-open-select-label">HomeAssistant Devices</InputLabel>
                         <Select
-                            labelId="demo-controlled-open-select-label"
+                            key="hassFormControlSelect"
                             id="demo-controlled-open-select"
                             value={selectedDevice}
                             onChange={handleChange}
                         >
-                            <MenuItem value="">
+                            <MenuItem key="hassFormControlMenuItem" value="">
                                 <em>None</em>
                             </MenuItem>
                             {
@@ -193,15 +196,41 @@ export function HomeAssistantIntegration({ integration, refetchData }) {
                     </FormControl>
                     {selectedDevice !== "" ?
                         <div className={classes.deviceDetails}>
-                            <Typography className={classes.deviceHeading} align="left"><em className={classes.em}>ENTITY ID:</em>     {selectedDevice.entityId}</Typography>
-                            <Typography className={classes.deviceHeading} align="left"><em className={classes.em}>TYPE:</em>          {selectedDevice.type}</Typography>
-                            <Typography className={classes.deviceHeading} align="left"><em className={classes.em}>AREA NAME:</em>     {selectedDevice.areaName}</Typography>
-                            <Typography className={classes.deviceHeading} align="left"><em className={classes.em}>NAME:</em>          {selectedDevice.name}</Typography>
+                            <Typography
+                                key="selectedDeviceEntityId"
+                                className={classes.deviceHeading}
+                                align="left">
+                                <em className={classes.em}>ENTITY ID:</em>     {selectedDevice.entityId}
+                            </Typography>
+                            <Typography
+                                key="selectedDeviceType"
+                                className={classes.deviceHeading}
+                                align="left">
+                                <em className={classes.em}>TYPE:</em>          {selectedDevice.type}
+                            </Typography>
+                            <Typography
+                                key="selectedDeviceAreaName"
+                                className={classes.deviceHeading}
+                                align="left">
+                                <em className={classes.em}>AREA NAME:</em>     {selectedDevice.areaName}
+                            </Typography>
+                            <Typography
+                                key="selectedDeviceName"
+                                className={classes.deviceHeading}
+                                align="left">
+                                <em className={classes.em}>NAME:</em>          {selectedDevice.name}
+                            </Typography>
                             <Typography className={classes.deviceHeading} align="left"><em className={classes.em}>CURRENT STATE:</em> {selectedDevice.state}</Typography>
                             <div className={classes.buttonDiv}>
                                 <Button className={classes.button} onClick={addToSelectedInterface}>Add to interface</Button>
                                 <Button className={classes.button} onClick={addToSelectedAutomation}>Add to automated</Button>
-                                <Button className={classes.button} onClick={addToSelectedInterface}>edit device</Button>
+                                <HomeAssistantEditMenu
+                                    device={selectedDevice}
+                                    buttonStyle={classes.button}
+                                    buttonText="edit device"
+                                    areaData={areaData}
+                                    refetchData={refetchData}
+                                    updateSelected={updateSelected} />
                                 <Button className={classes.button} onClick={clearSelected}>clear</Button>
                             </div>
                         </div> : <div></div>}

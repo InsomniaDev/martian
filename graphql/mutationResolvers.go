@@ -290,10 +290,29 @@ func selectDevicesForIntegration(params graphql.ResolveParams) (interface{}, err
 
 	switch integration{
 	case "hass":
-		err := Integrations.Hass.UpdateInterfaceDevices(daters, addDevices, automationDevice)
+		err := Integrations.Hass.UpdateSelectedDevices(daters, addDevices, automationDevice)
 		if err != nil {
 			return false, err
 		}
 	}
 	return true, nil
 }
+
+// editDeviceConfiguration will edit the passed in configuration device
+func editDeviceConfiguration(params graphql.ResolveParams) (interface{}, error) {
+	integration := params.Args["integration"].(string)
+	device := params.Args["device"].(string)
+	removeEdit := params.Args["removeEdit"].(bool)
+	
+	switch integration{
+	case "hass":
+		var hass homeassistant.HomeAssistantDevice
+		err := json.Unmarshal([]byte(device), &hass)
+		Integrations.Hass.EditDeviceConfiguration(hass, removeEdit)
+		if err != nil {
+			return false, err
+		}
+	}
+	return true, nil
+}
+

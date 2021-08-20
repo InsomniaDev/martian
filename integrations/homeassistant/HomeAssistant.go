@@ -105,6 +105,43 @@ func (h *HomeAssistant) listen() {
 				if len(friendlyName) > 1 {
 					areaName = friendlyName[0]
 				}
+				// Was an Edited Device
+				wasEditedDevice := false
+				editedDeviceWasRemoved := false
+				// Determine if it already exists in the interface devices or automated devices or edited devices
+				for i := range h.EditedDevices {
+					if h.EditedDevices[i].EntityId == result.EntityId {
+						name = h.EditedDevices[i].Name
+						areaName = h.EditedDevices[i].AreaName
+						wasEditedDevice = true
+					}
+				}
+				for i := range h.InterfaceDevices {
+					if h.InterfaceDevices[i].EntityId == result.EntityId {
+						if h.InterfaceDevices[i].Name != name || h.InterfaceDevices[i].AreaName != areaName {
+							h.InterfaceDevices[i].Name = name
+							h.InterfaceDevices[i].AreaName = areaName
+							if !wasEditedDevice {
+								editedDeviceWasRemoved = true
+							}
+						}
+					}
+				}
+				for i := range h.AutomatedDevices {
+					if h.AutomatedDevices[i].EntityId == result.EntityId {
+						if h.AutomatedDevices[i].Name != name || h.AutomatedDevices[i].AreaName != areaName {
+							h.AutomatedDevices[i].Name = name
+							h.AutomatedDevices[i].AreaName = areaName
+							if !wasEditedDevice {
+								editedDeviceWasRemoved = true
+							}
+						}
+					}
+				}
+				if editedDeviceWasRemoved {
+					// TODO: Need to determine how to reset this if the device was recent edited without removing all of the other fields
+				}
+
 				newDevice := HomeAssistantDevice{EntityId: result.EntityId, Name: name, Type: deviceType, State: result.State, AreaName: areaName}
 				h.Devices = append(h.Devices, newDevice)
 			}
@@ -192,9 +229,9 @@ func (h *HomeAssistant) getServices() {
 	}
 }
 
-// UpdateInterfaceDevices will go through and update the devices as selected or not selected
-func (h *HomeAssistant) UpdateInterfaceDevices(selectedDevices []string, addDevices bool, automationDevice bool) error {
-	
+// UpdateSelectedDevices will go through and update the devices as selected or not selected
+func (h *HomeAssistant) UpdateSelectedDevices(selectedDevices []string, addDevices bool, automationDevice bool) error {
+
 	// Compare either through the automation or interface selections
 	if automationDevice {
 		h.AutomatedDevices = checkIfDeviceIsInList(h.Devices, h.AutomatedDevices, selectedDevices, addDevices)
@@ -246,4 +283,63 @@ func checkIfDeviceIsInList(allDevices []HomeAssistantDevice, alreadyChosenDevice
 		}
 	}
 	return newlySelectedDevices
+}
+
+// EditDeviceConfiguration will go through and update information for the passed in device
+func (h *HomeAssistant) EditDeviceConfiguration(device HomeAssistantDevice, removeEdit bool) error {
+
+	// Cycle through all of the devices, interfaceDevices, and automatedDevices and update
+	for i := range h.Devices {
+		if h.Devices[i].EntityId == device.EntityId {
+			h.Devices[i] = device
+		}
+	}
+	for i := range h.InterfaceDevices {
+		if h.InterfaceDevices[i].EntityId == device.EntityId {
+			h.InterfaceDevices[i] = device
+		}
+	}
+	for i := range h.AutomatedDevices {
+		if h.AutomatedDevices[i].EntityId == device.EntityId {
+			h.AutomatedDevices[i] = device
+		}
+	}
+
+	// Add the updated device to the editedDevices
+	found := false
+	for i := range h.EditedDevices {
+		if h.EditedDevices[i].EntityId == device.EntityId {
+			h.EditedDevices[i] = device
+			found = true
+			break
+		}
+	}
+	if !found {
+		h.EditedDevices = append(h.EditedDevices, device)
+	}
+
+	// If set to remove the edit then recreate the list of edited devices without that edit
+	if removeEdit {
+		var newEditedDeviceList []HomeAssistantDevice
+		for i := range h.EditedDevices {
+			if h.EditedDevices[i].EntityId != device.EntityId {
+				newEditedDeviceList = append(newEditedDeviceList, h.EditedDevices[i])
+			}
+		}
+		h.EditedDevices = newEditedDeviceList
+	}
+
+	// Save in the database
+	var db database.Database
+	err := db.PutIntegrationValue("hass", h)
+	if err != nil {
+		log.Println(err)
+	}
+
+	// Let's repopulate with the correct device state
+	if removeEdit {
+		h.getStates()
+	}
+
+	return nil
 }

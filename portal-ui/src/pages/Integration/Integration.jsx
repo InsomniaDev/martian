@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import React from "react";
 import { HomeAssistantIntegration } from '../../components/IntegrationArea/HomeAssistant/HomeAssistant';
 import { IntegrationArea } from '../../components/IntegrationArea/IntegrationArea';
+import { areaNames } from '../../components/IntegrationArea/queries/areaNames';
 import { getIntegrations } from './queries/getIntegrations';
 
 
@@ -50,6 +51,7 @@ const useStyles = makeStyles((theme) => ({
 
 export function Integration() {
   const { loading, error, data, refetch } = useQuery(getIntegrations);
+  const { loading: areaLoading, error: areaError, data: areaData } = useQuery(areaNames);
 
   const classes = useStyles();
 
@@ -59,7 +61,11 @@ export function Integration() {
     return <p>Error :( {error}</p>;
   }
 
-
+  if (areaLoading) return <p>loading ...</p>;
+  if (areaError) {
+    console.log(areaError);
+    return <p>Error :( {areaError}</p>;
+  }
 
   return (
     <div className={classes.root}>
@@ -69,15 +75,15 @@ export function Integration() {
           case "hass":
             integrationValue.name = "Home Assistant";
             integrationValue.value = data.integrations.hass;
-            return <HomeAssistantIntegration integration={integrationValue} refetchData={() => refetch()} />
+            return <HomeAssistantIntegration key="hassIntegration" areaData={areaData} integration={integrationValue} refetchData={() => refetch()} />
           case "kasa":
             integrationValue.name = "Kasa Smart Home";
             integrationValue.value = data.integrations.kasa;
-            return <IntegrationArea integration={integrationValue} />
+            return <IntegrationArea key="kasaIntegration" integration={integrationValue} />
           case "lutron":
             integrationValue.name = "Lutron Lighting";
             integrationValue.value = data.integrations.lutron;
-            return <IntegrationArea integration={integrationValue} />
+            return <IntegrationArea key="lutronIntegration" integration={integrationValue} />
           default:
             return <div />
         }

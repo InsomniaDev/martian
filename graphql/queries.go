@@ -49,14 +49,14 @@ var rootQuery = graphql.NewObject(graphql.ObjectConfig{
 			Resolve:     life360Members,
 		},
 		"homeAssistantDevices": &graphql.Field{
-			Type:        graphql.NewList(homeAssistantType),
+			Type: graphql.NewList(homeAssistantType),
 			Args: graphql.FieldConfigArgument{
 				"name": &graphql.ArgumentConfig{
-					Type: graphql.String,
+					Type:         graphql.String,
 					DefaultValue: "",
 				},
 				"type": &graphql.ArgumentConfig{
-					Type: graphql.String,
+					Type:         graphql.String,
 					DefaultValue: "",
 				},
 			},
@@ -67,6 +67,11 @@ var rootQuery = graphql.NewObject(graphql.ObjectConfig{
 			Type:        integrationsType,
 			Description: "The Integrations that are Setup for Martian",
 			Resolve:     integrationResolver,
+		},
+		"areaNames": &graphql.Field{
+			Type:        graphql.NewList(graphql.String),
+			Description: "The Integrations that are Setup for Martian",
+			Resolve:     getAreaNamesResolver,
 		},
 	},
 })

@@ -144,3 +144,13 @@ func integrationResolver(params graphql.ResolveParams) (interface{}, error) {
 
 	return integration, nil
 }
+
+// getAreaNamesResolver will get a string of area names and return them
+func getAreaNamesResolver(params graphql.ResolveParams) (interface{}, error) {
+	var areaNames []string
+	for _, area := range Integrations.Menu {
+		areaNames = append(areaNames, area.AreaName)
+	}
+
+	return areaNames, nil
+}

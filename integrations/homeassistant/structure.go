@@ -10,8 +10,9 @@ type HomeAssistant struct {
 	Token            string `json:"token"`
 	Connection       *websocket.Conn
 	Devices          []HomeAssistantDevice `json:"devices"`
-	InterfaceDevices []HomeAssistantDevice `json:"interfaceDevices"`
+	EditedDevices    []HomeAssistantDevice `json:"editedDevices"`
 	AutomatedDevices []HomeAssistantDevice `json:"automatedDevices"`
+	InterfaceDevices []HomeAssistantDevice `json:"interfaceDevices"`
 }
 
 // GraphqlHomeAssistantType is the graphql object for the HomeAssistant integration
