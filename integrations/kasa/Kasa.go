@@ -39,13 +39,7 @@ func (d *Devices) Init(configuration string) {
 
 	// Check every second for a change in the connected kasa devices and then update on that change
 	for i := range d.Devices {
-		d.Devices[i].ID = d.Devices[i].IPAddress
 		go d.Devices[i].WatchForChanges()
-	}
-	var db database.Database
-	err := db.PutIntegrationValue("kasa", d)
-	if err != nil {
-		log.Println(err)
 	}
 }
 
@@ -83,7 +77,8 @@ func (h *KasaDevice) UpdateArea(areaName string) {
 
 // PowerOff turns the plug off
 func (h *KasaDevice) PowerOff() error {
-	_, err := h.do(PowerOffCommand, "set_relay_state")
+	data, err := h.do(PowerOffCommand, "set_relay_state")
+	fmt.Println(data)
 	if err != nil {
 		return err
 	}
@@ -102,7 +97,8 @@ func (h *KasaDevice) PowerOff() error {
 
 // PowerOn turns the plug on
 func (h *KasaDevice) PowerOn() error {
-	_, err := h.do(PowerOnCommand, "set_relay_state")
+	data, err := h.do(PowerOnCommand, "set_relay_state")
+	fmt.Println(string(data))
 	if err != nil {
 		return err
 	}
@@ -224,17 +220,17 @@ func (h *Devices) UpdateSelectedDevices(selectedDevices []string, addDevices boo
 }
 
 // checkIfDeviceIsInList is an internal method to see if the value already exists in the list
-func checkIfDeviceIsInList(allDevices []KasaDevice, alreadyChosenDevices []KasaDevice, selectedDevices []string, addDevices bool) []KasaDevice {
-	var newlySelectedDevices []KasaDevice
+func checkIfDeviceIsInList(allDevices []KasaDevice, alreadyChosenDevices []string, selectedDevices []string, addDevices bool) []string {
+	var newlySelectedDevices []string
 	// Cycle through all of the available devices for HomeAssistant
 	for _, availableDevice := range allDevices {
 
 		selectedDeviceExists := false
 		// Cycle through all of the already selected devices to see if there is a match
-		for _, selectedDevice := range alreadyChosenDevices {
+		for _, selectedDeviceIpAddress := range alreadyChosenDevices {
 
 			// If this available device is already selected, then set selectedDeviceExists as true
-			if availableDevice.IPAddress == selectedDevice.IPAddress {
+			if availableDevice.IPAddress == selectedDeviceIpAddress {
 				selectedDeviceExists = true
 				break // break out of the selectedDevice cycle since there is a match
 			}
@@ -253,9 +249,9 @@ func checkIfDeviceIsInList(allDevices []KasaDevice, alreadyChosenDevices []KasaD
 		// IF the device is already selected, and is one of the newly selected, and set to be added
 		//			IF addDevices is FALSE, then it will be removed from the selectedDevices slice
 		if availableDeviceIsNowSelected && addDevices {
-			newlySelectedDevices = append(newlySelectedDevices, availableDevice)
+			newlySelectedDevices = append(newlySelectedDevices, availableDevice.IPAddress)
 		} else if selectedDeviceExists && !availableDeviceIsNowSelected { // IF it was already selected
-			newlySelectedDevices = append(newlySelectedDevices, availableDevice)
+			newlySelectedDevices = append(newlySelectedDevices, availableDevice.IPAddress)
 		}
 	}
 	return newlySelectedDevices
@@ -269,40 +265,6 @@ func (k *Devices) EditDeviceConfiguration(device KasaDevice, removeEdit bool) er
 		if k.Devices[i].IPAddress == device.IPAddress {
 			k.Devices[i] = device
 		}
-	}
-	for i := range k.InterfaceDevices {
-		if k.InterfaceDevices[i].IPAddress == device.IPAddress {
-			k.InterfaceDevices[i] = device
-		}
-	}
-	for i := range k.AutomatedDevices {
-		if k.AutomatedDevices[i].IPAddress == device.IPAddress {
-			k.AutomatedDevices[i] = device
-		}
-	}
-
-	// Add the updated device to the editedDevices
-	found := false
-	for i := range k.EditedDevices {
-		if k.EditedDevices[i].IPAddress == device.IPAddress {
-			k.EditedDevices[i] = device
-			found = true
-			break
-		}
-	}
-	if !found {
-		k.EditedDevices = append(k.EditedDevices, device)
-	}
-
-	// If set to remove the edit then recreate the list of edited devices without that edit
-	if removeEdit {
-		var newEditedDeviceList []KasaDevice
-		for i := range k.EditedDevices {
-			if k.EditedDevices[i].IPAddress != device.IPAddress {
-				newEditedDeviceList = append(newEditedDeviceList, k.EditedDevices[i])
-			}
-		}
-		k.EditedDevices = newEditedDeviceList
 	}
 
 	// Save in the database

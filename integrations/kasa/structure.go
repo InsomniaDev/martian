@@ -12,9 +12,8 @@ type PowerState int
 
 type Devices struct {
 	Devices          []KasaDevice `json="devices"`
-	EditedDevices    []KasaDevice `json="editedDevices"`
-	InterfaceDevices []KasaDevice `json="interfaceDevices"`
-	AutomatedDevices []KasaDevice `json="automatedDevices"`
+	InterfaceDevices []string `json="interfaceDevices"`
+	AutomatedDevices []string `json="automatedDevices"`
 }
 
 // GraphqlKasaType is the object type for the kasa integration
@@ -26,10 +25,10 @@ var GraphqlKasaType = graphql.NewObject(
 				Type: graphql.NewList(GraphqlKasaDevicesType),
 			},
 			"interfaceDevices": &graphql.Field{
-				Type: graphql.NewList(GraphqlKasaDevicesType),
+				Type: graphql.NewList(graphql.String),
 			},
 			"automatedDevices": &graphql.Field{
-				Type: graphql.NewList(GraphqlKasaDevicesType),
+				Type: graphql.NewList(graphql.String),
 			},
 		},
 	},

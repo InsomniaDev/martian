@@ -112,11 +112,11 @@ export function KasaIntegration({ integration, refetchData, areaData }) {
     }
 
     // Remove the selected variable from the interfaceDevices for kasa
-    const removeSelectedInterface = (device) => {
+    const removeSelectedInterface = (ipAddress) => {
         selectDevicesForIntegrationMutation({
             variables: {
                 integration: "kasa",
-                devices: [device.ipAddress],
+                devices: [ipAddress],
                 addDevices: false,
                 automationDevice: false,
             }
@@ -139,11 +139,11 @@ export function KasaIntegration({ integration, refetchData, areaData }) {
     }
 
     // Remove the selected variable from the interfaceDevices for kasa
-    const removeSelectedAutomation = (device) => {
+    const removeSelectedAutomation = (ipAddress) => {
         selectDevicesForIntegrationMutation({
             variables: {
                 integration: "kasa",
-                devices: [device.ipAddress],
+                devices: [ipAddress],
                 addDevices: false,
                 automationDevice: true,
             }
@@ -235,13 +235,13 @@ export function KasaIntegration({ integration, refetchData, areaData }) {
                 <div key="kasaInterfaceSelection" className={classNames(classes.column, classes.helper)}>
                     <Typography key="kasaInterfaceSelectionTypography" className={classes.columnHeading}>Interface Devices</Typography>
                     {interfaceDevices.map(device =>
-                        <Chip key={"interface_chip_"+device.name} label={device.name} className={classes.chip} onDelete={() => removeSelectedInterface(device)} />
+                        <Chip key={"interface_chip_"+device} label={device} className={classes.chip} onDelete={() => removeSelectedInterface(device)} />
                     )}
                 </div>
                 <div key="kasaAutomationSelection" className={classNames(classes.column, classes.helper)}>
                     <Typography key="kasaAutomationSelectionTypography" className={classes.columnHeading}>Automation Devices</Typography>
                     {automatedDevices.map(device =>
-                        <Chip key={"automation_chip_"+device.name} label={device.name} className={classes.chip} onDelete={() => removeSelectedAutomation(device)} />
+                        <Chip key={"automation_chip_"+device} label={device} className={classes.chip} onDelete={() => removeSelectedAutomation(device)} />
                     )}
                 </div>
             </ExpansionPanelDetails>

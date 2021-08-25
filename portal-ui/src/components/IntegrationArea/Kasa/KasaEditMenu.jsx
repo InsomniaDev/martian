@@ -39,9 +39,8 @@ export default function KasaEditMenu({ device, buttonStyle, buttonText, areaData
             areaName: target.value,
             name: device.name,
             ipAddress: device.ipAddress,
-            state: device.state,
             type: device.type,
-            group: device.group,
+            id: device.ipAddress,
         };
         setAreaName(target.value);
         updateDevice({
@@ -59,9 +58,8 @@ export default function KasaEditMenu({ device, buttonStyle, buttonText, areaData
             areaName: device.areaName,
             name: nameRef.current.value,
             ipAddress: device.ipAddress,
-            state: device.state,
             type: device.type,
-            group: device.group,
+            id: device.ipAddress,
         };
         updateDevice({
             variables: {

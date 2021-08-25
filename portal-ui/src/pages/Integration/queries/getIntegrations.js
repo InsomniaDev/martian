@@ -46,20 +46,8 @@ query integrations {
           name
           type
         }
-        interfaceDevices {
-          areaName
-          id
-          ipAddress
-          name
-          type
-        }
-        automatedDevices {
-          areaName
-          id
-          ipAddress
-          name
-          type
-        }
+        interfaceDevices 
+        automatedDevices 
       }
       lutron {
         config {
