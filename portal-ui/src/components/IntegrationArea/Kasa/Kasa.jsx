@@ -13,7 +13,7 @@ import Chip from '@material-ui/core/Chip';
 import Button from '@material-ui/core/Button';
 import { useMutation } from '@apollo/client';
 import { selectDevicesForIntegration } from '../mutations/selectDevicesForIntegration';
-import HomeAssistantEditMenu from './HomeAssistantEditMenu';
+import KasaEditMenu from './KasaEditMenu';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -88,7 +88,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 
-export function HomeAssistantIntegration({ integration, refetchData, areaData }) {
+export function KasaIntegration({ integration, refetchData, areaData }) {
     const classes = useStyles();
 
     const [selectedDevice, changeSelectedDevice] = useState("");
@@ -97,12 +97,12 @@ export function HomeAssistantIntegration({ integration, refetchData, areaData })
         changeSelectedDevice(event.target.value);
     };
 
-    // Add the selected variable to the interfaceDevices for Hass
+    // Add the selected variable to the interfaceDevices for kasa
     const addToSelectedInterface = () => {
-        devices = [selectedDevice.entityId];
+        devices = [selectedDevice.ipAddress];
         selectDevicesForIntegrationMutation({
             variables: {
-                integration: "hass",
+                integration: "kasa",
                 devices: devices,
                 addDevices: true,
                 automationDevice: false,
@@ -111,12 +111,12 @@ export function HomeAssistantIntegration({ integration, refetchData, areaData })
         refetchData();
     }
 
-    // Remove the selected variable from the interfaceDevices for Hass
+    // Remove the selected variable from the interfaceDevices for kasa
     const removeSelectedInterface = (device) => {
         selectDevicesForIntegrationMutation({
             variables: {
-                integration: "hass",
-                devices: [device.entityId],
+                integration: "kasa",
+                devices: [device.ipAddress],
                 addDevices: false,
                 automationDevice: false,
             }
@@ -124,12 +124,12 @@ export function HomeAssistantIntegration({ integration, refetchData, areaData })
         refetchData();
     }
 
-    // Add the selected variable to the interfaceDevices for Hass
+    // Add the selected variable to the interfaceDevices for kasa
     const addToSelectedAutomation = () => {
-        devices = [selectedDevice.entityId];
+        devices = [selectedDevice.ipAddress];
         selectDevicesForIntegrationMutation({
             variables: {
-                integration: "hass",
+                integration: "kasa",
                 devices: devices,
                 addDevices: true,
                 automationDevice: true,
@@ -138,12 +138,12 @@ export function HomeAssistantIntegration({ integration, refetchData, areaData })
         refetchData();
     }
 
-    // Remove the selected variable from the interfaceDevices for Hass
+    // Remove the selected variable from the interfaceDevices for kasa
     const removeSelectedAutomation = (device) => {
         selectDevicesForIntegrationMutation({
             variables: {
-                integration: "hass",
-                devices: [device.entityId],
+                integration: "kasa",
+                devices: [device.ipAddress],
                 addDevices: false,
                 automationDevice: true,
             }
@@ -159,50 +159,45 @@ export function HomeAssistantIntegration({ integration, refetchData, areaData })
         changeSelectedDevice(newDevice);
     }
 
-    var devices = [...integration.value.devices].sort((a, b) => (a.entityId > b.entityId) ? 1 : ((b.entityId > a.entityId) ? -1 : 0));
-    var interfaceDevices = [...integration.value.interfaceDevices].sort((a, b) => (a.entityId > b.entityId) ? 1 : ((b.entityId > a.entityId) ? -1 : 0));
-    var automatedDevices = [...integration.value.automatedDevices].sort((a, b) => (a.entityId > b.entityId) ? 1 : ((b.entityId > a.entityId) ? -1 : 0));
-
-    // Remove automations from the provided list
-    devices = devices.filter(function (elem) {
-        return !elem.entityId.includes("automation");
-    });
+    var devices = [...integration.value.devices].sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
+    var interfaceDevices = [...integration.value.interfaceDevices].sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
+    var automatedDevices = [...integration.value.automatedDevices].sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
 
     return (
-        <ExpansionPanel key="hassExpansionPanel">
-            <ExpansionPanelSummary key="hass" >
-                <div key="hassTypographyNameDiv" className={classes.column}>
-                    <Typography key="hassTypographyName" className={classes.heading}>{integration.name}</Typography>
+        <ExpansionPanel key="kasaExpansionPanel">
+            <ExpansionPanelSummary key="kasa" >
+                <div key="kasaTypographyNameDiv" className={classes.column}>
+                    <Typography key="kasaTypographyName" className={classes.heading}>{integration.name}</Typography>
                 </div>
-                <div key="hassTypographyHeadingDiv" className={classes.column}>
-                    <Typography key="hassTypographyHeading" className={classes.secondaryHeading}>Edit Configuration</Typography>
+                <div key="kasaTypographyHeadingDiv" className={classes.column}>
+                    <Typography key="kasaTypographyHeading" className={classes.secondaryHeading}>Edit Configuration</Typography>
                 </div>
             </ExpansionPanelSummary>
-            <ExpansionPanelDetails key="hassExpansionPanelDetails" className={classes.details}>
-                <div key="hassExpansionPanelDetailsDiv" className={classes.column}>
-                    <FormControl key="hassFormControl" className={classes.formControl}>
-                        <InputLabel key="hassFormControlInputLabel" id="demo-controlled-open-select-label">HomeAssistant Devices</InputLabel>
+            <ExpansionPanelDetails key="kasaExpansionPanelDetails" className={classes.details}>
+                <div key="kasaExpansionPanelDetailsDiv" className={classes.column}>
+                    <FormControl key="kasaFormControl" className={classes.formControl}>
+                        <InputLabel key="kasaFormControlInputLabel" id="demo-controlled-open-select-label">Kasa Devices</InputLabel>
                         <Select
-                            key="hassFormControlSelect"
+                            key="kasaFormControlSelect"
                             id="demo-controlled-open-select"
                             value={selectedDevice}
                             onChange={handleChange}
                         >
-                            <MenuItem key="select_none" key="hassFormControlMenuItem" value="">
+                            <MenuItem key="select_none" key="kasaFormControlMenuItem" value="">
                                 <em>None</em>
                             </MenuItem>
                             {
-                                devices.map(device => <MenuItem key={"select_" + device.entityId} value={device}>{device.entityId}</MenuItem>)
+                                devices.map(device => <MenuItem key={"select_" + device.name} value={device}>{device.name}</MenuItem>)
                             }
                         </Select>
                     </FormControl>
                     {selectedDevice !== "" ?
                         <div className={classes.deviceDetails}>
                             <Typography
-                                key="selectedDeviceEntityId"
+                                key="selectedDeviceIpAddress"
                                 className={classes.deviceHeading}
                                 align="left">
-                                <em className={classes.em}>ENTITY ID:</em>     {selectedDevice.entityId}
+                                <em className={classes.em}>ENTITY ID:</em>     {selectedDevice.ipAddress}
                             </Typography>
                             <Typography
                                 key="selectedDeviceType"
@@ -222,16 +217,10 @@ export function HomeAssistantIntegration({ integration, refetchData, areaData })
                                 align="left">
                                 <em className={classes.em}>NAME:</em>          {selectedDevice.name}
                             </Typography>
-                            <Typography
-                                key="selectedDeviceCurrentState"
-                                className={classes.deviceHeading}
-                                align="left">
-                                <em className={classes.em}>CURRENT STATE:</em> {selectedDevice.state}
-                            </Typography>
                             <div key="selectedDeviceDiv" className={classes.buttonDiv}>
                                 <Button key="selectedDeviceInterfaceButton" className={classes.button} onClick={addToSelectedInterface}>Add to interface</Button>
                                 <Button key="selectedDeviceAutomatedButton" className={classes.button} onClick={addToSelectedAutomation}>Add to automated</Button>
-                                <HomeAssistantEditMenu
+                                <KasaEditMenu
                                     key="selectedDeviceEditButton" 
                                     device={selectedDevice}
                                     buttonStyle={classes.button}
@@ -243,16 +232,16 @@ export function HomeAssistantIntegration({ integration, refetchData, areaData })
                             </div>
                         </div> : <div></div>}
                 </div>
-                <div key="hassInterfaceSelection" className={classNames(classes.column, classes.helper)}>
-                    <Typography key="hassInterfaceSelectionTypography" className={classes.columnHeading}>Interface Devices</Typography>
+                <div key="kasaInterfaceSelection" className={classNames(classes.column, classes.helper)}>
+                    <Typography key="kasaInterfaceSelectionTypography" className={classes.columnHeading}>Interface Devices</Typography>
                     {interfaceDevices.map(device =>
-                        <Chip key={"interface_chip_"+device.entityId} label={device.entityId} className={classes.chip} onDelete={() => removeSelectedInterface(device)} />
+                        <Chip key={"interface_chip_"+device.name} label={device.name} className={classes.chip} onDelete={() => removeSelectedInterface(device)} />
                     )}
                 </div>
-                <div key="hassAutomationSelection" className={classNames(classes.column, classes.helper)}>
-                    <Typography key="hassAutomationSelectionTypography" className={classes.columnHeading}>Automation Devices</Typography>
+                <div key="kasaAutomationSelection" className={classNames(classes.column, classes.helper)}>
+                    <Typography key="kasaAutomationSelectionTypography" className={classes.columnHeading}>Automation Devices</Typography>
                     {automatedDevices.map(device =>
-                        <Chip key={"automation_chip_"+device.entityId} label={device.entityId} className={classes.chip} onDelete={() => removeSelectedAutomation(device)} />
+                        <Chip key={"automation_chip_"+device.name} label={device.name} className={classes.chip} onDelete={() => removeSelectedAutomation(device)} />
                     )}
                 </div>
             </ExpansionPanelDetails>

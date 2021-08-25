@@ -175,7 +175,7 @@ export function HomeAssistantIntegration({ integration, refetchData, areaData })
                     <Typography key="hassTypographyName" className={classes.heading}>{integration.name}</Typography>
                 </div>
                 <div key="hassTypographyHeadingDiv" className={classes.column}>
-                    <Typography key="hassTypographyHeading" className={classes.secondaryHeading}>Edit Configuration</Typography>
+                    <Typography key="hassTypographyHeading" className={classes.secondaryHeading}>Edit Devices</Typography>
                 </div>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails key="hassExpansionPanelDetails" className={classes.details}>
