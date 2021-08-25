@@ -33,11 +33,6 @@ var rootQuery = graphql.NewObject(graphql.ObjectConfig{
 			Description: "Current harmony activity",
 			Resolve:     getCurrentHarmonyActivity,
 		},
-		"kasaDevices": &graphql.Field{
-			Type:        graphql.NewList(kasaType),
-			Description: "All of the kasa devices",
-			Resolve:     getKasaDevices,
-		},
 		"menuConfiguration": &graphql.Field{
 			Type:        graphql.NewList(area.AreaType),
 			Description: "The configuration that is returned for the UI to display",

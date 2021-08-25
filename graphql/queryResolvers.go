@@ -38,21 +38,6 @@ func getCurrentHarmonyActivity(params graphql.ResolveParams) (interface{}, error
 	return nil, nil
 }
 
-func getKasaDevices(params graphql.ResolveParams) (interface{}, error) {
-	var devices []Kasa
-	for _, data := range Integrations.KasaData.Devices {
-		dev := Kasa{
-			AreaName:  data.AreaName,
-			IPAddress: data.IPAddress,
-			IsOn:      data.PlugInfo.On,
-			Name:      data.Name,
-			Type:      data.Type,
-		}
-		devices = append(devices, dev)
-	}
-	return devices, nil
-}
-
 func life360Members(params graphql.ResolveParams) (interface{}, error) {
 	var members []Life360Member
 	for _, data := range Integrations.Life3.Members {

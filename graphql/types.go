@@ -162,41 +162,6 @@ var harmonyCommandType = graphql.NewObject(
 	},
 )
 
-// Kasa is the struct used for GraphQL
-type Kasa struct {
-	ID        string `json:"id"`
-	IPAddress string `json:"ipAddress"`
-	Name      string `json:"name"`
-	AreaName  string `json:"areaName"`
-	Type      string `json:"type"`
-	IsOn      bool   `json:"on"`
-}
-
-var kasaType = graphql.NewObject(
-	graphql.ObjectConfig{
-		Name: "Kasa",
-		Fields: graphql.Fields{
-			"id": &graphql.Field{
-				Type: graphql.String,
-			},
-			"ipAddress": &graphql.Field{
-				Type: graphql.String,
-			},
-			"name": &graphql.Field{
-				Type: graphql.String,
-			},
-			"areaName": &graphql.Field{
-				Type: graphql.String,
-			},
-			"type": &graphql.Field{
-				Type: graphql.String,
-			},
-			"on": &graphql.Field{
-				Type: graphql.Boolean,
-			},
-		},
-	},
-)
 
 type Custom struct {
 	Type    string   `yaml:"type"`

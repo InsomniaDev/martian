@@ -10,6 +10,7 @@ import (
 	"github.com/insomniadev/martian/integrations/area"
 	"github.com/insomniadev/martian/integrations/harmony"
 	"github.com/insomniadev/martian/integrations/homeassistant"
+	"github.com/insomniadev/martian/integrations/kasa"
 	"github.com/insomniadev/martian/integrations/lutron"
 )
 
@@ -294,6 +295,11 @@ func selectDevicesForIntegration(params graphql.ResolveParams) (interface{}, err
 		if err != nil {
 			return false, err
 		}
+	case "kasa":
+		err := Integrations.KasaData.UpdateSelectedDevices(daters, addDevices, automationDevice)
+		if err != nil {
+			return false, err
+		}
 	}
 	return true, nil
 }
@@ -309,6 +315,13 @@ func editDeviceConfiguration(params graphql.ResolveParams) (interface{}, error) 
 		var hass homeassistant.HomeAssistantDevice
 		err := json.Unmarshal([]byte(device), &hass)
 		Integrations.Hass.EditDeviceConfiguration(hass, removeEdit)
+		if err != nil {
+			return false, err
+		}
+	case "kasa":
+		var kasaDevice kasa.KasaDevice
+		err := json.Unmarshal([]byte(device), &kasaDevice)
+		Integrations.KasaData.EditDeviceConfiguration(kasaDevice, removeEdit)
 		if err != nil {
 			return false, err
 		}

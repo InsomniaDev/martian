@@ -5,6 +5,7 @@ package kasa
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net"
 	"sync"
 	"time"
@@ -15,9 +16,7 @@ import (
 
 // Init initializes the instance of kasa for devices on the network
 func (d *Devices) Init(configuration string) {
-	var devices []KasaDevice
-	json.Unmarshal([]byte(configuration), &devices)
-	d.Devices = devices
+	json.Unmarshal([]byte(configuration), &d)
 	// d.Plugs = RetrieveKasaNodes()
 	// devices := config.LoadKasa()
 
@@ -40,7 +39,13 @@ func (d *Devices) Init(configuration string) {
 
 	// Check every second for a change in the connected kasa devices and then update on that change
 	for i := range d.Devices {
+		d.Devices[i].ID = d.Devices[i].IPAddress
 		go d.Devices[i].WatchForChanges()
+	}
+	var db database.Database
+	err := db.PutIntegrationValue("kasa", d)
+	if err != nil {
+		log.Println(err)
 	}
 }
 
@@ -51,7 +56,7 @@ func (d *Devices) ChangeAreaForKasaDevice(ipAddress, area string) error {
 		}
 	}
 	var db database.Database
-	err := db.PutIntegrationValue("kasa", d.Devices)
+	err := db.PutIntegrationValue("kasa", d)
 	if err != nil {
 		return err
 	}
@@ -97,8 +102,7 @@ func (h *KasaDevice) PowerOff() error {
 
 // PowerOn turns the plug on
 func (h *KasaDevice) PowerOn() error {
-	data, err := h.do(PowerOnCommand, "set_relay_state")
-	fmt.Println(string(data))
+	_, err := h.do(PowerOnCommand, "set_relay_state")
 	if err != nil {
 		return err
 	}
@@ -173,13 +177,12 @@ func (d *Devices) Discover() {
 				if !alreadyUsedPlug {
 					d.Devices = append(d.Devices, plug)
 				}
-				fmt.Println(ip.String(), info)
 			}
 		}()
 	}
 	wg.Wait()
 	var db database.Database
-	db.PutIntegrationValue("kasa", d.Devices)
+	db.PutIntegrationValue("kasa", d)
 	// 	}
 	// case *net.IPAddr:
 	// 	fmt.Printf("%v : %s (%s)\n", i.Name, v, v.IP.DefaultMask())
@@ -200,4 +203,119 @@ func inc(ip net.IP) {
 			break
 		}
 	}
+}
+
+// UpdateSelectedDevices will go through and update the devices as selected or not selected
+func (h *Devices) UpdateSelectedDevices(selectedDevices []string, addDevices bool, automationDevice bool) error {
+
+	// Compare either through the automation or interface selections
+	if automationDevice {
+		h.AutomatedDevices = checkIfDeviceIsInList(h.Devices, h.AutomatedDevices, selectedDevices, addDevices)
+	} else {
+		h.InterfaceDevices = checkIfDeviceIsInList(h.Devices, h.InterfaceDevices, selectedDevices, addDevices)
+	}
+	var db database.Database
+	err := db.PutIntegrationValue("kasa", h)
+	if err != nil {
+		log.Println(err)
+	}
+
+	return nil
+}
+
+// checkIfDeviceIsInList is an internal method to see if the value already exists in the list
+func checkIfDeviceIsInList(allDevices []KasaDevice, alreadyChosenDevices []KasaDevice, selectedDevices []string, addDevices bool) []KasaDevice {
+	var newlySelectedDevices []KasaDevice
+	// Cycle through all of the available devices for HomeAssistant
+	for _, availableDevice := range allDevices {
+
+		selectedDeviceExists := false
+		// Cycle through all of the already selected devices to see if there is a match
+		for _, selectedDevice := range alreadyChosenDevices {
+
+			// If this available device is already selected, then set selectedDeviceExists as true
+			if availableDevice.IPAddress == selectedDevice.IPAddress {
+				selectedDeviceExists = true
+				break // break out of the selectedDevice cycle since there is a match
+			}
+		}
+
+		availableDeviceIsNowSelected := false
+		// Cycle through the selectedDevices parameter to see if the available device has a match
+		for _, newlySelectedDevice := range selectedDevices {
+
+			// If the available device matches with the newly selected criteria then set as true
+			if availableDevice.IPAddress == newlySelectedDevice {
+				availableDeviceIsNowSelected = true
+			}
+		}
+
+		// IF the device is already selected, and is one of the newly selected, and set to be added
+		//			IF addDevices is FALSE, then it will be removed from the selectedDevices slice
+		if availableDeviceIsNowSelected && addDevices {
+			newlySelectedDevices = append(newlySelectedDevices, availableDevice)
+		} else if selectedDeviceExists && !availableDeviceIsNowSelected { // IF it was already selected
+			newlySelectedDevices = append(newlySelectedDevices, availableDevice)
+		}
+	}
+	return newlySelectedDevices
+}
+
+// EditDeviceConfiguration will go through and update information for the passed in device
+func (k *Devices) EditDeviceConfiguration(device KasaDevice, removeEdit bool) error {
+
+	// Cycle through all of the devices, interfaceDevices, and automatedDevices and update
+	for i := range k.Devices {
+		if k.Devices[i].IPAddress == device.IPAddress {
+			k.Devices[i] = device
+		}
+	}
+	for i := range k.InterfaceDevices {
+		if k.InterfaceDevices[i].IPAddress == device.IPAddress {
+			k.InterfaceDevices[i] = device
+		}
+	}
+	for i := range k.AutomatedDevices {
+		if k.AutomatedDevices[i].IPAddress == device.IPAddress {
+			k.AutomatedDevices[i] = device
+		}
+	}
+
+	// Add the updated device to the editedDevices
+	found := false
+	for i := range k.EditedDevices {
+		if k.EditedDevices[i].IPAddress == device.IPAddress {
+			k.EditedDevices[i] = device
+			found = true
+			break
+		}
+	}
+	if !found {
+		k.EditedDevices = append(k.EditedDevices, device)
+	}
+
+	// If set to remove the edit then recreate the list of edited devices without that edit
+	if removeEdit {
+		var newEditedDeviceList []KasaDevice
+		for i := range k.EditedDevices {
+			if k.EditedDevices[i].IPAddress != device.IPAddress {
+				newEditedDeviceList = append(newEditedDeviceList, k.EditedDevices[i])
+			}
+		}
+		k.EditedDevices = newEditedDeviceList
+	}
+
+	// Save in the database
+	var db database.Database
+	err := db.PutIntegrationValue("hass", k)
+	if err != nil {
+		log.Println(err)
+	}
+
+	// Let's repopulate with the correct device state
+	if removeEdit {
+		k.Discover()
+	}
+
+	return nil
 }

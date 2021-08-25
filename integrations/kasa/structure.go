@@ -11,7 +11,10 @@ import (
 type PowerState int
 
 type Devices struct {
-	Devices []KasaDevice `json="devices"`
+	Devices          []KasaDevice `json="devices"`
+	EditedDevices    []KasaDevice `json="editedDevices"`
+	InterfaceDevices []KasaDevice `json="interfaceDevices"`
+	AutomatedDevices []KasaDevice `json="automatedDevices"`
 }
 
 // GraphqlKasaType is the object type for the kasa integration
@@ -20,6 +23,12 @@ var GraphqlKasaType = graphql.NewObject(
 		Name: "KasaType",
 		Fields: graphql.Fields{
 			"devices": &graphql.Field{
+				Type: graphql.NewList(GraphqlKasaDevicesType),
+			},
+			"interfaceDevices": &graphql.Field{
+				Type: graphql.NewList(GraphqlKasaDevicesType),
+			},
+			"automatedDevices": &graphql.Field{
 				Type: graphql.NewList(GraphqlKasaDevicesType),
 			},
 		},
