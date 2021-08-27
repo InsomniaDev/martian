@@ -152,8 +152,8 @@ export function KasaIntegration({ integration, refetchData, areaData }) {
     }
 
     const getNameForIp = (ipAddress) => {
-        const device = [...integration.value.devices].filter(device => device.ipAddress == ipAddress);
-        return device[0].name; 
+        const device = [...integration.value.devices].filter(device => device.ipAddress === ipAddress);
+        return device[0].name;
     }
 
     const clearSelected = () => {
@@ -165,8 +165,8 @@ export function KasaIntegration({ integration, refetchData, areaData }) {
     }
 
     var devices = [...integration.value.devices].sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
-    var interfaceDevices = [...integration.value.interfaceDevices].sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
-    var automatedDevices = [...integration.value.automatedDevices].sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
+    var interfaceDevices = [...integration.value.interfaceDevices].map(device => getNameForIp(device)).sort((a, b) => (a > b) ? 1 : ((b > a) ? -1 : 0));
+    var automatedDevices = [...integration.value.automatedDevices].map(device => getNameForIp(device)).sort((a, b) => (a > b) ? 1 : ((b > a) ? -1 : 0));
 
     return (
         <ExpansionPanel key="kasaExpansionPanel">
@@ -188,7 +188,7 @@ export function KasaIntegration({ integration, refetchData, areaData }) {
                             value={selectedDevice}
                             onChange={handleChange}
                         >
-                            <MenuItem key="select_none" key="kasaFormControlMenuItem" value="">
+                            <MenuItem key="kasaFormControlMenuItem" value="">
                                 <em>None</em>
                             </MenuItem>
                             {
@@ -199,54 +199,54 @@ export function KasaIntegration({ integration, refetchData, areaData }) {
                     {selectedDevice !== "" ?
                         <div className={classes.deviceDetails}>
                             <Typography
-                                key="selectedDeviceIpAddress"
+                                key={"selectedDeviceIpAddress" + selectedDevice.ipAddress}
                                 className={classes.deviceHeading}
                                 align="left">
                                 <em className={classes.em}>ENTITY ID:</em>     {selectedDevice.ipAddress}
                             </Typography>
                             <Typography
-                                key="selectedDeviceType"
+                                key={"selectedDeviceType" + selectedDevice.ipAddress}
                                 className={classes.deviceHeading}
                                 align="left">
                                 <em className={classes.em}>TYPE:</em>          {selectedDevice.type}
                             </Typography>
                             <Typography
-                                key="selectedDeviceAreaName"
+                                key={"selectedDeviceAreaName" + selectedDevice.ipAddress}
                                 className={classes.deviceHeading}
                                 align="left">
                                 <em className={classes.em}>AREA NAME:</em>     {selectedDevice.areaName}
                             </Typography>
                             <Typography
-                                key="selectedDeviceName"
+                                key={"selectedDeviceName" + selectedDevice.ipAddress}
                                 className={classes.deviceHeading}
                                 align="left">
                                 <em className={classes.em}>NAME:</em>          {selectedDevice.name}
                             </Typography>
-                            <div key="selectedDeviceDiv" className={classes.buttonDiv}>
-                                <Button key="selectedDeviceInterfaceButton" className={classes.button} onClick={addToSelectedInterface}>Add to interface</Button>
-                                <Button key="selectedDeviceAutomatedButton" className={classes.button} onClick={addToSelectedAutomation}>Add to automated</Button>
+                            <div key={"selectedDeviceDiv" + selectedDevice.ipAddress} className={classes.buttonDiv}>
+                                <Button key={"selectedDeviceInterfaceButton" + selectedDevice.ipAddress} className={classes.button} onClick={addToSelectedInterface}>Add to interface</Button>
+                                <Button key={"selectedDeviceAutomatedButton" + selectedDevice.ipAddress} className={classes.button} onClick={addToSelectedAutomation}>Add to automated</Button>
                                 <KasaEditMenu
-                                    key="selectedDeviceEditButton" 
+                                    key={"selectedDeviceEditButton" + selectedDevice.ipAddress}
                                     device={selectedDevice}
                                     buttonStyle={classes.button}
                                     buttonText="edit device"
                                     areaData={areaData}
                                     refetchData={refetchData}
                                     updateSelected={updateSelected} />
-                                <Button key="selectedDeviceClearButton" className={classes.button} onClick={clearSelected}>clear</Button>
+                                <Button key={"selectedDeviceClearButton" + selectedDevice.ipAddress} className={classes.button} onClick={clearSelected}>clear</Button>
                             </div>
                         </div> : <div></div>}
                 </div>
-                <div key="kasaInterfaceSelection" className={classNames(classes.column, classes.helper)}>
-                    <Typography key="kasaInterfaceSelectionTypography" className={classes.columnHeading}>Interface Devices</Typography>
+                <div key={"kasaInterfaceSelection" + selectedDevice.ipAddress} className={classNames(classes.column, classes.helper)}>
+                    <Typography key={"kasaInterfaceSelectionTypography" + selectedDevice.ipAddress} className={classes.columnHeading}>Interface Devices</Typography>
                     {interfaceDevices.map(device =>
-                        <Chip key={"interface_chip_"+device} label={getNameForIp(device)} className={classes.chip} onDelete={() => removeSelectedInterface(device)} />
+                        <Chip key={"interface_chip_" + device} label={device} className={classes.chip} onDelete={() => removeSelectedInterface(device)} />
                     )}
                 </div>
-                <div key="kasaAutomationSelection" className={classNames(classes.column, classes.helper)}>
-                    <Typography key="kasaAutomationSelectionTypography" className={classes.columnHeading}>Automation Devices</Typography>
+                <div key={"kasaAutomationSelection" + selectedDevice.ipAddress} className={classNames(classes.column, classes.helper)}>
+                    <Typography key={"kasaAutomationSelectionTypography" + selectedDevice.ipAddress} className={classes.columnHeading}>Automation Devices</Typography>
                     {automatedDevices.map(device =>
-                        <Chip key={"automation_chip_"+device} label={getNameForIp(device)} className={classes.chip} onDelete={() => removeSelectedAutomation(device)} />
+                        <Chip key={"automation_chip_" + device} label={device} className={classes.chip} onDelete={() => removeSelectedAutomation(device)} />
                     )}
                 </div>
             </ExpansionPanelDetails>
