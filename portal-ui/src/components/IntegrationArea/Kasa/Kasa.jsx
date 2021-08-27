@@ -151,6 +151,11 @@ export function KasaIntegration({ integration, refetchData, areaData }) {
         refetchData();
     }
 
+    const getNameForIp = (ipAddress) => {
+        const device = [...integration.value.devices].filter(device => device.ipAddress == ipAddress);
+        return device[0].name; 
+    }
+
     const clearSelected = () => {
         changeSelectedDevice("");
     }
@@ -235,13 +240,13 @@ export function KasaIntegration({ integration, refetchData, areaData }) {
                 <div key="kasaInterfaceSelection" className={classNames(classes.column, classes.helper)}>
                     <Typography key="kasaInterfaceSelectionTypography" className={classes.columnHeading}>Interface Devices</Typography>
                     {interfaceDevices.map(device =>
-                        <Chip key={"interface_chip_"+device} label={device} className={classes.chip} onDelete={() => removeSelectedInterface(device)} />
+                        <Chip key={"interface_chip_"+device} label={getNameForIp(device)} className={classes.chip} onDelete={() => removeSelectedInterface(device)} />
                     )}
                 </div>
                 <div key="kasaAutomationSelection" className={classNames(classes.column, classes.helper)}>
                     <Typography key="kasaAutomationSelectionTypography" className={classes.columnHeading}>Automation Devices</Typography>
                     {automatedDevices.map(device =>
-                        <Chip key={"automation_chip_"+device} label={device} className={classes.chip} onDelete={() => removeSelectedAutomation(device)} />
+                        <Chip key={"automation_chip_"+device} label={getNameForIp(device)} className={classes.chip} onDelete={() => removeSelectedAutomation(device)} />
                     )}
                 </div>
             </ExpansionPanelDetails>

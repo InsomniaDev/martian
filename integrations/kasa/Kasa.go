@@ -17,25 +17,8 @@ import (
 // Init initializes the instance of kasa for devices on the network
 func (d *Devices) Init(configuration string) {
 	json.Unmarshal([]byte(configuration), &d)
-	// d.Plugs = RetrieveKasaNodes()
-	// devices := config.LoadKasa()
 
-	// for _, ipAdd := range devices {
-	// 	found := false
-	// 	for _, dev := range d.Plugs {
-	// 		if ipAdd == dev.IPAddress {
-	// 			found = true
-	// 			dev.PowerState()
-	// 		}
-	// 	}
-	// 	if !found {
-	// 		plug := NewPlug(ipAdd)
-	// 		plug.PowerOff()
-	// 		plug.Name = plug.PlugInfo.Alias
-	// 		InsertKasaGraph(ipAdd, plug.Name)
-	// 		d.Plugs = append(d.Plugs, plug)
-	// 	}
-	// }
+	d.Discover()
 
 	// Check every second for a change in the connected kasa devices and then update on that change
 	for i := range d.Devices {
@@ -125,36 +108,25 @@ func (h *KasaDevice) PowerState() (PowerState, error) {
 	return state.RelayState, nil
 }
 
+// Discover will go through and discover all Kasa devices on the network
 func (d *Devices) Discover() {
-	// ifaces, err := net.Interfaces()
-	// if err != nil {
-	// 	fmt.Print(fmt.Errorf("localAddresses: %+v", err.Error()))
-	// 	return
-	// }
-	// found := false
-	// for _, i := range ifaces {
-	// 	addrs, err := i.Addrs()
-	// 	if err != nil {
-	// 		fmt.Print(fmt.Errorf("localAddresses: %+v", err.Error()))
-	// 		continue
-	// 	}
-	// 	for _, a := range addrs {
-	// 		switch v := a.(type) {
-	// 		case *net.IPNet:
+	d.Devices = []KasaDevice{}
 	addr := "192.168.1.1/24"
-	// if strings.Contains(addr, "192.168") || strings.Contains(addr, "10.10") {
+
+	// Get all ips in the cidr
 	ip, ipnet, err := net.ParseCIDR(addr)
 	if err != nil {
 		panic(err)
 	}
 	var wg sync.WaitGroup
+
+	// Check each ip to see if it responds as a Kasa device
 	for ip := ip.Mask(ipnet.Mask); ipnet.Contains(ip); inc(ip) {
 		plug := NewPlug(ip.String())
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
 			info, _ := plug.Info()
-			// d.Plugs = append(d.Plugs, plug)
 			if info != nil {
 				plug.Name = plug.PlugInfo.Alias
 				switch plug.PlugInfo.Model {
@@ -163,34 +135,23 @@ func (d *Devices) Discover() {
 				case "HS200(US)":
 					plug.Type = "light"
 				}
-				alreadyUsedPlug := false
-				for i := range d.Devices {
-					if d.Devices[i].IPAddress == plug.IPAddress {
-						d.Devices[i] = plug
-						alreadyUsedPlug = true
+
+				// Check if this device has been edited already and update it accordingly
+				for i := range d.EditedDevices {
+					if d.EditedDevices[i].IPAddress == plug.IPAddress {
+						plug.Name = d.EditedDevices[i].Name
+						plug.AreaName = d.EditedDevices[i].AreaName
 					}
 				}
-				if !alreadyUsedPlug {
-					d.Devices = append(d.Devices, plug)
-				}
+				d.Devices = append(d.Devices, plug)
 			}
 		}()
 	}
 	wg.Wait()
+
+	// Insert into the database again with all devices
 	var db database.Database
 	db.PutIntegrationValue("kasa", d)
-	// 	}
-	// case *net.IPAddr:
-	// 	fmt.Printf("%v : %s (%s)\n", i.Name, v, v.IP.DefaultMask())
-	// }
-	// 	if found {
-	// 		break
-	// 	}
-	// }
-	// if found {
-	// 	break
-	// }
-	// }
 }
 func inc(ip net.IP) {
 	for j := len(ip) - 1; j >= 0; j-- {
@@ -265,6 +226,18 @@ func (k *Devices) EditDeviceConfiguration(device KasaDevice, removeEdit bool) er
 		if k.Devices[i].IPAddress == device.IPAddress {
 			k.Devices[i] = device
 		}
+	}
+
+	// Update device in edited section, if not found then add it to the edited devices
+	foundDevice := false
+	for i := range k.EditedDevices {
+		if k.EditedDevices[i].IPAddress == device.IPAddress {
+			k.EditedDevices[i] = device
+			foundDevice = true
+		}
+	}
+	if !foundDevice {
+		k.EditedDevices = append(k.EditedDevices, device)
 	}
 
 	// Save in the database

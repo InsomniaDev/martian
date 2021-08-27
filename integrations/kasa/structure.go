@@ -12,6 +12,7 @@ type PowerState int
 
 type Devices struct {
 	Devices          []KasaDevice `json="devices"`
+	EditedDevices    []KasaDevice
 	InterfaceDevices []string `json="interfaceDevices"`
 	AutomatedDevices []string `json="automatedDevices"`
 }
