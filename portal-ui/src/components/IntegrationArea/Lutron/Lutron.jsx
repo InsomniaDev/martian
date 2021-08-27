@@ -88,7 +88,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 
-export function KasaIntegration({ integration, refetchData, areaData }) {
+export function LutronIntegration({ integration, refetchData, areaData }) {
     const classes = useStyles();
 
     const [selectedDevice, changeSelectedDevice] = useState("");
@@ -97,12 +97,12 @@ export function KasaIntegration({ integration, refetchData, areaData }) {
         changeSelectedDevice(event.target.value);
     };
 
-    // Add the selected variable to the interfaceDevices for kasa
+    // Add the selected variable to the interfaceDevices for lutron
     const addToSelectedInterface = () => {
-        devices = [selectedDevice.ipAddress];
+        devices = [selectedDevice.id];
         selectDevicesForIntegrationMutation({
             variables: {
-                integration: "kasa",
+                integration: "lutron",
                 devices: devices,
                 addDevices: true,
                 automationDevice: false,
@@ -111,11 +111,11 @@ export function KasaIntegration({ integration, refetchData, areaData }) {
         refetchData();
     }
 
-    // Remove the selected variable from the interfaceDevices for kasa
+    // Remove the selected variable from the interfaceDevices for lutron
     const removeSelectedInterface = (ipAddress) => {
         selectDevicesForIntegrationMutation({
             variables: {
-                integration: "kasa",
+                integration: "lutron",
                 devices: [ipAddress],
                 addDevices: false,
                 automationDevice: false,
@@ -124,12 +124,12 @@ export function KasaIntegration({ integration, refetchData, areaData }) {
         refetchData();
     }
 
-    // Add the selected variable to the interfaceDevices for kasa
+    // Add the selected variable to the interfaceDevices for lutron
     const addToSelectedAutomation = () => {
-        devices = [selectedDevice.ipAddress];
+        devices = [selectedDevice.id];
         selectDevicesForIntegrationMutation({
             variables: {
-                integration: "kasa",
+                integration: "lutron",
                 devices: devices,
                 addDevices: true,
                 automationDevice: true,
@@ -138,11 +138,11 @@ export function KasaIntegration({ integration, refetchData, areaData }) {
         refetchData();
     }
 
-    // Remove the selected variable from the interfaceDevices for kasa
+    // Remove the selected variable from the interfaceDevices for lutron
     const removeSelectedAutomation = (ipAddress) => {
         selectDevicesForIntegrationMutation({
             variables: {
-                integration: "kasa",
+                integration: "lutron",
                 devices: [ipAddress],
                 addDevices: false,
                 automationDevice: true,
@@ -151,8 +151,8 @@ export function KasaIntegration({ integration, refetchData, areaData }) {
         refetchData();
     }
 
-    const getNameForIp = (ipAddress) => {
-        const device = [...integration.value.devices].filter(device => device.ipAddress === ipAddress);
+    const getNameForId = (id) => {
+        const device = [...integration.value.devices].filter(device => device.id === id);
         return device[0].name;
     }
 
@@ -164,89 +164,89 @@ export function KasaIntegration({ integration, refetchData, areaData }) {
         changeSelectedDevice(newDevice);
     }
 
-    var devices = [...integration.value.devices].sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
-    var interfaceDevices = [...integration.value.interfaceDevices].sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
-    var automatedDevices = [...integration.value.automatedDevices].sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
+    var devices = [...integration.value.devices].sort((a, b) => (a.lutronName > b.lutronName) ? 1 : ((b.lutronName > a.lutronName) ? -1 : 0));
+    var interfaceDevices = [...integration.value.interfaceDevices].map(device => getNameForId(device)).sort((a, b) => (a > b) ? 1 : ((b > a) ? -1 : 0));
+    var automatedDevices = [...integration.value.automatedDevices].map(device => getNameForId(device)).sort((a, b) => (a > b) ? 1 : ((b > a) ? -1 : 0));
 
     return (
-        <ExpansionPanel key="kasaExpansionPanel">
-            <ExpansionPanelSummary key="kasa" >
-                <div key="kasaTypographyNameDiv" className={classes.column}>
-                    <Typography key="kasaTypographyName" className={classes.heading}>{integration.name}</Typography>
+        <ExpansionPanel key="lutronExpansionPanel">
+            <ExpansionPanelSummary key="lutron" >
+                <div key="lutronTypographyNameDiv" className={classes.column}>
+                    <Typography key="lutronTypographyName" className={classes.heading}>{integration.name}</Typography>
                 </div>
-                <div key="kasaTypographyHeadingDiv" className={classes.column}>
-                    <Typography key="kasaTypographyHeading" className={classes.secondaryHeading}>Edit Configuration</Typography>
+                <div key="lutronTypographyHeadingDiv" className={classes.column}>
+                    <Typography key="lutronTypographyHeading" className={classes.secondaryHeading}>Edit Configuration</Typography>
                 </div>
             </ExpansionPanelSummary>
-            <ExpansionPanelDetails key="kasaExpansionPanelDetails" className={classes.details}>
-                <div key="kasaExpansionPanelDetailsDiv" className={classes.column}>
-                    <FormControl key="kasaFormControl" className={classes.formControl}>
-                        <InputLabel key="kasaFormControlInputLabel" id="demo-controlled-open-select-label">Kasa Devices</InputLabel>
+            <ExpansionPanelDetails key="lutronExpansionPanelDetails" className={classes.details}>
+                <div key="lutronExpansionPanelDetailsDiv" className={classes.column}>
+                    <FormControl key="lutronFormControl" className={classes.formControl}>
+                        <InputLabel key="lutronFormControlInputLabel" id="demo-controlled-open-select-label">Lutron Devices</InputLabel>
                         <Select
-                            key="kasaFormControlSelect"
+                            key="lutronFormControlSelect"
                             id="demo-controlled-open-select"
                             value={selectedDevice}
                             onChange={handleChange}
                         >
-                            <MenuItem key="kasaFormControlMenuItem" value="">
+                            <MenuItem key="lutronFormControlMenuItem" value="">
                                 <em>None</em>
                             </MenuItem>
                             {
-                                devices.map(device => <MenuItem key={"select_" + device.name} value={device}>{device.name}</MenuItem>)
+                                devices.map(device => <MenuItem key={"select_" + device.areaName + device.name} value={device}><em>{device.areaName}</em>{". - " + device.name}</MenuItem>)
                             }
                         </Select>
                     </FormControl>
                     {selectedDevice !== "" ?
                         <div className={classes.deviceDetails}>
                             <Typography
-                                key={"selectedDeviceIpAddress" + selectedDevice.ipAddress}
+                                key={"selectedDeviceIpAddress" + selectedDevice.id}
                                 className={classes.deviceHeading}
                                 align="left">
-                                <em className={classes.em}>ENTITY ID:</em>     {selectedDevice.ipAddress}
+                                <em className={classes.em}>ID:</em>     {selectedDevice.id}
                             </Typography>
                             <Typography
-                                key={"selectedDeviceType" + selectedDevice.ipAddress}
+                                key={"selectedDeviceType" + selectedDevice.id}
                                 className={classes.deviceHeading}
                                 align="left">
                                 <em className={classes.em}>TYPE:</em>          {selectedDevice.type}
                             </Typography>
                             <Typography
-                                key={"selectedDeviceAreaName" + selectedDevice.ipAddress}
+                                key={"selectedDeviceAreaName" + selectedDevice.id}
                                 className={classes.deviceHeading}
                                 align="left">
                                 <em className={classes.em}>AREA NAME:</em>     {selectedDevice.areaName}
                             </Typography>
                             <Typography
-                                key={"selectedDeviceName" + selectedDevice.ipAddress}
+                                key={"selectedDeviceName" + selectedDevice.id}
                                 className={classes.deviceHeading}
                                 align="left">
                                 <em className={classes.em}>NAME:</em>          {selectedDevice.name}
                             </Typography>
-                            <div key={"selectedDeviceDiv" + selectedDevice.ipAddress} className={classes.buttonDiv}>
-                                <Button key={"selectedDeviceInterfaceButton" + selectedDevice.ipAddress} className={classes.button} onClick={addToSelectedInterface}>Add to interface</Button>
-                                <Button key={"selectedDeviceAutomatedButton" + selectedDevice.ipAddress} className={classes.button} onClick={addToSelectedAutomation}>Add to automated</Button>
+                            <div key={"selectedDeviceDiv" + selectedDevice.id} className={classes.buttonDiv}>
+                                <Button key={"selectedDeviceInterfaceButton" + selectedDevice.id} className={classes.button} onClick={addToSelectedInterface}>Add to interface</Button>
+                                <Button key={"selectedDeviceAutomatedButton" + selectedDevice.id} className={classes.button} onClick={addToSelectedAutomation}>Add to automated</Button>
                                 <LutronEditMenu
-                                    key={"selectedDeviceEditButton" + selectedDevice.ipAddress}
+                                    key={"selectedDeviceEditButton" + selectedDevice.id}
                                     device={selectedDevice}
                                     buttonStyle={classes.button}
                                     buttonText="edit device"
                                     areaData={areaData}
                                     refetchData={refetchData}
                                     updateSelected={updateSelected} />
-                                <Button key={"selectedDeviceClearButton" + selectedDevice.ipAddress} className={classes.button} onClick={clearSelected}>clear</Button>
+                                <Button key={"selectedDeviceClearButton" + selectedDevice.id} className={classes.button} onClick={clearSelected}>clear</Button>
                             </div>
                         </div> : <div></div>}
                 </div>
-                <div key={"kasaInterfaceSelection" + selectedDevice.ipAddress} className={classNames(classes.column, classes.helper)}>
-                    <Typography key={"kasaInterfaceSelectionTypography" + selectedDevice.ipAddress} className={classes.columnHeading}>Interface Devices</Typography>
+                <div key={"lutronInterfaceSelection" + selectedDevice.id} className={classNames(classes.column, classes.helper)}>
+                    <Typography key={"lutronInterfaceSelectionTypography" + selectedDevice.id} className={classes.columnHeading}>Interface Devices</Typography>
                     {interfaceDevices.map(device =>
-                        <Chip key={"interface_chip_" + device} label={getNameForIp(device)} className={classes.chip} onDelete={() => removeSelectedInterface(device)} />
+                        <Chip key={"interface_chip_" + device} label={device} className={classes.chip} onDelete={() => removeSelectedInterface(device)} />
                     )}
                 </div>
-                <div key={"kasaAutomationSelection" + selectedDevice.ipAddress} className={classNames(classes.column, classes.helper)}>
-                    <Typography key={"kasaAutomationSelectionTypography" + selectedDevice.ipAddress} className={classes.columnHeading}>Automation Devices</Typography>
+                <div key={"lutronAutomationSelection" + selectedDevice.id} className={classNames(classes.column, classes.helper)}>
+                    <Typography key={"lutronAutomationSelectionTypography" + selectedDevice.id} className={classes.columnHeading}>Automation Devices</Typography>
                     {automatedDevices.map(device =>
-                        <Chip key={"automation_chip_" + device} label={getNameForIp(device)} className={classes.chip} onDelete={() => removeSelectedAutomation(device)} />
+                        <Chip key={"automation_chip_" + device} label={device} className={classes.chip} onDelete={() => removeSelectedAutomation(device)} />
                     )}
                 </div>
             </ExpansionPanelDetails>

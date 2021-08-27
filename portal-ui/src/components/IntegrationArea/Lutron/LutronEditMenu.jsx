@@ -38,14 +38,14 @@ export default function KasaEditMenu({ device, buttonStyle, buttonText, areaData
         var newDevice = {
             areaName: target.value,
             name: device.name,
-            ipAddress: device.ipAddress,
             type: device.type,
-            id: device.ipAddress,
+            lutronName: device.lutronName,
+            id: device.id,
         };
         setAreaName(target.value);
         updateDevice({
             variables: {
-                integration: "kasa",
+                integration: "lutron",
                 device: JSON.stringify(newDevice),
                 removeEdit: false
             }
@@ -57,13 +57,13 @@ export default function KasaEditMenu({ device, buttonStyle, buttonText, areaData
         var newDevice = {
             areaName: device.areaName,
             name: nameRef.current.value,
-            ipAddress: device.ipAddress,
             type: device.type,
-            id: device.ipAddress,
+            lutronName: device.lutronName,
+            id: device.id,
         };
         updateDevice({
             variables: {
-                integration: "kasa",
+                integration: "lutron",
                 device: JSON.stringify(device),
                 removeEdit: false
             }
@@ -90,7 +90,7 @@ export default function KasaEditMenu({ device, buttonStyle, buttonText, areaData
                         margin="dense"
                         id="ipAddress"
                         label="Unique ID"
-                        defaultValue={device.ipAddress}
+                        defaultValue={device.id}
                         InputProps={{
                             readOnly: true,
                         }}
@@ -114,10 +114,10 @@ export default function KasaEditMenu({ device, buttonStyle, buttonText, areaData
                         <InputLabel>Area Name</InputLabel>
                         <Select
                             id="priority-selection"
-                            key={"selection_" + device.ipAddress}
+                            key={"selection_" + device.id}
                             value={areaName}
                             onChange={handleAreaNameChange}>
-                            {areaData.areaNames.map(area => <MenuItem key={area + "kasaPopUp"} value={area}>{area}</MenuItem>)}
+                            {areaData.areaNames.map(area => <MenuItem key={area + "lutronPopUp"} value={area}>{area}</MenuItem>)}
                         </Select>
                     </FormControl>
                     <TextField

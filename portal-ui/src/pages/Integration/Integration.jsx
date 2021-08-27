@@ -4,6 +4,7 @@ import React from "react";
 import { HomeAssistantIntegration } from '../../components/IntegrationArea/HomeAssistant/HomeAssistant';
 import { IntegrationArea } from '../../components/IntegrationArea/IntegrationArea';
 import { KasaIntegration } from '../../components/IntegrationArea/Kasa/Kasa';
+import { LutronIntegration } from '../../components/IntegrationArea/Lutron/Lutron';
 import { areaNames } from '../../components/IntegrationArea/queries/areaNames';
 import { getIntegrations } from './queries/getIntegrations';
 
@@ -84,7 +85,7 @@ export function Integration() {
           case "lutron":
             integrationValue.name = "Lutron Lighting";
             integrationValue.value = data.integrations.lutron;
-            return <IntegrationArea key="lutronIntegration" integration={integrationValue} />
+            return <LutronIntegration key="lutronIntegration" areaData={areaData} integration={integrationValue} refetchData={() => refetch()} />
           default:
             return <div />
         }

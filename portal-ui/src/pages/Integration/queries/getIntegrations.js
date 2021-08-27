@@ -57,14 +57,17 @@ query integrations {
           username
           file
         }
-        inventory {
+        devices {
           areaName
           id
           name
           state
           type
           value
+          lutronName
         }
+        interfaceDevices 
+        automatedDevices 
       }
     }
   }

@@ -11,12 +11,13 @@ import (
 
 // LDevice type
 type LDevice struct {
-	Name     string  `json:"name"`
-	ID       int     `json:"id"`
-	AreaName string  `json:"areaName"`
-	Type     string  `json:"type"`
-	Value    float64 `json:"value"`
-	State    string  `json:"state"`
+	Name       string  `json:"name"`
+	ID         int     `json:"id"`
+	AreaName   string  `json:"areaName"`
+	Type       string  `json:"type"`
+	Value      float64 `json:"value"`
+	State      string  `json:"state"`
+	LutronName string  `json:"lutronName"`
 }
 
 type MsgType int
@@ -37,13 +38,15 @@ const (
 )
 
 type Lutron struct {
-	Config    database.LutronConfig `json:"config"`
-	conn      net.Conn
-	reader    *bufio.Reader
-	done      chan bool
-	Inventory []*LDevice `json:"inventory"`
-	broker    *pubsub.PubSub
-	Changed   bool
+	Config              database.LutronConfig `json:"config"`
+	conn                net.Conn
+	reader              *bufio.Reader
+	done                chan bool
+	Inventory           []*LDevice `json:"devices"`
+	InterfaceInventory  []int      `json:"interfaceDevices"`
+	AutomationInventory []int      `json:"automatedDevices"`
+	broker              *pubsub.PubSub
+	Changed             bool
 }
 
 // GraphqlLutronType is the graphql object for the lutron integration
@@ -53,8 +56,14 @@ var GraphqlLutronType = graphql.NewObject(graphql.ObjectConfig{
 		"config": &graphql.Field{
 			Type: database.GrapqhlLutronConfigType,
 		},
-		"inventory": &graphql.Field{
+		"devices": &graphql.Field{
 			Type: graphql.NewList(GrapqhlLutronInventoryType),
+		},
+		"interfaceDevices": &graphql.Field{
+			Type: graphql.NewList(graphql.Int),
+		},
+		"automatedDevices": &graphql.Field{
+			Type: graphql.NewList(graphql.Int),
 		},
 	},
 })
@@ -70,6 +79,9 @@ var GrapqhlLutronInventoryType = graphql.NewObject(graphql.ObjectConfig{
 			Type: graphql.Int,
 		},
 		"areaName": &graphql.Field{
+			Type: graphql.String,
+		},
+		"lutronName": &graphql.Field{
 			Type: graphql.String,
 		},
 		"type": &graphql.Field{

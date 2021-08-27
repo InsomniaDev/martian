@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/insomniadev/martian/database"
 )
@@ -21,10 +22,11 @@ func Init(configuration string) Lutron {
 		fileContents := loadIntegrationFile(lutron.Config)
 		for _, device := range fileContents.LIPIDList.Zones {
 			lutron.Inventory = append(lutron.Inventory, &LDevice{
-				Name: device.Name,
-				ID: device.ID,
-				AreaName: device.Area.Name,
-				Type: device.Type,
+				Name:       device.Name,
+				ID:         device.ID,
+				AreaName:   device.Area.Name,
+				Type:       device.Type,
+				LutronName: strings.Replace(device.Area.Name+" "+device.Name, " ", "_", -1),
 			})
 		}
 	}
