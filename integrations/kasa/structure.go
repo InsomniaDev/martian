@@ -11,10 +11,10 @@ import (
 type PowerState int
 
 type Devices struct {
-	Devices          []KasaDevice `json="devices"`
+	Devices          []KasaDevice `json="devices,omitempty"`
 	EditedDevices    []KasaDevice
-	InterfaceDevices []string `json="interfaceDevices"`
-	AutomatedDevices []string `json="automatedDevices"`
+	InterfaceDevices []string `json="interfaceDevices,omitempty"`
+	AutomatedDevices []string `json="automatedDevices,omitempty"`
 }
 
 // GraphqlKasaType is the object type for the kasa integration
@@ -69,12 +69,12 @@ const (
 
 // Plug represents a management interface for a plug
 type KasaDevice struct {
-	ID        string `json:"id"`
-	IPAddress string `json:"ipAddress"`
+	ID        string `json:"id,omitempty"`
+	IPAddress string `json:"ipAddress,omitempty"`
 	PlugInfo  Info
-	Name      string `json:"name"`
-	AreaName  string `json:"areaName"`
-	Type      string `json:"type"`
+	Name      string `json:"name,omitempty"`
+	AreaName  string `json:"areaName,omitempty"`
+	Type      string `json:"type,omitempty"`
 }
 
 // GraphqlKasaDevicesType is the grapqhl object for the Kasa plugs

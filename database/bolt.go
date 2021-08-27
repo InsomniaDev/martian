@@ -47,6 +47,7 @@ func (d *Database) RetrieveAllValuesInBucket(bucket []byte) (value map[string]st
 	})
 
 	if err != nil {
+		log.Fatal(err)
 		return nil, err
 	}
 	value = foundIntegrations
@@ -63,21 +64,25 @@ func (d *Database) PutIntegrationValue(key string, value interface{}) error {
 	err = db.Update(func(tx *bolt.Tx) error {
 		bucket, err := tx.CreateBucketIfNotExists(IntegrationBucket)
 		if err != nil {
+			log.Fatal(err)
 			return err
 		}
 
 		byteValue, err := json.Marshal(value)
 		if err != nil {
+			log.Fatal(err)
 			return err
 		}
 
 		err = bucket.Put([]byte(key), byteValue)
 		if err != nil {
+			log.Fatal(err)
 			return err
 		}
 		return nil
 	})
 	if err != nil {
+		log.Fatal(err)
 		return err
 	}
 	return nil
@@ -94,6 +99,7 @@ func (d *Database) GetIntegrationValue(key string) (value interface{}, err error
 	err = db.View(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket(IntegrationBucket)
 		if bucket == nil {
+			log.Fatal(err)
 			return err
 		}
 
@@ -102,6 +108,7 @@ func (d *Database) GetIntegrationValue(key string) (value interface{}, err error
 	})
 
 	if err != nil {
+		log.Fatal(err)
 		return nil, err
 	}
 	return value, nil

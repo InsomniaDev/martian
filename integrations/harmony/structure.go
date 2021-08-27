@@ -6,13 +6,13 @@ import (
 
 // Device type
 type Device struct {
-	Name            string     `json:"name"`
-	ActivityID      string     `json:"activityId"`
-	Activities      []Activity `json:"activities"`
-	AreaName        string     `json:"areaName"`
+	Name            string     `json:"name,omitempty"`
+	ActivityID      string     `json:"activityId,omitempty"`
+	Activities      []Activity `json:"activities,omitempty"`
+	AreaName        string     `json:"areaName,omitempty"`
 	Actions         string
 	Connection      *websocket.Conn
-	IPAddress       string `json:"ipAddress"`
+	IPAddress       string `json:"ipAddress,omitempty"`
 	CurrentActivity string
 	ActiveRemoteID  int
 	HostName        string

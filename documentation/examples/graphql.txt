@@ -1,77 +1,118 @@
-query getOfficeDevices {
-  homeAssistantDevices(type: "light", name: "office") {
-    name
-    entityId
-  }
+mutation createLutron($lutronType: String!, $lutronValue: String!) {
+  updateIntegration(type: $lutronType, value: $lutronValue)
 }
 
-query menuTest {
+mutation createHarmony {
+  updateIntegration(type: "harmony", value: "{\"areaName\":\"Family Room\"}")
+}
+
+mutation createKasa {
+  updateIntegration(type: "kasa", value: "")
+}
+
+query getdevices {
   menuConfiguration {
+    active
     areaName
     index
-    lutron {
-      id
-      name
-      state
-      areaName
-      type
-    }
-    kasa {
+    devices {
       id
       areaName
-      ipAddress
+      integration
       name
-      on
-    }
-    harmony {
-      id
-      activityId
-      name
-    }
-    hass {
-      entityId
-      name
-      type
       state
-    }
-    custom {
-      devices
-      name
       type
-      state
+      value
     }
   }
 }
-
-subscription menuConf {
-    menuChange {
-      areaName
-      index
-      hass {
-        entityId
+query integrations {
+    integrations {
+      integrations
+      harmony {
+        activityId
+        id
         name
-        type
-        state
-        group
+      }
+      hass {
+        devices {
+          areaName
+          name
+          entityId
+          state
+          type
+          group
+        }
+        interfaceDevices {
+          areaName
+          name
+          entityId
+          state
+          type
+          group
+        }
+        automatedDevices {
+          areaName
+          name
+          entityId
+          state
+          type
+          group
+        }
+        token
+        url
+      }
+      kasa {
+        devices {
+          areaName
+          id
+          ipAddress
+          name
+          type
+        }
+      }
+      lutron {
+        config {
+          port
+          url
+          password
+          username
+          file
+        }
+        # inventory {
+        #   areaName
+        #   id
+        #   name
+        #   state
+        #   type
+        #   value
+        # }
       }
     }
   }
-
-query hassTest {
-  menuConfiguration {
-    areaName
-    index
-    hass {
-      entityId
-      name
-      type
-      state
-      group
-    }
-  }
+mutation changeDeviceStatus (
+  $id: String!, 
+  $integration: String!, 
+  $status: String!, 
+  $level: String!) {
+  changeDeviceStatus(
+    id: $id, 
+    integration: $integration, 
+    status: $status, 
+    level: $level)
 }
 
-mutation changeHass($entityId: String!, $activated: Boolean!) {
-  changeHassDeviceStatus(entityId: $entityId, activated: $activated)
-}
+# query kasaDevices {
+#   kasaDevices {
+#     areaName
+#     id
+#     ipAddress
+#     name
+#     on
+#     type
+#   }
+# }
 
+mutation assignKasaToRoom($ipAddress: String!, $areaName: String!) {
+  changeAreaForKasaDevice(ipAddress: $ipAddress, area: $areaName)
+}

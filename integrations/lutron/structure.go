@@ -11,13 +11,13 @@ import (
 
 // LDevice type
 type LDevice struct {
-	Name       string  `json:"name"`
-	ID         int     `json:"id"`
-	AreaName   string  `json:"areaName"`
-	Type       string  `json:"type"`
-	Value      float64 `json:"value"`
-	State      string  `json:"state"`
-	LutronName string  `json:"lutronName"`
+	Name       string  `json:"name,omitempty"`
+	ID         int     `json:"id,omitempty"`
+	AreaName   string  `json:"areaName,omitempty"`
+	Type       string  `json:"type,omitempty"`
+	Value      float64 `json:"value,omitempty"`
+	State      string  `json:"state,omitempty"`
+	LutronName string  `json:"lutronName,omitempty"`
 }
 
 type MsgType int
@@ -42,9 +42,9 @@ type Lutron struct {
 	conn                net.Conn
 	reader              *bufio.Reader
 	done                chan bool
-	Inventory           []*LDevice `json:"devices"`
-	InterfaceInventory  []int      `json:"interfaceDevices"`
-	AutomationInventory []int      `json:"automatedDevices"`
+	Inventory           []*LDevice `json:"devices,omitempty"`
+	InterfaceInventory  []int      `json:"interfaceDevices,omitempty"`
+	AutomationInventory []int      `json:"automatedDevices,omitempty"`
 	broker              *pubsub.PubSub
 	Changed             bool
 }

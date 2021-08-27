@@ -2,6 +2,7 @@ package integrations
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/insomniadev/martian/database"
 	"github.com/insomniadev/martian/integrations/area"
@@ -32,7 +33,8 @@ func (i *Integrations) Init() {
 	storedIntegrations, err := i.Database.RetrieveAllValuesInBucket(database.IntegrationBucket)
 	if err != nil {
 		// TODO: Change this away from being a panic
-		panic(err)
+		log.Println(err)
+		// panic(err)
 	}
 
 	for k := range storedIntegrations {
