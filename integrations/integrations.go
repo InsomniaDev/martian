@@ -51,9 +51,6 @@ func (i *Integrations) Init() {
 			i.Integrations = append(i.Integrations, "harmony")
 		case "kasa":
 			i.KasaData.Init(storedIntegrations[k])
-			if len(i.KasaData.Devices) == 0 {
-				i.KasaData.Discover()
-			}
 			i.Menu = area.KasaIntegration(i.Menu, i.KasaData)
 			i.Integrations = append(i.Integrations, "kasa")
 		case "life360":
@@ -61,6 +58,13 @@ func (i *Integrations) Init() {
 			go i.Life3.SyncMemberStatus()
 			i.Integrations = append(i.Integrations, "life360")
 		case "hass":
+
+			var db database.Database
+			err := db.DeleteIntegrationValue("hass")
+			if err != nil {
+				println(err)
+			}
+			continue
 			go i.Hass.Init(storedIntegrations[k])
 			i.Integrations = append(i.Integrations, "hass")
 		default:

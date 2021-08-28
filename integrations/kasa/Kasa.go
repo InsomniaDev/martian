@@ -150,8 +150,11 @@ func (d *Devices) Discover() {
 	wg.Wait()
 
 	// Insert into the database again with all devices
-	var db database.Database
-	db.PutIntegrationValue("kasa", d)
+	// var db database.Database
+	// err = db.PutIntegrationValue("kasa", d)
+	// if err != nil {
+	// 	log.Println(err)
+	// }
 }
 func inc(ip net.IP) {
 	for j := len(ip) - 1; j >= 0; j-- {
@@ -242,7 +245,7 @@ func (k *Devices) EditDeviceConfiguration(device KasaDevice, removeEdit bool) er
 
 	// Save in the database
 	var db database.Database
-	err := db.PutIntegrationValue("hass", k)
+	err := db.PutIntegrationValue("kasa", k)
 	if err != nil {
 		log.Println(err)
 	}
