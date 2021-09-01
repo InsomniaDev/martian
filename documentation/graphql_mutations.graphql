@@ -4,3 +4,66 @@ http://192.168.1.19:30919/graphiql?query=mutation%20createLutron(%24lutronType%3
 http://localhost:4000/graphiql?query=mutation%20createLutron(%24lutronType%3A%20String!%2C%20%24lutronValue%3A%20String!)%20%7B%0A%20%20updateIntegration(type%3A%20%24lutronType%2C%20value%3A%20%24lutronValue)%0A%7D%0A%0Amutation%20createKasa%20%7B%0A%20%20updateIntegration(type%3A%20%22kasa%22%2C%20value%3A%20%22%22)%0A%7D%0A%0Amutation%20createHass%20%7B%0A%20%20updateIntegration(type%3A%20%22hass%22%2C%20value%3A%20%22%7B%5C%22url%5C%22%3A%5C%22192.168.1.19%3A8123%5C%22%2C%5C%22token%5C%22%3A%5C%22eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIxOTQ1MzBlMmZiY2U0MjJiODgyNjVkYjc2N2NhYzJjNyIsImlhdCI6MTYyMzgxMjc2OCwiZXhwIjoxOTM5MTcyNzY4fQ.bzKTV01SG1euLtUQ1vRWlCzkyiSKXp1rJhPW82bWPDE%5C%22%7D%22)%0A%7D%0A%0Aquery%20integrations%20%7B%0A%20%20integrations%20%7B%0A%20%20%20%20integrations%0A%20%20%20%20harmony%20%7B%0A%20%20%20%20%20%20activityId%0A%20%20%20%20%20%20id%0A%20%20%20%20%20%20name%0A%20%20%20%20%7D%0A%20%20%20%20hass%20%7B%0A%20%20%20%20%20%20devices%20%7B%0A%20%20%20%20%20%20%20%20areaName%0A%20%20%20%20%20%20%20%20name%0A%20%20%20%20%20%20%20%20entityId%0A%20%20%20%20%20%20%20%20state%0A%20%20%20%20%20%20%20%20type%0A%20%20%20%20%20%20%20%20group%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20selectedDevices%20%7B%0A%20%20%20%20%20%20%20%20areaName%0A%20%20%20%20%20%20%20%20name%0A%20%20%20%20%20%20%20%20entityId%0A%20%20%20%20%20%20%20%20state%0A%20%20%20%20%20%20%20%20type%0A%20%20%20%20%20%20%20%20group%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20token%0A%20%20%20%20%20%20url%0A%20%20%20%20%7D%0A%20%20%20%20kasa%20%7B%0A%20%20%20%20%20%20plugs%20%7B%0A%20%20%20%20%20%20%20%20areaName%0A%20%20%20%20%20%20%20%20id%0A%20%20%20%20%20%20%20%20ipAddress%0A%20%20%20%20%20%20%20%20name%0A%20%20%20%20%20%20%20%20type%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%0A%20%20%20%20lutron%20%7B%0A%20%20%20%20%20%20config%20%7B%0A%20%20%20%20%20%20%20%20port%0A%20%20%20%20%20%20%20%20url%0A%20%20%20%20%20%20%20%20password%0A%20%20%20%20%20%20%20%20username%0A%20%20%20%20%20%20%20%20file%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20inventory%20%7B%0A%20%20%20%20%20%20%20%20areaName%0A%20%20%20%20%20%20%20%20id%0A%20%20%20%20%20%20%20%20name%0A%20%20%20%20%20%20%20%20state%0A%20%20%20%20%20%20%20%20type%0A%20%20%20%20%20%20%20%20value%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D%0A%0Aquery%20getdevices%20%7B%0A%20%20menuConfiguration%20%7B%0A%20%20%20%20active%0A%20%20%20%20areaName%0A%20%20%20%20index%0A%20%20%20%20devices%20%7B%0A%20%20%20%20%20%20id%0A%20%20%20%20%20%20areaName%0A%20%20%20%20%20%20integration%0A%20%20%20%20%20%20name%0A%20%20%20%20%20%20state%0A%20%20%20%20%20%20type%0A%20%20%20%20%20%20value%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D%0A%0Amutation%20changeDeviceStatus%20(%0A%20%20%24id%3A%20String!%2C%20%0A%20%20%24integration%3A%20String!%2C%20%0A%20%20%24status%3A%20String!%2C%20%0A%20%20%24level%3A%20String!)%20%7B%0A%20%20changeDeviceStatus(%0A%20%20%20%20id%3A%20%24id%2C%20%0A%20%20%20%20integration%3A%20%24integration%2C%20%0A%20%20%20%20status%3A%20%24status%2C%20%0A%20%20%20%20level%3A%20%24level)%0A%7D%0A%0Aquery%20kasaDevices%20%7B%0A%20%20kasaDevices%20%7B%0A%20%20%20%20areaName%0A%20%20%20%20id%0A%20%20%20%20ipAddress%0A%20%20%20%20name%0A%20%20%20%20on%0A%20%20%20%20type%0A%20%20%7D%0A%7D%0A%0Amutation%20assignKasaToRoom(%24ipAddress%3A%20String!%2C%20%24areaName%3A%20String!)%20%7B%0A%20%20changeAreaForKasaDevice(ipAddress%3A%20%24ipAddress%2C%20area%3A%20%24areaName)%0A%7D%0A%0Amutation%20updateIndexForArea(%24areaName%3A%20String!%2C%20%24index%3A%20Int!)%20%7B%0A%20%20updateIndexForArea(areaName%3A%20%24areaName%2C%20index%3A%24index)%0A%7D&operationName=integrations&variables=%7B%0A%20%20%22lutronType%22%3A%20%22lutron%22%2C%0A%20%20%22lutronValue%22%3A%20%22%7B%5C%22config%5C%22%3A%20%7B%5C%22url%5C%22%3A%20%5C%22192.168.1.150%5C%22%2C%5C%22port%5C%22%3A%20%5C%2223%5C%22%2C%5C%22username%5C%22%3A%20%5C%22lutron%5C%22%2C%5C%22password%5C%22%3A%20%5C%22integration%5C%22%2C%5C%22file%5C%22%3A%20%5C%22lutron_configuration.json%5C%22%7D%7D%22%2C%0A%20%20%22ipAddress%22%3A%20%22192.168.1.161%
 
 http://localhost:4000/graphiql?operationName=integrations&query=%20%20mutation%20selectDevicesForIntegration(%24integration%3A%20String!%2C%20%24devices%3A%20%5BString%5D)%20%7B%0A%20%20%20%20selectDevicesForIntegration(integration%3A%20%24integration%2C%20devices%3A%24devices)%0A%20%20%7D%0A%0Amutation%20createLutron(%24lutronType%3A%20String!%2C%20%24lutronValue%3A%20String!)%20%7B%0A%20%20updateIntegration(type%3A%20%24lutronType%2C%20value%3A%20%24lutronValue)%0A%7D%0A%0Amutation%20createKasa%20%7B%0A%20%20updateIntegration(type%3A%20%22kasa%22%2C%20value%3A%20%22%22)%0A%7D%0A%0Amutation%20createHass%20%7B%0A%20%20updateIntegration(type%3A%20%22hass%22%2C%20value%3A%20%22%7B%5C%22url%5C%22%3A%5C%22192.168.1.19%3A8123%5C%22%2C%5C%22token%5C%22%3A%5C%22eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIxOTQ1MzBlMmZiY2U0MjJiODgyNjVkYjc2N2NhYzJjNyIsImlhdCI6MTYyMzgxMjc2OCwiZXhwIjoxOTM5MTcyNzY4fQ.bzKTV01SG1euLtUQ1vRWlCzkyiSKXp1rJhPW82bWPDE%5C%22%7D%22)%0A%7D%0A%0Aquery%20integrations%20%7B%0A%20%20integrations%20%7B%0A%20%20%20%20integrations%0A%20%20%20%20harmony%20%7B%0A%20%20%20%20%20%20activityId%0A%20%20%20%20%20%20id%0A%20%20%20%20%20%20name%0A%20%20%20%20%7D%0A%20%20%20%20hass%20%7B%0A%20%20%20%20%20%20devices%20%7B%0A%20%20%20%20%20%20%20%20areaName%0A%20%20%20%20%20%20%20%20name%0A%20%20%20%20%20%20%20%20entityId%0A%20%20%20%20%20%20%20%20state%0A%20%20%20%20%20%20%20%20type%0A%20%20%20%20%20%20%20%20group%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20selectedDevices%20%7B%0A%20%20%20%20%20%20%20%20areaName%0A%20%20%20%20%20%20%20%20name%0A%20%20%20%20%20%20%20%20entityId%0A%20%20%20%20%20%20%20%20state%0A%20%20%20%20%20%20%20%20type%0A%20%20%20%20%20%20%20%20group%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20token%0A%20%20%20%20%20%20url%0A%20%20%20%20%7D%0A%20%20%20%20kasa%20%7B%0A%20%20%20%20%20%20plugs%20%7B%0A%20%20%20%20%20%20%20%20areaName%0A%20%20%20%20%20%20%20%20id%0A%20%20%20%20%20%20%20%20ipAddress%0A%20%20%20%20%20%20%20%20name%0A%20%20%20%20%20%20%20%20type%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%0A%20%20%20%20lutron%20%7B%0A%20%20%20%20%20%20config%20%7B%0A%20%20%20%20%20%20%20%20port%0A%20%20%20%20%20%20%20%20url%0A%20%20%20%20%20%20%20%20password%0A%20%20%20%20%20%20%20%20username%0A%20%20%20%20%20%20%20%20file%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20inventory%20%7B%0A%20%20%20%20%20%20%20%20areaName%0A%20%20%20%20%20%20%20%20id%0A%20%20%20%20%20%20%20%20name%0A%20%20%20%20%20%20%20%20state%0A%20%20%20%20%20%20%20%20type%0A%20%20%20%20%20%20%20%20value%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D%0A%0Aquery%20getdevices%20%7B%0A%20%20menuConfiguration%20%7B%0A%20%20%20%20active%0A%20%20%20%20areaName%0A%20%20%20%20index%0A%20%20%20%20devices%20%7B%0A%20%20%20%20%20%20id%0A%20%20%20%20%20%20areaName%0A%20%20%20%20%20%20integration%0A%20%20%20%20%20%20name%0A%20%20%20%20%20%20state%0A%20%20%20%20%20%20type%0A%20%20%20%20%20%20value%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D%0A%0Amutation%20changeDeviceStatus%20(%0A%20%20%24id%3A%20String!%2C%20%0A%20%20%24integration%3A%20String!%2C%20%0A%20%20%24status%3A%20String!%2C%20%0A%20%20%24level%3A%20String!)%20%7B%0A%20%20changeDeviceStatus(%0A%20%20%20%20id%3A%20%24id%2C%20%0A%20%20%20%20integration%3A%20%24integration%2C%20%0A%20%20%20%20status%3A%20%24status%2C%20%0A%20%20%20%20level%3A%20%24level)%0A%7D%0A%0Aquery%20kasaDevices%20%7B%0A%20%20kasaDevices%20%7B%0A%20%20%20%20areaName%0A%20%20%20%20id%0A%20%20%20%20ipAddress%0A%20%20%20%20name%0A%20%20%20%20on%0A%20%20%20%20type%0A%20%20%7D%0A%7D%0A%0Amutation%20assignKasaToRoom(%24ipAddress%3A%20String!%2C%20%24areaName%3A%20String!)%20%7B%0A%20%20changeAreaForKasaDevice(ipAddress%3A%20%24ipAddress%2C%20area%3A%20%24areaName)%0A%7D%0A%0Amutation%20updateIndexForArea(%24areaName%3A%20String!%2C%20%24index%3A%20Int!)%20%7B%0A%20%20updateIndexForArea(areaName%3A%20%24areaName%2C%20index%3A%24index)%0A%7D&variables=%7B%0A%20%20%22lutronType%22%3A%20%22lutron%22%2C%0A%20%20%22lutronValue%22%3A%20%22%7B%5C%22config%5C%22%3A%20%7B%5C%22url%5C%22%3A%20%5C%22192.168.1.150%5C%22%2C%5C%22port%5C%22%3A%20%5
+
+
+{
+  "lutronType": "lutron",
+  "lutronValue": "{\"config\": {\"url\": \"192.168.1.150\",\"port\": \"23\",\"username\": \"lutron\",\"password\": \"integration\",\"file\": \"lutron_configuration.json\"}}",
+  "ipAddress": "192.168.1.161",
+  "areaName": "Master Bedroom",
+  "index": 1
+}
+
+
+mutation createLutron($lutronType: String!, $lutronValue: String!) {
+  updateIntegration(type: $lutronType, value: $lutronValue)
+}
+
+mutation createKasa {
+  updateIntegration(type: "kasa", value: "")
+}
+
+mutation createHarmony {
+  updateIntegration(type: "harmony", value: "")
+}
+
+mutation createHass {
+  updateIntegration(type: "hass", value: "{\"url\":\"192.168.1.19:8123\",\"token\":\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIxOTQ1MzBlMmZiY2U0MjJiODgyNjVkYjc2N2NhYzJjNyIsImlhdCI6MTYyMzgxMjc2OCwiZXhwIjoxOTM5MTcyNzY4fQ.bzKTV01SG1euLtUQ1vRWlCzkyiSKXp1rJhPW82bWPDE\"}")
+}
+
+query getdevices {
+  menuConfiguration {
+    active
+    areaName
+    index
+    devices {
+      id
+      areaName
+      integration
+      name
+      state
+      type
+      value
+    }
+  }
+}
+
+mutation changeDeviceStatus (
+  $id: String!, 
+  $integration: String!, 
+  $status: String!, 
+  $level: String!) {
+  changeDeviceStatus(
+    id: $id, 
+    integration: $integration, 
+    status: $status, 
+    level: $level)
+}
+
+mutation assignKasaToRoom($ipAddress: String!, $areaName: String!) {
+  changeAreaForKasaDevice(ipAddress: $ipAddress, area: $areaName)
+}
+
+mutation updateIndexForArea($areaName: String!, $index: Int!) {
+  updateIndexForArea(areaName: $areaName, index:$index)
+}
