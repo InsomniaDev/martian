@@ -19,22 +19,8 @@ query integrations {
           type
           group
         }
-        interfaceDevices {
-          areaName
-          name
-          entityId
-          state
-          type
-          group
-        }
-        automatedDevices {
-          areaName
-          name
-          entityId
-          state
-          type
-          group
-        }
+        interfaceDevices
+        automatedDevices
         token
         url
       }

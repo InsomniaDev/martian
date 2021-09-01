@@ -106,36 +106,12 @@ func (h *HomeAssistant) listen() {
 					areaName = friendlyName[0]
 				}
 				// Was an Edited Device
-				wasEditedDevice := false
 				editedDeviceWasRemoved := false
 				// Determine if it already exists in the interface devices or automated devices or edited devices
 				for i := range h.EditedDevices {
 					if h.EditedDevices[i].EntityId == result.EntityId {
 						name = h.EditedDevices[i].Name
 						areaName = h.EditedDevices[i].AreaName
-						wasEditedDevice = true
-					}
-				}
-				for i := range h.InterfaceDevices {
-					if h.InterfaceDevices[i].EntityId == result.EntityId {
-						if h.InterfaceDevices[i].Name != name || h.InterfaceDevices[i].AreaName != areaName {
-							h.InterfaceDevices[i].Name = name
-							h.InterfaceDevices[i].AreaName = areaName
-							if !wasEditedDevice {
-								editedDeviceWasRemoved = true
-							}
-						}
-					}
-				}
-				for i := range h.AutomatedDevices {
-					if h.AutomatedDevices[i].EntityId == result.EntityId {
-						if h.AutomatedDevices[i].Name != name || h.AutomatedDevices[i].AreaName != areaName {
-							h.AutomatedDevices[i].Name = name
-							h.AutomatedDevices[i].AreaName = areaName
-							if !wasEditedDevice {
-								editedDeviceWasRemoved = true
-							}
-						}
 					}
 				}
 				if editedDeviceWasRemoved {
@@ -151,20 +127,20 @@ func (h *HomeAssistant) listen() {
 		// 	}
 		// }
 		case subscribeEventsId:
-			for _, result := range message.Result {
-				for i, devices := range h.InterfaceDevices {
-					if result.EntityId == devices.EntityId {
-						h.InterfaceDevices[i].State = result.State
-					}
-				}
+			// for _, result := range message.Result {
+			// 	for i, devices := range h.InterfaceDevices {
+			// 		if result.EntityId == devices.EntityId {
+			// 			h.InterfaceDevices[i].State = result.State
+			// 		}
+			// 	}
 
-				for i, devices := range h.AutomatedDevices {
-					if result.EntityId == devices.EntityId {
-						h.AutomatedDevices[i].State = result.State
-						// TODO: Need to do something with the brain piece here since the state was updated for the device
-					}
-				}
-			}
+			// 	for i, devices := range h.AutomatedDevices {
+			// 		if result.EntityId == devices.EntityId {
+			// 			h.AutomatedDevices[i].State = result.State
+			// 			// TODO: Need to do something with the brain piece here since the state was updated for the device
+			// 		}
+			// 	}
+			// }
 		}
 	}
 }
@@ -248,17 +224,17 @@ func (h *HomeAssistant) UpdateSelectedDevices(selectedDevices []string, addDevic
 }
 
 // checkIfDeviceIsInList is an internal method to see if the value already exists in the list
-func checkIfDeviceIsInList(allDevices []HomeAssistantDevice, alreadyChosenDevices []HomeAssistantDevice, selectedDevices []string, addDevices bool) []HomeAssistantDevice {
-	var newlySelectedDevices []HomeAssistantDevice
+func checkIfDeviceIsInList(allDevices []HomeAssistantDevice, alreadyChosenDevices []string, selectedDevices []string, addDevices bool) []string {
+	var newlySelectedDevices []string
 	// Cycle through all of the available devices for HomeAssistant
 	for _, availableDevice := range allDevices {
 
 		selectedDeviceExists := false
 		// Cycle through all of the already selected devices to see if there is a match
-		for _, selectedDevice := range alreadyChosenDevices {
+		for _, alreadyChosenDevice := range alreadyChosenDevices {
 
 			// If this available device is already selected, then set selectedDeviceExists as true
-			if availableDevice.EntityId == selectedDevice.EntityId {
+			if availableDevice.EntityId == alreadyChosenDevice {
 				selectedDeviceExists = true
 				break // break out of the selectedDevice cycle since there is a match
 			}
@@ -277,9 +253,9 @@ func checkIfDeviceIsInList(allDevices []HomeAssistantDevice, alreadyChosenDevice
 		// IF the device is already selected, and is one of the newly selected, and set to be added
 		//			IF addDevices is FALSE, then it will be removed from the selectedDevices slice
 		if availableDeviceIsNowSelected && addDevices {
-			newlySelectedDevices = append(newlySelectedDevices, availableDevice)
+			newlySelectedDevices = append(newlySelectedDevices, availableDevice.EntityId)
 		} else if selectedDeviceExists && !availableDeviceIsNowSelected { // IF it was already selected
-			newlySelectedDevices = append(newlySelectedDevices, availableDevice)
+			newlySelectedDevices = append(newlySelectedDevices, availableDevice.EntityId)
 		}
 	}
 	return newlySelectedDevices
@@ -292,16 +268,6 @@ func (h *HomeAssistant) EditDeviceConfiguration(device HomeAssistantDevice, remo
 	for i := range h.Devices {
 		if h.Devices[i].EntityId == device.EntityId {
 			h.Devices[i] = device
-		}
-	}
-	for i := range h.InterfaceDevices {
-		if h.InterfaceDevices[i].EntityId == device.EntityId {
-			h.InterfaceDevices[i] = device
-		}
-	}
-	for i := range h.AutomatedDevices {
-		if h.AutomatedDevices[i].EntityId == device.EntityId {
-			h.AutomatedDevices[i] = device
 		}
 	}
 

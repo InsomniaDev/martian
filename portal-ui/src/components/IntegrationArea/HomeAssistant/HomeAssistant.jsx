@@ -112,11 +112,11 @@ export function HomeAssistantIntegration({ integration, refetchData, areaData })
     }
 
     // Remove the selected variable from the interfaceDevices for Hass
-    const removeSelectedInterface = (device) => {
+    const removeSelectedInterface = (entityId) => {
         selectDevicesForIntegrationMutation({
             variables: {
                 integration: "hass",
-                devices: [device.entityId],
+                devices: [entityId],
                 addDevices: false,
                 automationDevice: false,
             }
@@ -139,11 +139,11 @@ export function HomeAssistantIntegration({ integration, refetchData, areaData })
     }
 
     // Remove the selected variable from the interfaceDevices for Hass
-    const removeSelectedAutomation = (device) => {
+    const removeSelectedAutomation = (entityId) => {
         selectDevicesForIntegrationMutation({
             variables: {
                 integration: "hass",
-                devices: [device.entityId],
+                devices: [entityId],
                 addDevices: false,
                 automationDevice: true,
             }
@@ -160,8 +160,8 @@ export function HomeAssistantIntegration({ integration, refetchData, areaData })
     }
 
     var devices = [...integration.value.devices].sort((a, b) => (a.entityId > b.entityId) ? 1 : ((b.entityId > a.entityId) ? -1 : 0));
-    var interfaceDevices = [...integration.value.interfaceDevices].sort((a, b) => (a.entityId > b.entityId) ? 1 : ((b.entityId > a.entityId) ? -1 : 0));
-    var automatedDevices = [...integration.value.automatedDevices].sort((a, b) => (a.entityId > b.entityId) ? 1 : ((b.entityId > a.entityId) ? -1 : 0));
+    var interfaceDevices = [...integration.value.interfaceDevices].sort((a, b) => (a > b) ? 1 : ((b > a) ? -1 : 0));
+    var automatedDevices = [...integration.value.automatedDevices].sort((a, b) => (a > b) ? 1 : ((b > a) ? -1 : 0));
 
     // Remove automations from the provided list
     devices = devices.filter(function (elem) {
@@ -246,13 +246,13 @@ export function HomeAssistantIntegration({ integration, refetchData, areaData })
                 <div key="hassInterfaceSelection" className={classNames(classes.column, classes.helper)}>
                     <Typography key="hassInterfaceSelectionTypography" className={classes.columnHeading}>Interface Devices</Typography>
                     {interfaceDevices.map(device =>
-                        <Chip key={"interface_chip_"+device.entityId} label={device.entityId} className={classes.chip} onDelete={() => removeSelectedInterface(device)} />
+                        <Chip key={"interface_chip_"+device} label={device} className={classes.chip} onDelete={() => removeSelectedInterface(device)} />
                     )}
                 </div>
                 <div key="hassAutomationSelection" className={classNames(classes.column, classes.helper)}>
                     <Typography key="hassAutomationSelectionTypography" className={classes.columnHeading}>Automation Devices</Typography>
                     {automatedDevices.map(device =>
-                        <Chip key={"automation_chip_"+device.entityId} label={device.entityId} className={classes.chip} onDelete={() => removeSelectedAutomation(device)} />
+                        <Chip key={"automation_chip_"+device} label={device} className={classes.chip} onDelete={() => removeSelectedAutomation(device)} />
                     )}
                 </div>
             </ExpansionPanelDetails>
