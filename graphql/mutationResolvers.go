@@ -289,7 +289,7 @@ func selectDevicesForIntegration(params graphql.ResolveParams) (interface{}, err
 		daters = append(daters, devices[a].(string))
 	}
 
-	switch integration{
+	switch integration {
 	case "hass":
 		err := Integrations.Hass.UpdateSelectedDevices(daters, addDevices, automationDevice)
 		if err != nil {
@@ -297,6 +297,19 @@ func selectDevicesForIntegration(params graphql.ResolveParams) (interface{}, err
 		}
 	case "kasa":
 		err := Integrations.KasaData.UpdateSelectedDevices(daters, addDevices, automationDevice)
+		if err != nil {
+			return false, err
+		}
+	case "lutron":
+		var intDaters []int
+		for a := range daters {
+			number, err := strconv.Atoi(daters[a])
+			if err != nil {
+				return false, err
+			}
+			intDaters = append(intDaters, number)
+		}
+		err := Integrations.LutronData.UpdateSelectedDevices(intDaters, addDevices, automationDevice)
 		if err != nil {
 			return false, err
 		}
@@ -309,8 +322,8 @@ func editDeviceConfiguration(params graphql.ResolveParams) (interface{}, error) 
 	integration := params.Args["integration"].(string)
 	device := params.Args["device"].(string)
 	removeEdit := params.Args["removeEdit"].(bool)
-	
-	switch integration{
+
+	switch integration {
 	case "hass":
 		var hass homeassistant.HomeAssistantDevice
 		err := json.Unmarshal([]byte(device), &hass)
@@ -325,7 +338,13 @@ func editDeviceConfiguration(params graphql.ResolveParams) (interface{}, error) 
 		if err != nil {
 			return false, err
 		}
+	case "lutron":
+		var lutronDevice lutron.LDevice
+		err := json.Unmarshal([]byte(device), &lutronDevice)
+		Integrations.LutronData.EditDeviceConfiguration(lutronDevice, removeEdit)
+		if err != nil {
+			return false, err
+		}
 	}
 	return true, nil
 }
-

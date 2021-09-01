@@ -112,11 +112,11 @@ export function LutronIntegration({ integration, refetchData, areaData }) {
     }
 
     // Remove the selected variable from the interfaceDevices for lutron
-    const removeSelectedInterface = (ipAddress) => {
+    const removeSelectedInterface = (id) => {
         selectDevicesForIntegrationMutation({
             variables: {
                 integration: "lutron",
-                devices: [ipAddress],
+                devices: [id],
                 addDevices: false,
                 automationDevice: false,
             }
@@ -139,11 +139,11 @@ export function LutronIntegration({ integration, refetchData, areaData }) {
     }
 
     // Remove the selected variable from the interfaceDevices for lutron
-    const removeSelectedAutomation = (ipAddress) => {
+    const removeSelectedAutomation = (id) => {
         selectDevicesForIntegrationMutation({
             variables: {
                 integration: "lutron",
-                devices: [ipAddress],
+                devices: [id],
                 addDevices: false,
                 automationDevice: true,
             }
@@ -153,7 +153,7 @@ export function LutronIntegration({ integration, refetchData, areaData }) {
 
     const getNameForId = (id) => {
         const device = [...integration.value.devices].filter(device => device.id === id);
-        return device[0].name;
+        return `${device[0].areaName} - ${device[0].name}`;
     }
 
     const clearSelected = () => {

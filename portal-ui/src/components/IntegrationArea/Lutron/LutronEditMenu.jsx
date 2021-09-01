@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function KasaEditMenu({ device, buttonStyle, buttonText, areaData, refetchData, updateSelected }) {
+export default function LutronEditMenu({ device, buttonStyle, buttonText, areaData, refetchData, updateSelected }) {
     const classes = useStyles();
     const [areaName, setAreaName] = useState(device.areaName);
     const [updateDevice] = useMutation(editDeviceConfiguration);

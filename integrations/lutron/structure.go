@@ -43,6 +43,7 @@ type Lutron struct {
 	reader              *bufio.Reader
 	done                chan bool
 	Inventory           []*LDevice `json:"devices,omitempty"`
+	EditedInventory     []*LDevice `json:"editedDevices,omitempty"`
 	InterfaceInventory  []int      `json:"interfaceDevices,omitempty"`
 	AutomationInventory []int      `json:"automatedDevices,omitempty"`
 	broker              *pubsub.PubSub
