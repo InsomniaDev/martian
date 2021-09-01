@@ -153,7 +153,7 @@ export function LutronIntegration({ integration, refetchData, areaData }) {
 
     const getNameForId = (id) => {
         const device = [...integration.value.devices].filter(device => device.id === id);
-        return `${device[0].areaName} - ${device[0].name}`;
+        return `${device[0].areaName} - ${device[0].name} - ${device[0].id}`;
     }
 
     const clearSelected = () => {
@@ -185,6 +185,7 @@ export function LutronIntegration({ integration, refetchData, areaData }) {
                         <Select
                             key="lutronFormControlSelect"
                             id="demo-controlled-open-select"
+                            defaultValue={selectedDevice}
                             value={selectedDevice}
                             onChange={handleChange}
                         >
@@ -240,13 +241,13 @@ export function LutronIntegration({ integration, refetchData, areaData }) {
                 <div key={"lutronInterfaceSelection" + selectedDevice.id} className={classNames(classes.column, classes.helper)}>
                     <Typography key={"lutronInterfaceSelectionTypography" + selectedDevice.id} className={classes.columnHeading}>Interface Devices</Typography>
                     {interfaceDevices.map(device =>
-                        <Chip key={"interface_chip_" + device} label={device} className={classes.chip} onDelete={() => removeSelectedInterface(device)} />
+                        <Chip key={"interface_chip_" + device} label={device} className={classes.chip} onDelete={() => removeSelectedInterface(device.split(" - ")[2])} />
                     )}
                 </div>
                 <div key={"lutronAutomationSelection" + selectedDevice.id} className={classNames(classes.column, classes.helper)}>
                     <Typography key={"lutronAutomationSelectionTypography" + selectedDevice.id} className={classes.columnHeading}>Automation Devices</Typography>
                     {automatedDevices.map(device =>
-                        <Chip key={"automation_chip_" + device} label={device} className={classes.chip} onDelete={() => removeSelectedAutomation(device)} />
+                        <Chip key={"automation_chip_" + device} label={device} className={classes.chip} onDelete={() => removeSelectedAutomation(device.split(" - ")[2])} />
                     )}
                 </div>
             </ExpansionPanelDetails>

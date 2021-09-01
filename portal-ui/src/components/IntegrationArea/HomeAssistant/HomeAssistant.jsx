@@ -186,6 +186,7 @@ export function HomeAssistantIntegration({ integration, refetchData, areaData })
                             key="hassFormControlSelect"
                             id="demo-controlled-open-select"
                             value={selectedDevice}
+                            defaultValue={selectedDevice}
                             onChange={handleChange}
                         >
                             <MenuItem key="hassFormControlMenuItem" value="">
