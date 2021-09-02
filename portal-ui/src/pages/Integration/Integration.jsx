@@ -83,7 +83,7 @@ export function Integration() {
             integrationValue.value = data.integrations.kasa;
             return <KasaIntegration key="kasaIntegration" areaData={areaData} integration={integrationValue} refetchData={() => refetch()} />
           case "lutron":
-            integrationValue.name = "Lutron Lighting";
+            integrationValue.name = "Lutron Caseta";
             integrationValue.value = data.integrations.lutron;
             return <LutronIntegration key="lutronIntegration" areaData={areaData} integration={integrationValue} refetchData={() => refetch()} />
           default:

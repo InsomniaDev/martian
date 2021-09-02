@@ -153,7 +153,7 @@ export function KasaIntegration({ integration, refetchData, areaData }) {
 
     const getNameForIp = (ipAddress) => {
         const device = [...integration.value.devices].filter(device => device.ipAddress === ipAddress);
-        return device[0].name;
+        return `${device[0].name}--${ipAddress}`;
     }
 
     const clearSelected = () => {
@@ -186,6 +186,7 @@ export function KasaIntegration({ integration, refetchData, areaData }) {
                             key="kasaFormControlSelect"
                             id="demo-controlled-open-select"
                             value={selectedDevice}
+                            defaultValue={selectedDevice}
                             onChange={handleChange}
                         >
                             <MenuItem key="kasaFormControlMenuItem" value="">
@@ -240,13 +241,13 @@ export function KasaIntegration({ integration, refetchData, areaData }) {
                 <div key={"kasaInterfaceSelection" + selectedDevice.ipAddress} className={classNames(classes.column, classes.helper)}>
                     <Typography key={"kasaInterfaceSelectionTypography" + selectedDevice.ipAddress} className={classes.columnHeading}>Interface Devices</Typography>
                     {interfaceDevices.map(device =>
-                        <Chip key={"interface_chip_" + device} label={device} className={classes.chip} onDelete={() => removeSelectedInterface(device)} />
+                        <Chip key={"interface_chip_" + device} label={device.split("--")[0]} className={classes.chip} onDelete={() => removeSelectedInterface(device.split("--")[1])} />
                     )}
                 </div>
                 <div key={"kasaAutomationSelection" + selectedDevice.ipAddress} className={classNames(classes.column, classes.helper)}>
                     <Typography key={"kasaAutomationSelectionTypography" + selectedDevice.ipAddress} className={classes.columnHeading}>Automation Devices</Typography>
                     {automatedDevices.map(device =>
-                        <Chip key={"automation_chip_" + device} label={device} className={classes.chip} onDelete={() => removeSelectedAutomation(device)} />
+                        <Chip key={"automation_chip_" + device} label={device.split("--")[0]} className={classes.chip} onDelete={() => removeSelectedAutomation(device.split("--")[1])} />
                     )}
                 </div>
             </ExpansionPanelDetails>

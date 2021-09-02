@@ -73,25 +73,30 @@ func CheckIndexForAreas(areas []Area, areaWithIndexes []Area) []Area {
 	return areas
 }
 
-func LutronIntegration(areas []Area, devices []*lutron.LDevice) []Area {
+func LutronIntegration(areas []Area, devices []*lutron.LDevice, interfaceDevices []int) []Area {
 	for _, lutronDev := range devices {
-		foundArea := false
-		areaName := strings.TrimSpace(lutronDev.AreaName)
-		if areaName == "" {
-			areaName = "UKN"
-		}
-		for area := range areas {
-			if strings.EqualFold(areas[area].AreaName, areaName) {
-				areas[area].addLutron(lutronDev)
-				foundArea = true
+		for _, iDevice := range interfaceDevices {
+			// Match the provided interface device id with the inventory device id
+			if lutronDev.ID == iDevice {
+				foundArea := false
+				areaName := strings.TrimSpace(lutronDev.AreaName)
+				if areaName == "" {
+					areaName = "UKN"
+				}
+				for area := range areas {
+					if strings.EqualFold(areas[area].AreaName, areaName) {
+						areas[area].addLutron(lutronDev)
+						foundArea = true
+					}
+				}
+				if !foundArea {
+					newArea := Area{
+						AreaName: areaName,
+					}
+					newArea.addLutron(lutronDev)
+					areas = append(areas, newArea)
+				}
 			}
-		}
-		if !foundArea {
-			newArea := Area{
-				AreaName: areaName,
-			}
-			newArea.addLutron(lutronDev)
-			areas = append(areas, newArea)
 		}
 	}
 	return areas
@@ -113,25 +118,30 @@ func (a *Area) addLutron(device *lutron.LDevice) {
 	a.Devices = append(a.Devices, newDev)
 }
 
-func KasaIntegration(areas []Area, devices kasa.Devices) []Area {
+func KasaIntegration(areas []Area, devices kasa.Devices, interfaceDevices []string) []Area {
 	for _, kasaDev := range devices.Devices {
-		foundArea := false
-		areaName := strings.TrimSpace(kasaDev.AreaName)
-		if areaName == "" {
-			areaName = "UKN"
-		}
-		for area := range areas {
-			if strings.EqualFold(areas[area].AreaName, areaName) {
-				areas[area].addKasa(kasaDev)
-				foundArea = true
+		for _, iDevice := range interfaceDevices {
+			// Match the provided interface device IPAddress with the inventory device IPAddress
+			if kasaDev.IPAddress == iDevice {
+				foundArea := false
+				areaName := strings.TrimSpace(kasaDev.AreaName)
+				if areaName == "" {
+					areaName = "UKN"
+				}
+				for area := range areas {
+					if strings.EqualFold(areas[area].AreaName, areaName) {
+						areas[area].addKasa(kasaDev)
+						foundArea = true
+					}
+				}
+				if !foundArea {
+					newArea := Area{
+						AreaName: areaName,
+					}
+					newArea.addKasa(kasaDev)
+					areas = append(areas, newArea)
+				}
 			}
-		}
-		if !foundArea {
-			newArea := Area{
-				AreaName: areaName,
-			}
-			newArea.addKasa(kasaDev)
-			areas = append(areas, newArea)
 		}
 	}
 	return areas

@@ -43,7 +43,7 @@ func (i *Integrations) Init() {
 			i.AreaIndexes = area.Init(storedIntegrations[k])
 		case "lutron":
 			i.LutronData = lutron.Init(storedIntegrations[k])
-			i.Menu = area.LutronIntegration(i.Menu, i.LutronData.Inventory)
+			i.Menu = area.LutronIntegration(i.Menu, i.LutronData.Inventory, i.LutronData.InterfaceInventory)
 			i.Integrations = append(i.Integrations, "lutron")
 		case "harmony":
 			i.HarmonyData.Init(storedIntegrations[k])
@@ -51,7 +51,7 @@ func (i *Integrations) Init() {
 			i.Integrations = append(i.Integrations, "harmony")
 		case "kasa":
 			i.KasaData.Init(storedIntegrations[k])
-			i.Menu = area.KasaIntegration(i.Menu, i.KasaData)
+			i.Menu = area.KasaIntegration(i.Menu, i.KasaData, i.KasaData.InterfaceDevices)
 			i.Integrations = append(i.Integrations, "kasa")
 		case "life360":
 			i.Life3.Authenticate()

@@ -90,11 +90,11 @@ func menuConfiguration(params graphql.ResolveParams) (interface{}, error) {
 		case "area":
 			Integrations.Menu = area.CheckIndexForAreas(Integrations.Menu, Integrations.AreaIndexes)
 		case "lutron":
-			Integrations.Menu = area.LutronIntegration(Integrations.Menu, Integrations.LutronData.Inventory)
+			Integrations.Menu = area.LutronIntegration(Integrations.Menu, Integrations.LutronData.Inventory, Integrations.LutronData.InterfaceInventory)
 		case "harmony":
 			Integrations.Menu = area.HarmonyIntegration(Integrations.Menu, Integrations.HarmonyData)
 		case "kasa":
-			Integrations.Menu = area.KasaIntegration(Integrations.Menu, Integrations.KasaData)
+			Integrations.Menu = area.KasaIntegration(Integrations.Menu, Integrations.KasaData, Integrations.KasaData.InterfaceDevices)
 		case "life360":
 			fmt.Println("Not implemented")
 		case "hass":

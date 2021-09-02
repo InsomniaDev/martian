@@ -4,7 +4,6 @@ go 1.13
 
 require (
 	github.com/barnybug/go-cast v0.0.0-20201201064555-a87ccbc26692 // indirect
-	github.com/cpuguy83/go-md2man/v2 v2.0.1 // indirect
 	github.com/dgraph-io/ristretto v0.0.3
 	github.com/evalphobia/google-home-client-go v0.2.1
 	github.com/evalphobia/google-tts-go v0.3.0 // indirect
@@ -18,7 +17,6 @@ require (
 	github.com/graphql-go/graphql v0.7.9
 	github.com/graphql-go/handler v0.2.3
 	github.com/hashicorp/mdns v1.0.4
-	github.com/hasit/bolter v0.0.0-20210331045447-e1283cecdb7b // indirect
 	github.com/jdkato/prose/v2 v2.0.0
 	github.com/mattn/go-colorable v0.1.8 // indirect
 	github.com/mattn/go-runewidth v0.0.13 // indirect
@@ -26,12 +24,10 @@ require (
 	github.com/olekukonko/tablewriter v0.0.5 // indirect
 	github.com/onsi/ginkgo v1.16.4 // indirect
 	github.com/onsi/gomega v1.13.0 // indirect
-	github.com/pkg/errors v0.9.1 // indirect
 	github.com/redislabs/redisgraph-go v2.0.2+incompatible
 	github.com/rs/cors v1.7.0
 	github.com/sirupsen/logrus v1.8.1 // indirect
 	github.com/tidwall/gjson v1.8.0
-	github.com/urfave/cli v1.22.5 // indirect
 	github.com/x-cray/logrus-prefixed-formatter v0.5.2 // indirect
 	go.etcd.io/bbolt v1.3.6
 	golang.org/x/crypto v0.0.0-20210513164829-c07d793c2f9a // indirect
