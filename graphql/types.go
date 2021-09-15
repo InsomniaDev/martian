@@ -30,7 +30,7 @@ var integrationsType = graphql.NewObject(
 				Type: homeassistant.GraphqlHomeAssistantType,
 			},
 			"harmony": &graphql.Field{
-				Type: harmonyType,
+				Type: harmony.GraphqlType,
 			},
 			"kasa": &graphql.Field{
 				Type: kasa.GraphqlKasaType,
@@ -112,56 +112,6 @@ var hassType = graphql.NewObject(
 		},
 	},
 )
-
-var harmonyType = graphql.NewObject(
-	graphql.ObjectConfig{
-		Name: "Harmony",
-		Fields: graphql.Fields{
-			"id": &graphql.Field{
-				Type: graphql.String,
-			},
-			"activityId": &graphql.Field{
-				Type: graphql.String,
-			},
-			"name": &graphql.Field{
-				Type: graphql.String,
-			},
-			"actions": &graphql.Field{
-				Type: graphql.NewList(harmonyActionType),
-			},
-		},
-	},
-)
-var harmonyActionType = graphql.NewObject(
-	graphql.ObjectConfig{
-		Name: "HarmonyAction",
-		Fields: graphql.Fields{
-			"label": &graphql.Field{
-				Type: graphql.String,
-			},
-			"action": &graphql.Field{
-				Type: harmonyCommandType,
-			},
-		},
-	},
-)
-var harmonyCommandType = graphql.NewObject(
-	graphql.ObjectConfig{
-		Name: "HarmonyCommand",
-		Fields: graphql.Fields{
-			"command": &graphql.Field{
-				Type: graphql.String,
-			},
-			"type": &graphql.Field{
-				Type: graphql.String,
-			},
-			"deviceId": &graphql.Field{
-				Type: graphql.String,
-			},
-		},
-	},
-)
-
 
 type Custom struct {
 	Type    string   `yaml:"type"`

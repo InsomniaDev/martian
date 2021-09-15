@@ -212,18 +212,27 @@ func updateIntegration(params graphql.ResolveParams) (interface{}, error) {
 		Integrations.Database.PutIntegrationValue(integrationType, lutron)
 		newIntegration = true
 	case "harmony":
-		var harmony harmony.Device
-		err := json.Unmarshal([]byte(integrationValue), &harmony)
-		if err != nil {
-			return false, err
-		}
-		Integrations.Database.PutIntegrationValue(integrationType, harmony)
+		// var harmony harmony.Device
+		// err := json.Unmarshal([]byte(integrationValue), &harmony)
+		// if err != nil {
+		// 	return false, err
+		// }
+		Integrations.Database.PutIntegrationValue(integrationType, "")
 		newIntegration = true
 	case "kasa":
 		currentDevices := len(Integrations.KasaData.Devices)
+		var ipAddress kasa.Devices
+		err := json.Unmarshal([]byte(integrationValue), &ipAddress)
+		if err != nil {
+			return false, err
+		}
+		if ipAddress.IpAddressCidr != Integrations.KasaData.IpAddressCidr {
+			Integrations.KasaData.IpAddressCidr = ipAddress.IpAddressCidr
+			Integrations.Database.PutIntegrationValue(integrationType, Integrations.KasaData)
+		}
 		Integrations.KasaData.Discover()
 		if len(Integrations.KasaData.Devices) > currentDevices {
-			Integrations.Database.PutIntegrationValue(integrationType, Integrations.KasaData.Devices)
+			Integrations.Database.PutIntegrationValue(integrationType, Integrations.KasaData)
 		} else {
 			// TODO: Need to fix this piece, it is constantly assigning it as "", even though there are new ones
 			Integrations.Database.PutIntegrationValue(integrationType, "")
@@ -342,6 +351,13 @@ func editDeviceConfiguration(params graphql.ResolveParams) (interface{}, error) 
 		var lutronDevice lutron.LDevice
 		err := json.Unmarshal([]byte(device), &lutronDevice)
 		Integrations.LutronData.EditDeviceConfiguration(lutronDevice, removeEdit)
+		if err != nil {
+			return false, err
+		}
+	case "harmony":
+		var harmony harmony.Device
+		err := json.Unmarshal([]byte(device), &harmony)
+		Integrations.HarmonyData.EditDeviceConfiguration(harmony, removeEdit)
 		if err != nil {
 			return false, err
 		}

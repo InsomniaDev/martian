@@ -25,7 +25,7 @@ var (
 func (d *Device) Init(configuration string) error {
 	// Load up the configuration as the device itself
 	json.Unmarshal([]byte(configuration), d)
-	
+
 	// IF the IPAddress doesn't exist, then we need to find the endpoint
 	if d.IPAddress == "" {
 		d.discover()
@@ -227,5 +227,18 @@ func (d *Device) WriteMessage(message string) {
 	err := d.Connection.WriteMessage(websocket.TextMessage, []byte(message))
 	if err != nil {
 		log.Println("harmony write:", err)
+	}
+}
+
+// EditDeviceConfiguration will update the name and areaname for the harmony configuration
+func (d *Device) EditDeviceConfiguration(device Device, removeEdit bool) {
+	d.Name = device.Name
+	d.AreaName = device.AreaName
+
+	// Save in the database
+	var db database.Database
+	err := db.PutIntegrationValue("harmony", d)
+	if err != nil {
+		log.Println(err)
 	}
 }

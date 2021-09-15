@@ -3,6 +3,7 @@ package graphql
 import (
 	"github.com/graphql-go/graphql"
 	"github.com/insomniadev/martian/integrations/area"
+	"github.com/insomniadev/martian/integrations/harmony"
 )
 
 var rootQuery = graphql.NewObject(graphql.ObjectConfig{
@@ -24,12 +25,12 @@ var rootQuery = graphql.NewObject(graphql.ObjectConfig{
 			Resolve:     lutronAllResolver,
 		},
 		"getHarmonyActivities": &graphql.Field{
-			Type:        graphql.NewList(harmonyType),
+			Type:        graphql.NewList(harmony.GraphqlType),
 			Description: "All of the Harmony Activities",
 			Resolve:     getHarmonyActivities,
 		},
 		"currentHarmonyActivity": &graphql.Field{
-			Type:        harmonyType,
+			Type:        harmony.GraphqlType,
 			Description: "Current harmony activity",
 			Resolve:     getCurrentHarmonyActivity,
 		},

@@ -81,7 +81,7 @@ func LutronIntegration(areas []Area, devices []*lutron.LDevice, interfaceDevices
 				foundArea := false
 				areaName := strings.TrimSpace(lutronDev.AreaName)
 				if areaName == "" {
-					areaName = "UKN"
+					areaName = "No Area"
 				}
 				for area := range areas {
 					if strings.EqualFold(areas[area].AreaName, areaName) {
@@ -126,7 +126,7 @@ func KasaIntegration(areas []Area, devices kasa.Devices, interfaceDevices []stri
 				foundArea := false
 				areaName := strings.TrimSpace(kasaDev.AreaName)
 				if areaName == "" {
-					areaName = "UKN"
+					areaName = "No Area"
 				}
 				for area := range areas {
 					if strings.EqualFold(areas[area].AreaName, areaName) {
@@ -169,7 +169,7 @@ func HarmonyIntegration(areas []Area, device harmony.Device) []Area {
 	foundArea := false
 	areaName := strings.TrimSpace(device.AreaName)
 	if areaName == "" {
-		areaName = "UKN"
+		areaName = "No Area"
 	}
 	for area := range areas {
 		if strings.EqualFold(areas[area].AreaName, areaName) {

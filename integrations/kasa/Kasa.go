@@ -17,7 +17,6 @@ import (
 // Init initializes the instance of kasa for devices on the network
 func (d *Devices) Init(configuration string) {
 	json.Unmarshal([]byte(configuration), &d)
-	d.IpAddressCidr = "10.10.10.1/24"
 
 	d.Discover()
 

@@ -122,6 +122,8 @@ func integrationResolver(params graphql.ResolveParams) (interface{}, error) {
 			integration.Kasa = Integrations.KasaData
 		case "hass":
 			integration.Hass = Integrations.Hass
+		case "harmony":
+			integration.Harmony = Integrations.HarmonyData
 		default:
 			fmt.Println("This integration doesn't exist yet", k)
 		}

@@ -3,6 +3,7 @@ package graphql
 import (
 	"github.com/graphql-go/graphql"
 	"github.com/insomniadev/martian/integrations/area"
+	"github.com/insomniadev/martian/integrations/harmony"
 )
 
 var rootSubscription = graphql.NewObject(graphql.ObjectConfig{
@@ -14,7 +15,7 @@ var rootSubscription = graphql.NewObject(graphql.ObjectConfig{
 			Resolve:     lutronAllResolver,
 		},
 		"harmonyChange": &graphql.Field{
-			Type:        harmonyType,
+			Type:        harmony.GraphqlType,
 			Description: "Retrieve harmony state changes",
 			Resolve:     getCurrentHarmonyActivity,
 		},

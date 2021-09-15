@@ -1,6 +1,7 @@
 import { useQuery } from '@apollo/client';
 import { makeStyles } from '@material-ui/core/styles';
 import React from "react";
+import { HarmonyIntegration } from '../../components/IntegrationArea/Harmony/Harmony';
 import { HomeAssistantIntegration } from '../../components/IntegrationArea/HomeAssistant/HomeAssistant';
 import { IntegrationArea } from '../../components/IntegrationArea/IntegrationArea';
 import { KasaIntegration } from '../../components/IntegrationArea/Kasa/Kasa';
@@ -86,6 +87,10 @@ export function Integration() {
             integrationValue.name = "Lutron Caseta";
             integrationValue.value = data.integrations.lutron;
             return <LutronIntegration key="lutronIntegration" areaData={areaData} integration={integrationValue} refetchData={() => refetch()} />
+          case "harmony":
+            integrationValue.name = "Harmony";
+            integrationValue.value = data.integrations.harmony;
+            return <HarmonyIntegration key="harmonyIntegration" areaData={areaData} integration={integrationValue} refetchData={() => refetch()} />
           default:
             return <div />
         }

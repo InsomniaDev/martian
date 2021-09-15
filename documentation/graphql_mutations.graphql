@@ -15,16 +15,16 @@ http://localhost:4000/graphiql?operationName=integrations&query=%20%20mutation%2
 }
 
 
-mutation createLutron($lutronType: String!, $lutronValue: String!) {
-  updateIntegration(type: $lutronType, value: $lutronValue)
+mutation createLutron {
+  updateIntegration(type: "lutron", value: "{\"config\": {\"url\": \"192.168.1.150\",\"port\": \"23\",\"username\": \"lutron\",\"password\": \"integration\",\"file\": \"lutron_configuration.json\"}}")
 }
 
 mutation createKasa {
-  updateIntegration(type: "kasa", value: "")
+  updateIntegration(type: "kasa", value: "{\"ipAddressCidr\":\"10.10.10.1/24\"}")
 }
 
 mutation createHarmony {
-  updateIntegration(type: "harmony", value: "")
+  updateIntegration(type: "harmony", value: "{\"ipAddress\":\"192.168.1.219\"}")
 }
 
 mutation createHass {

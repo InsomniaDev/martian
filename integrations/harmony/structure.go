@@ -2,6 +2,7 @@ package harmony
 
 import (
 	"github.com/gorilla/websocket"
+	"github.com/graphql-go/graphql"
 )
 
 // Device type
@@ -17,6 +18,61 @@ type Device struct {
 	ActiveRemoteID  int
 	HostName        string
 }
+
+var GraphqlType = graphql.NewObject(
+	graphql.ObjectConfig{
+		Name: "Harmony",
+		Fields: graphql.Fields{
+			"id": &graphql.Field{
+				Type: graphql.String,
+			},
+			"activityId": &graphql.Field{
+				Type: graphql.String,
+			},
+			"name": &graphql.Field{
+				Type: graphql.String,
+			},
+			"actions": &graphql.Field{
+				Type: graphql.NewList(harmonyActionType),
+			},
+			"ipAddress": &graphql.Field{
+				Type: graphql.String,
+			},
+			"areaName": &graphql.Field{
+				Type: graphql.String,
+			},
+		},
+	},
+)
+var harmonyActionType = graphql.NewObject(
+	graphql.ObjectConfig{
+		Name: "HarmonyAction",
+		Fields: graphql.Fields{
+			"label": &graphql.Field{
+				Type: graphql.String,
+			},
+			"action": &graphql.Field{
+				Type: harmonyCommandType,
+			},
+		},
+	},
+)
+var harmonyCommandType = graphql.NewObject(
+	graphql.ObjectConfig{
+		Name: "HarmonyCommand",
+		Fields: graphql.Fields{
+			"command": &graphql.Field{
+				Type: graphql.String,
+			},
+			"type": &graphql.Field{
+				Type: graphql.String,
+			},
+			"deviceId": &graphql.Field{
+				Type: graphql.String,
+			},
+		},
+	},
+)
 
 // HTTPMessage is the message returned from the HTTP call
 type HTTPMessage struct {
