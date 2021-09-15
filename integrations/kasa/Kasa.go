@@ -17,6 +17,7 @@ import (
 // Init initializes the instance of kasa for devices on the network
 func (d *Devices) Init(configuration string) {
 	json.Unmarshal([]byte(configuration), &d)
+	d.IpAddressCidr = "10.10.10.1/24"
 
 	d.Discover()
 
@@ -111,10 +112,9 @@ func (h *KasaDevice) PowerState() (PowerState, error) {
 // Discover will go through and discover all Kasa devices on the network
 func (d *Devices) Discover() {
 	d.Devices = []KasaDevice{}
-	addr := "192.168.1.1/24"
 
 	// Get all ips in the cidr
-	ip, ipnet, err := net.ParseCIDR(addr)
+	ip, ipnet, err := net.ParseCIDR(d.IpAddressCidr)
 	if err != nil {
 		panic(err)
 	}

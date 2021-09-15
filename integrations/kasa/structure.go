@@ -11,6 +11,7 @@ import (
 type PowerState int
 
 type Devices struct {
+	IpAddressCidr    string       `json="ipAddressCidr"`
 	Devices          []KasaDevice `json="devices,omitempty"`
 	EditedDevices    []KasaDevice
 	InterfaceDevices []string `json="interfaceDevices,omitempty"`
