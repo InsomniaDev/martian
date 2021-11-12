@@ -2,7 +2,7 @@ package graphql
 
 import (
 	"encoding/json"
-	"fmt"
+	"log"
 	"strconv"
 	"strings"
 
@@ -119,7 +119,6 @@ func kasaTurnOnResolver(params graphql.ResolveParams) (interface{}, error) {
 func changeHassDeviceStatusResolver(params graphql.ResolveParams) (interface{}, error) {
 	entityId := params.Args["entityId"].(string)
 	activated := params.Args["activated"].(bool)
-	fmt.Println("got something here", entityId, activated)
 	for _, d := range Integrations.Hass.Devices {
 		if d.EntityId == entityId {
 			Integrations.Hass.CallService(d, activated)
@@ -239,7 +238,7 @@ func updateIntegration(params graphql.ResolveParams) (interface{}, error) {
 		}
 		newIntegration = true
 	case "life360":
-		fmt.Println("Not implemented")
+		log.Println("Not implemented")
 	case "hass":
 		// Will pass in {"url":"","token":""}
 		var hass homeassistant.HomeAssistant
@@ -250,7 +249,7 @@ func updateIntegration(params graphql.ResolveParams) (interface{}, error) {
 		Integrations.Database.PutIntegrationValue(integrationType, hass)
 		newIntegration = true
 	default:
-		fmt.Println("This integration doesn't exist yet", integrationType)
+		log.Println("This integration doesn't exist yet", integrationType)
 	}
 
 	if newIntegration {

@@ -2,7 +2,6 @@ package lutron
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -11,7 +10,7 @@ import (
 )
 
 // Init starts up the lutron instance
-func Init(configuration string) Lutron {
+func Init(configuration string) (Lutron, error) {
 	var lutron Lutron
 	err := json.Unmarshal([]byte(configuration), &lutron)
 	if err != nil {
@@ -20,7 +19,10 @@ func Init(configuration string) Lutron {
 	}
 
 	if len(lutron.Inventory) == 0 {
-		fileContents := loadIntegrationFile(lutron.Config)
+		fileContents, err := loadIntegrationFile(lutron.Config)
+		if err != nil {
+			return Lutron{}, err
+		}
 		for _, device := range fileContents.LIPIDList.Zones {
 			lutron.Inventory = append(lutron.Inventory, &LDevice{
 				Name:       device.Name,
@@ -35,19 +37,19 @@ func Init(configuration string) Lutron {
 	lutron.done = make(chan bool)
 
 	lutron.Connect()
-	return lutron
+	return lutron, nil
 }
 
-func loadIntegrationFile(config database.LutronConfig) CasetaIntegrationFile {
+func loadIntegrationFile(config database.LutronConfig) (CasetaIntegrationFile, error) {
 	// TODO: Need to add setup screen in the UI to determine what type the device is, currently it is manually being put in
 	jsonfile, err := os.Open("./config/" + config.File)
 
 	fileContents := CasetaIntegrationFile{}
 	jsonParser := json.NewDecoder(jsonfile)
 	if err = jsonParser.Decode(&fileContents); err != nil {
-		fmt.Println("parsing lutron config file", err.Error())
+		return CasetaIntegrationFile{}, err
 	}
-	return fileContents
+	return fileContents, nil
 }
 
 // UpdateSelectedDevices will go through and update the devices as selected or not selected

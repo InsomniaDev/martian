@@ -60,8 +60,7 @@ func (h *KasaDevice) UpdateArea(areaName string) {
 
 // PowerOff turns the plug off
 func (h *KasaDevice) PowerOff() error {
-	data, err := h.do(PowerOffCommand, "set_relay_state")
-	fmt.Println(data)
+	_, err := h.do(PowerOffCommand, "set_relay_state")
 	if err != nil {
 		return err
 	}
@@ -80,8 +79,7 @@ func (h *KasaDevice) PowerOff() error {
 
 // PowerOn turns the plug on
 func (h *KasaDevice) PowerOn() error {
-	data, err := h.do(PowerOnCommand, "set_relay_state")
-	fmt.Println(string(data))
+	_, err := h.do(PowerOnCommand, "set_relay_state")
 	if err != nil {
 		return err
 	}

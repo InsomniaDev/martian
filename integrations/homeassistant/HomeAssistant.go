@@ -5,6 +5,7 @@ import (
 	"log"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/gorilla/websocket"
 	"github.com/insomniadev/martian/database"
@@ -62,7 +63,10 @@ func (h *HomeAssistant) listen() {
 	for {
 		_, incoming, err := h.Connection.ReadMessage()
 		if err != nil {
-			println(err)
+			log.Println("homeassistant read:", err.Error())
+			time.Sleep(30 * time.Second) // Wait for thirty seconds
+			go h.connect()               // Start a new process to connect
+			return                       // exit out of this current listening loop
 		}
 		var message Event
 		err = json.Unmarshal(incoming, &message)
@@ -123,7 +127,6 @@ func (h *HomeAssistant) listen() {
 			}
 		// for _, dev := range h.Devices {
 		// 	if dev.Type == "light" {
-		// 		fmt.Println(dev.Name)
 		// 	}
 		// }
 		case subscribeEventsId:

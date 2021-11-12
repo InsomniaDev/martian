@@ -41,17 +41,17 @@ func (st *SmartThings) LoadToken() (*oauth2.Token, error) {
 func (st *SmartThings) RetrieveAuth() {
 	clientId, err := bolt.ReadAccount(SmartThingsClientID)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 	st.ClientID = clientId
 	clientSecret, err := bolt.ReadAccount(SmartThingsClientSecret)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 	st.ClientSecret = clientSecret
 	oauthToken, err := bolt.ReadAccount(SmartThingsOauthToken)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 	json.Unmarshal([]byte(oauthToken), &st.Token)
 

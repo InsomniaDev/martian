@@ -101,7 +101,7 @@ func (philips *PhilipsHue) GetLightsOnSystem() ([]Light, error) {
 func (philips *PhilipsHue) ChangeLightStatus(lightNumber int, lightOn bool) (err error) {
 	client := &http.Client{}
 	url := philips.URL + "/api/" + philips.Secret + "/lights/" + strconv.Itoa(lightNumber) + "/state"
-	fmt.Println(url)
+	log.Println(url)
 	changeState := state{lightOn}
 	data, err := json.Marshal(changeState)
 	if err != nil {
@@ -113,10 +113,10 @@ func (philips *PhilipsHue) ChangeLightStatus(lightNumber int, lightOn bool) (err
 		return
 	}
 	resp, err := client.Do(req)
-	fmt.Println(resp.StatusCode)
+	log.Println(resp.StatusCode)
 	contents, err := ioutil.ReadAll(resp.Body)
 	defer resp.Body.Close()
-	fmt.Println(string(contents))
+	log.Println(string(contents))
 	if err != nil {
 		return
 	}

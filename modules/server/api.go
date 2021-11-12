@@ -1,7 +1,7 @@
 package server
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 	"sort"
 	"strings"
@@ -26,6 +26,6 @@ func Start() {
 	// r.HandleFunc("/record/new", InsertNewRecord).Methods("POST")
 	r.HandleFunc("/query", DecipherQuery).Methods("POST")
 
-	fmt.Println("Hello from the Martian, I'm now alive and working!")
+	log.Println("Hello from the Martian, I'm now alive and working!")
 	http.ListenAndServe(":9000", r)
-} 
+}

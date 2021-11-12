@@ -7,14 +7,14 @@ import (
 	"time"
 )
 
-func assembleTimeString(eventTime time.Time) (timeString string) {
+func assembleTimeString(eventTime time.Time) (timeString string, err error) {
 	newTime := fmt.Sprintf("%s", eventTime.Format("15:04"))
 	newSplit := strings.Split(newTime, ":")
-	
+
 	minutes, err := strconv.Atoi(newSplit[1])
 	minuteString := ""
 	if err != nil {
-		fmt.Println(err)
+		return
 	}
 	switch {
 	case minutes > 45:

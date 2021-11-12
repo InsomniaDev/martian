@@ -13,7 +13,7 @@ const (
 )
 
 // InsertKasaGraph inserts device known into graph database
-func InsertKasaGraph(ipAddress string, name string) {
+func InsertKasaGraph(ipAddress string, name string) (err error) {
 	url, port := config.LoadRedis()
 
 	conn, _ := redis.Dial("tcp", url+":"+port)
@@ -22,21 +22,22 @@ func InsertKasaGraph(ipAddress string, name string) {
 
 	query := "CREATE (:kasa{name:'" + name + "', ipAddress:'" + ipAddress + "'}) "
 	query += "MERGE (:devicetype{name:'plug'}) "
-	_, err := graph.Query(query)
+	_, err = graph.Query(query)
 	if err != nil {
-		fmt.Println(err)
+		return
 	}
 
 	query = "MATCH (a:kasa{name:'" + name + "', ipAddress:'" + ipAddress + "'}), (b:devicetype{name:'plug'}) "
 	query += "CREATE (a) -[:OF_TYPE]-> (b) "
 	_, err = graph.Query(query)
 	if err != nil {
-		fmt.Println(err)
+		return
 	}
+	return
 }
 
 // UpdateAreaForKasaDevice will update an area for the
-func UpdateAreaForKasaDevice(ipAddress string, areaName string) {
+func UpdateAreaForKasaDevice(ipAddress string, areaName string) (err error) {
 	url, port := config.LoadRedis()
 
 	conn, _ := redis.Dial("tcp", url+":"+port)
@@ -45,9 +46,9 @@ func UpdateAreaForKasaDevice(ipAddress string, areaName string) {
 
 	query := "MATCH (:area) <-[r:RESIDES_IN]- (:kasa{ipAddress:'" + ipAddress + "'}) "
 	query += "DELETE r "
-	_, err := graph.Query(query)
+	_, err = graph.Query(query)
 	if err != nil {
-		fmt.Println(err)
+		return
 	}
 
 	query = "MATCH (a:kasa{ipAddress:'" + ipAddress + "'}) "
@@ -55,8 +56,9 @@ func UpdateAreaForKasaDevice(ipAddress string, areaName string) {
 	query += "MERGE (b) <-[:RESIDES_IN]- (a) "
 	_, err = graph.Query(query)
 	if err != nil {
-		fmt.Println(err)
+		return
 	}
+	return
 }
 
 // RetrieveKasaNodes will retrieve all of the nodes in the graph

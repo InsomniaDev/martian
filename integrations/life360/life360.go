@@ -3,7 +3,6 @@ package life360
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"time"
@@ -16,34 +15,38 @@ func (life *Life360) redirectPolicyFunc(req *http.Request, via []*http.Request) 
 	return nil
 }
 
-func (life *Life360) getURL(url string) []byte {
+func (life *Life360) getURL(url string) (contents []byte, err error) {
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		fmt.Println(err)
+		return
 	}
 	req.Header.Add("Authorization", "Bearer "+life.AccessToken)
 	resp, err := client.Do(req)
 
-	contents, err := ioutil.ReadAll(resp.Body)
+	contents, err = ioutil.ReadAll(resp.Body)
 	defer resp.Body.Close()
-	return contents
+	return
 }
 
 // GetCircles for Life360
-func (life *Life360) GetCircles() {
+func (life *Life360) GetCircles() (err error) {
 	if life.AccessToken == "" {
 		life.Authenticate()
 	}
-	resp := life.getURL(circlesURL)
-	values := Circles{}
-	err := json.Unmarshal(resp, &values)
+	resp, err := life.getURL(circlesURL)
 	if err != nil {
-		fmt.Println(err)
+		return
+	}
+	values := Circles{}
+	err = json.Unmarshal(resp, &values)
+	if err != nil {
+		return
 	}
 	for _, circle := range values.Circles {
 		life.Circles = append(life.Circles, circle)
 	}
+	return
 }
 
 // SyncMemberStatus : Constantly sync the life360 member status
@@ -56,16 +59,20 @@ func (life *Life360) SyncMemberStatus() {
 }
 
 // GetMembers for Life360
-func (life *Life360) GetMembers() {
+func (life *Life360) GetMembers() (err error) {
 	for _, circle := range life.Circles {
 		if life.AccessToken == "" {
 			life.Authenticate()
 		}
-		resp := life.getURL(baseURL + circleURL + circle.ID + membersURL)
-		values := Life360Members{}
-		err := json.Unmarshal(resp, &values)
+		var resp []byte
+		resp, err = life.getURL(baseURL + circleURL + circle.ID + membersURL)
 		if err != nil {
-			fmt.Println(err)
+			return
+		}
+		values := Life360Members{}
+		err = json.Unmarshal(resp, &values)
+		if err != nil {
+			return
 		}
 
 		// Save the previous data for comparison
@@ -85,26 +92,32 @@ func (life *Life360) GetMembers() {
 			}
 		}
 	}
+	return
 }
 
 // GetPlaces for Life360
-func (life *Life360) GetPlaces() {
+func (life *Life360) GetPlaces() (err error) {
 	for _, circle := range life.Circles {
 		if life.AccessToken == "" {
 			life.Authenticate()
 		}
-		resp := life.getURL(baseURL + circleURL + circle.ID + placesURL)
-		values := Places{}
-		err := json.Unmarshal(resp, &values)
+		var resp []byte
+		resp, err = life.getURL(baseURL + circleURL + circle.ID + placesURL)
 		if err != nil {
-			fmt.Println(err)
+			return
+		}
+		values := Places{}
+		err = json.Unmarshal(resp, &values)
+		if err != nil {
+			return
 		}
 		life.Places = values.Places
 	}
+	return
 }
 
 // Authenticate and return the token for Life360
-func (life *Life360) Authenticate() {
+func (life *Life360) Authenticate() (err error) {
 	life.RetrieveAuth()
 	client := &http.Client{
 		CheckRedirect: life.redirectPolicyFunc,
@@ -117,7 +130,7 @@ func (life *Life360) Authenticate() {
 
 	req, err := http.NewRequest("POST", tokenURL, bytes.NewBuffer(postJSON))
 	if err != nil {
-		fmt.Println(err)
+		return
 	}
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Add("Authorization", "Basic "+life.AuthorizationToken)
@@ -125,7 +138,7 @@ func (life *Life360) Authenticate() {
 
 	resp, err := client.Do(req)
 	if err != nil {
-		fmt.Println(err)
+		return
 	}
 
 	contents, err := ioutil.ReadAll(resp.Body)
@@ -139,4 +152,5 @@ func (life *Life360) Authenticate() {
 	life.GetCircles()
 	life.GetPlaces()
 	// life.InsertBearerToken("Bearer " + authentication.AccessToken)
+	return
 }

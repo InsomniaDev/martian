@@ -1,7 +1,6 @@
 package logic
 
 import (
-	"fmt"
 	"log"
 	"sort"
 	"strings"
@@ -62,8 +61,6 @@ func ParseRecordIntoCassandraRecord(postRecord string) cassandra.Record {
 	// Set the record to the whole entry including the title
 	record.Record = postRecord
 
-	fmt.Println("\nrecord to analyze:", postRecord)
-
 	// Parse out the tags and words from the passed record
 	entities, words := ParseEntry(postRecord)
 	record.Entities = entities
@@ -94,11 +91,6 @@ func ParseEntry(recordData string) ([]string, []string) {
 		log.Println("ERROR", err)
 		return nil, nil
 	}
-
-	fmt.Println("\n\ntokens/words", doc.Tokens())
-	fmt.Println("\n\nentities", doc.Entities())
-
-	fmt.Println("\n\nsentences", doc.Sentences())
 
 	var tags []string
 	var words []string

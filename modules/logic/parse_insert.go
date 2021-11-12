@@ -1,8 +1,6 @@
 package logic
 
 import (
-	"fmt"
-
 	"github.com/gocql/gocql"
 	"github.com/insomniadev/martian/modules/cassandra"
 )
@@ -10,13 +8,16 @@ import (
 // TODO: Process an incoming request
 
 func ParseInsert(conn *cassandra.Session, accountUuid gocql.UUID) {
-	fmt.Println("I don't do anything yet")
+	// I Don't do Anything yet
 
 }
 
-func UpsertRecord(conn *cassandra.Session, record cassandra.Record) bool {
+func UpsertRecord(conn *cassandra.Session, record cassandra.Record) (bool, error) {
 
-	inserted := conn.UpsertRecord(record)
+	inserted, err := conn.UpsertRecord(record)
+	if err != nil {
+		return false, err
+	}
 
 	// Create the word association with the record
 	var wordRecords []cassandra.WordsToRecord
@@ -36,5 +37,5 @@ func UpsertRecord(conn *cassandra.Session, record cassandra.Record) bool {
 
 	// TODO: need to upsert the entities to the record here
 
-	return inserted
+	return inserted, nil
 }

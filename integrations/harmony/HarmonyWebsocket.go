@@ -131,7 +131,10 @@ func (d *Device) listen() {
 		time.Sleep(1 * time.Second)
 		_, message, err := d.Connection.ReadMessage()
 		if err != nil {
-			log.Println("harmony read:", err)
+			log.Println("harmony read:", err.Error())
+			time.Sleep(30 * time.Second) // Wait for thirty seconds
+			go d.connect()               // Start a new process to connect
+			return                       // exit out of this current listening loop
 		}
 		if len(string(message)) > 0 {
 			receivedMessage := RecvMessage{}

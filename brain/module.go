@@ -1,7 +1,7 @@
 package brain
 
-import "fmt"
+import "log"
 
 func insert() {
-	fmt.Println("Currently not implemented")
+	log.Println("Currently not implemented")
 }

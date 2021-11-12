@@ -1,7 +1,7 @@
 package graphql
 
 import (
-	"fmt"
+	"log"
 	"strings"
 
 	"github.com/graphql-go/graphql"
@@ -96,12 +96,12 @@ func menuConfiguration(params graphql.ResolveParams) (interface{}, error) {
 		case "kasa":
 			Integrations.Menu = area.KasaIntegration(Integrations.Menu, Integrations.KasaData, Integrations.KasaData.InterfaceDevices)
 		case "life360":
-			fmt.Println("Not implemented")
+			log.Println("Not implemented")
 		case "hass":
 			// TODO: Need to update this and implement it to display on the screen and update the devices accordingly
-			fmt.Println("Not implemented")
+			log.Println("Not implemented")
 		default:
-			fmt.Println("This integration doesn't exist yet", k)
+			log.Println("This integration doesn't exist yet", k)
 		}
 	}
 
@@ -125,7 +125,7 @@ func integrationResolver(params graphql.ResolveParams) (interface{}, error) {
 		case "harmony":
 			integration.Harmony = Integrations.HarmonyData
 		default:
-			fmt.Println("This integration doesn't exist yet", k)
+			log.Println("This integration doesn't exist yet", k)
 		}
 	}
 

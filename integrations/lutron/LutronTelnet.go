@@ -80,12 +80,10 @@ func (l *Lutron) Connect() error {
 				return
 			// case l.Responses <- scannedMsg:
 			default:
-				// 	fmt.Println(scannedMsg)
 			}
 			response := &LutronMsg{}
 			groups := re.FindStringSubmatch(scannedMsg)
 			if len(groups) == 0 {
-				// fmt.Println("no groups")
 				continue
 			}
 			lutronItems := make(map[string]string)
@@ -96,7 +94,6 @@ func (l *Lutron) Connect() error {
 					lutronItems[name] = groups[i]
 				}
 			}
-			// fmt.Println(lutronItems)
 			switch lutronItems["command"] {
 			case "OUTPUT":
 				response.Cmd = Output
@@ -260,10 +257,8 @@ func (l *Lutron) SendCommand(c *LutronMsg) (resp string, err error) {
 		// to approximate (as an option) is to manage the fade here, with a ticker
 		cmd = fmt.Sprintf("%s,%.2f", cmd, c.Fade)
 	}
-	// fmt.Println("debug: ", cmd)
 	// TODO need to decide how to capture and bubble up either
 	// transport/connection errors, or semantic lighting errors
 	l.Send(cmd)
-	// fmt.Println("sent ", cmd)
 	return "", nil
 }

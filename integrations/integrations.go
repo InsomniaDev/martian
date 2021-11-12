@@ -1,7 +1,6 @@
 package integrations
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/insomniadev/martian/database"
@@ -11,6 +10,8 @@ import (
 	"github.com/insomniadev/martian/integrations/kasa"
 	"github.com/insomniadev/martian/integrations/life360"
 	"github.com/insomniadev/martian/integrations/lutron"
+	"github.com/insomniadev/martian/logger"
+	"github.com/sirupsen/logrus"
 )
 
 type Integrations struct {
@@ -42,7 +43,10 @@ func (i *Integrations) Init() {
 		case "area":
 			i.AreaIndexes = area.Init(storedIntegrations[k])
 		case "lutron":
-			i.LutronData = lutron.Init(storedIntegrations[k])
+			i.LutronData, err = lutron.Init(storedIntegrations[k])
+			if err != nil {
+				logger.Logger().Log(logrus.ErrorLevel, err)
+			}
 			i.Menu = area.LutronIntegration(i.Menu, i.LutronData.Inventory, i.LutronData.InterfaceInventory)
 			i.Integrations = append(i.Integrations, "lutron")
 		case "harmony":
@@ -61,12 +65,12 @@ func (i *Integrations) Init() {
 			go i.Hass.Init(storedIntegrations[k])
 			i.Integrations = append(i.Integrations, "hass")
 		default:
-			fmt.Println("This integration doesn't exist yet", k)
+			log.Println("This integration doesn't exist yet", k)
 		}
 	}
 	// Cycle through the integrations
 	if len(i.AreaIndexes) > 0 {
-		fmt.Println("Devices have been found")
+		log.Println("Devices have been found")
 		i.Menu = area.CheckIndexForAreas(i.Menu, i.AreaIndexes)
 	}
 

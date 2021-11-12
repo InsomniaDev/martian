@@ -1,8 +1,6 @@
 package cassandra
 
 import (
-	"fmt"
-
 	"github.com/gocql/gocql"
 )
 
@@ -24,8 +22,7 @@ func (s *Session) Close() {
 	s.Connection.Close()
 }
 
-func (s *Session) ExecuteBatch(batch *gocql.Batch) {
-	if err := s.Connection.ExecuteBatch(batch); err != nil {
-		fmt.Println(err)
-	}
+func (s *Session) ExecuteBatch(batch *gocql.Batch) (err error) {
+	err = s.Connection.ExecuteBatch(batch)
+	return
 }

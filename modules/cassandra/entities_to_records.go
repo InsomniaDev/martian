@@ -1,8 +1,6 @@
 package cassandra
 
 import (
-	"fmt"
-
 	"github.com/gocql/gocql"
 )
 
@@ -19,15 +17,14 @@ type EntitiesToRecords struct {
 }
 
 // UpsertEntitiesToRecords will add record association to tag
-func (s *Session) UpsertEntitiesToRecords(tags EntitiesToRecords) {
-	if err := s.Connection.Query(`
+func (s *Session) UpsertEntitiesToRecords(tags EntitiesToRecords) (err error) {
+	err = s.Connection.Query(`
 		UPDATE entities_to_records 
 		SET record_uuid = record_uuid + ?
 		WHERE account_uuid = ?
 		  AND entity = ?
-		`, tags.RecordUuid, tags.AccountUuid, tags.Entity).Exec(); err != nil {
-		fmt.Println(err)
-	}
+		`, tags.RecordUuid, tags.AccountUuid, tags.Entity).Exec()
+	return
 }
 
 // UpsertMultipleWordsToRecord will upsert multiple words and records into the tables
@@ -44,15 +41,14 @@ func (s *Session) UpsertMultipleEntitiesToRecord(words []EntitiesToRecord, batch
 }
 
 // DeleteRecordsFromEntities will delete the records from the Entities
-func (s *Session) DeleteRecordsFromEntities(tags EntitiesToRecords) {
-	if err := s.Connection.Query(`
+func (s *Session) DeleteRecordsFromEntities(tags EntitiesToRecords) (err error) {
+	err = s.Connection.Query(`
 		UPDATE entities_to_records 
 		SET record_uuid = record_uuid - ?
 		WHERE account_uuid = ?
 		  AND entity = ?
-		`, tags.RecordUuid, tags.AccountUuid, tags.Entity).Exec(); err != nil {
-		fmt.Println(err)
-	}
+		`, tags.RecordUuid, tags.AccountUuid, tags.Entity).Exec()
+	return
 }
 
 // Will get all records that have the provided tags

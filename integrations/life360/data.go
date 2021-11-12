@@ -1,21 +1,21 @@
 package life360
 
 import (
-	"fmt"
+	"log"
 
 	"github.com/insomniadev/martian/integrations/config"
 )
 
 // InsertAuth inserts the username and password into the database
 func (life *Life360) InsertAuth(username string, password string) {
-	fmt.Println("Not implemented")
+	log.Println("Not implemented")
 
 	// bolt.UpdateAccount(Life360AuthenticationToken, "cFJFcXVnYWJSZXRyZTRFc3RldGhlcnVmcmVQdW1hbUV4dWNyRUh1YzptM2ZydXBSZXRSZXN3ZXJFQ2hBUHJFOTZxYWtFZHI0Vg==")
 }
 
 // InsertBearerToken inserts the authenticated token to the database
 func (life *Life360) InsertBearerToken(token string) {
-	fmt.Println("Not implemented")
+	log.Println("Not implemented")
 }
 
 // RetrieveAuth from the bolt key value store

@@ -2,7 +2,6 @@ package philipshue
 
 import (
 	"encoding/json"
-	"fmt"
 	bolt "homesmartie/models"
 	"log"
 	"strconv"
@@ -20,7 +19,7 @@ func (philips *PhilipsHue) Refresh() {
 		philips.Lights[in].UUID = "philips" + strconv.Itoa(philips.Lights[in].ID)
 		value, err := json.Marshal(philips.Lights[in])
 		if err != nil {
-			fmt.Println(err)
+			log.Fatal(err)
 		}
 		bolt.UpdateDevice(philips.Lights[in].UUID, string(value))
 	}
@@ -31,12 +30,12 @@ func (philips *PhilipsHue) RetrieveAuth() {
 
 	url, err := bolt.ReadAccount("PHILIPS_HUE_URL")
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 	}
 	philips.URL = url
 	secret, err := bolt.ReadAccount("PHILIPS_HUE_SECRET")
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 	}
 	philips.Secret = secret
 }
@@ -50,7 +49,7 @@ func (philips *PhilipsHue) RetrieveDevices() {
 		var newLight Light
 		err := json.Unmarshal(byteValue, &newLight)
 		if err != nil {
-			fmt.Println(err)
+			log.Fatal(err)
 		}
 		lights = append(lights, newLight)
 	}

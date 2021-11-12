@@ -14,7 +14,7 @@ const (
 )
 
 // InsertLutronGraph is used to insert a lutron device into the graph
-func InsertLutronGraph(name string, deviceID int, areaName string, deviceType string) LDevice {
+func InsertLutronGraph(name string, deviceID int, areaName string, deviceType string) (LDevice, error) {
 	url, port := config.LoadRedis()
 	conn, _ := redis.Dial("tcp", url+":"+port)
 	defer conn.Close()
@@ -32,7 +32,7 @@ func InsertLutronGraph(name string, deviceID int, areaName string, deviceType st
 	query += "MERGE (:devicetype{name:'" + device.Type + "'}) "
 	_, err := graph.Query(query)
 	if err != nil {
-		fmt.Println(err)
+		return LDevice{}, err
 	}
 
 	// Create the relationships
@@ -40,9 +40,9 @@ func InsertLutronGraph(name string, deviceID int, areaName string, deviceType st
 	query += "CREATE (b) <-[:RESIDES_IN]- (a) -[:OF_TYPE]-> (c) "
 	_, err = graph.Query(query)
 	if err != nil {
-		fmt.Println(err)
+		return LDevice{}, err
 	}
-	return device
+	return device, nil
 }
 
 // RetrieveLutronNodes will retrieve all of the nodes and print them prettily

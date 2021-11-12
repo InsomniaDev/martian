@@ -72,7 +72,6 @@ func Graphql() {
 
 func zwavehandler(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
-	body, _ := ioutil.ReadAll(r.Body)
-	fmt.Println(string(body))
+	ioutil.ReadAll(r.Body)
 	fmt.Fprintf(w, "Hi there, I love %s!", r.URL.Path[1:])
 }

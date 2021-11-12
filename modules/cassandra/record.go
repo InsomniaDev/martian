@@ -1,8 +1,6 @@
 package cassandra
 
 import (
-	"fmt"
-
 	"github.com/gocql/gocql"
 )
 
@@ -17,7 +15,7 @@ type Record struct {
 }
 
 // UpsertRecord will insert or update a record in the Cassandra database
-func (s *Session) UpsertRecord(record Record) bool {
+func (s *Session) UpsertRecord(record Record) (bool, error) {
 	if err := s.Connection.Query(`
 		UPDATE record 
 		SET entities = entities + ?,
@@ -28,10 +26,9 @@ func (s *Session) UpsertRecord(record Record) bool {
 		  AND record_uuid = ?
 		  AND title = ?
 		`, record.Entities, record.Words, record.Record, record.Importance, record.AccountUuid, record.RecordUuid, record.Title).Exec(); err != nil {
-		fmt.Println(err)
-		return false
+		return false, err
 	}
-	return true
+	return true, nil
 }
 
 // GetRecords Will return all of the records for the account in the passed in recordUuid list

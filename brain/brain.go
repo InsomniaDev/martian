@@ -1,11 +1,12 @@
 package brain
 
 import (
-	"fmt"
 	"strconv"
 	"time"
 
 	"github.com/insomniadev/martian/integrations/config"
+	"github.com/insomniadev/martian/logger"
+	"github.com/sirupsen/logrus"
 )
 
 // Init will start up the brain struct
@@ -29,15 +30,22 @@ func (b *Brain) timeCleanUp() {
 func (b *Brain) timeAutomation() {
 	for {
 		time.Sleep(15 * time.Minute)
-		currentTimeString := assembleTimeString(time.Now())
+		currentTimeString, err := assembleTimeString(time.Now())
+		if err != nil {
+			logger.Logger().Log(logrus.ErrorLevel, err)
+		}
 
 		// Check if automation is in place for this time
-		b.automationCheck(b.checkForTimeAutomations(currentTimeString))
+		exists, err := b.checkForTimeAutomations(currentTimeString)
+		if err != nil {
+			logger.Logger().Log(logrus.ErrorLevel, err)
+		}
+		b.automationCheck(exists)
 	}
 }
 
 // ProcessEvent processes the event
-func (b *Brain) ProcessEvent(e Event) {
+func (b *Brain) ProcessEvent(e Event) (err error) {
 	b.LastEvent = b.CurrentEvent
 	b.CurrentEvent = e
 
@@ -66,7 +74,12 @@ func (b *Brain) ProcessEvent(e Event) {
 	}
 
 	// Check if automation is in place for this event
-	b.automationCheck(b.checkForEventAutomations())
+	exists, err := b.checkForEventAutomations()
+	if err != nil {
+		return
+	}
+	b.automationCheck(exists)
+	return
 }
 
 func (b *Brain) automationCheck(automationExists bool) {
@@ -76,8 +89,9 @@ func (b *Brain) automationCheck(automationExists bool) {
 		for _, aEvent := range b.AutomationEvent {
 			if aEvent.ID != b.CurrentEvent.ID {
 				if aEvent.Type == "lutron" {
-					if s, err := strconv.ParseFloat(aEvent.Value, 64); err == nil {
-						fmt.Println(s)
+					if _, err := strconv.ParseFloat(aEvent.Value, 64); err == nil {
+						// do nothing
+						return
 						// graphql.Integrations.LutronData.SetById(aEvent.ID, s)
 					}
 				}

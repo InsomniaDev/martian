@@ -5,6 +5,8 @@ import (
 	"strconv"
 
 	"github.com/gomodule/redigo/redis"
+	"github.com/insomniadev/martian/logger"
+	"github.com/sirupsen/logrus"
 
 	rg "github.com/redislabs/redisgraph-go"
 )
@@ -15,19 +17,17 @@ const (
 	permGraph = "automations"
 )
 
-func (b *Brain) cleanTempDatabase() {
+func (b *Brain) cleanTempDatabase() (err error) {
 	conn, _ := redis.Dial("tcp", b.redisURL+":"+b.redisPort)
 	defer conn.Close()
 
 	graph := rg.GraphNew(tempGraph, conn)
 	query := "MATCH (a) DELETE a"
-	_, err := graph.Query(query)
-	if err != nil {
-		fmt.Println(err)
-	}
+	_, err = graph.Query(query)
+	return
 }
 
-func (b *Brain) checkForTimeAutomations(eventTime string) (exists bool) {
+func (b *Brain) checkForTimeAutomations(eventTime string) (exists bool, err error) {
 	b.AutomationEvent = nil
 
 	conn, _ := redis.Dial("tcp", b.redisURL+":"+b.redisPort)
@@ -40,7 +40,7 @@ func (b *Brain) checkForTimeAutomations(eventTime string) (exists bool) {
 
 	resp, err := graph.Query(query)
 	if err != nil {
-		fmt.Println(err)
+		return
 	}
 	for resp.Next() {
 		r := resp.Record()
@@ -58,7 +58,7 @@ func (b *Brain) checkForTimeAutomations(eventTime string) (exists bool) {
 	return
 }
 
-func (b *Brain) checkForEventAutomations() (exists bool) {
+func (b *Brain) checkForEventAutomations() (exists bool, err error) {
 	b.AutomationEvent = nil
 
 	conn, _ := redis.Dial("tcp", b.redisURL+":"+b.redisPort)
@@ -71,7 +71,7 @@ func (b *Brain) checkForEventAutomations() (exists bool) {
 
 	resp, err := graph.Query(query)
 	if err != nil {
-		fmt.Println(err)
+		return
 	}
 	for resp.Next() {
 		r := resp.Record()
@@ -89,7 +89,7 @@ func (b *Brain) checkForEventAutomations() (exists bool) {
 	return
 }
 
-func (b *Brain) storeEventGraph() int {
+func (b *Brain) storeEventGraph() (weight int, err error) {
 	conn, _ := redis.Dial("tcp", b.redisURL+":"+b.redisPort)
 	defer conn.Close()
 
@@ -101,9 +101,8 @@ func (b *Brain) storeEventGraph() int {
 
 	resp, err := graph.Query(query)
 	if err != nil {
-		fmt.Println("Placeholder")
+		return
 	}
-	var weight int
 	for resp.Next() {
 		r := resp.Record()
 		weightString, _ := r.Get("c.weight")
@@ -113,9 +112,9 @@ func (b *Brain) storeEventGraph() int {
 	// Move to the permanent automation store
 	if weight > 3 {
 		permG := rg.GraphNew(permGraph, conn)
-		_, err := permG.Query(query)
+		_, err = permG.Query(query)
 		if err != nil {
-			fmt.Println("Placeholder")
+			return
 		}
 
 		// DELETE the relationship
@@ -123,18 +122,21 @@ func (b *Brain) storeEventGraph() int {
 		query += "DELETE c"
 		_, err = graph.Query(query)
 		if err != nil {
-			fmt.Println("Placeholder")
+			return
 		}
 	}
 
-	return weight
+	return
 }
 
-func (b *Brain) storeTimeGraph() int {
+func (b *Brain) storeTimeGraph() (weight int, err error) {
 	conn, _ := redis.Dial("tcp", b.redisURL+":"+b.redisPort)
 	defer conn.Close()
 
-	timeInstanceForEvent := assembleTimeString(b.CurrentEvent.Time)
+	timeInstanceForEvent, err := assembleTimeString(b.CurrentEvent.Time)
+	if err != nil {
+		logger.Logger().Log(logrus.ErrorLevel, err)
+	}
 
 	graph := rg.GraphNew(tempGraph, conn)
 
@@ -142,12 +144,11 @@ func (b *Brain) storeTimeGraph() int {
 	query += fmt.Sprintf(" MERGE (b:time{military:'%s'})", timeInstanceForEvent)
 	query += " MERGE (a) <-[c:RELATES]-> (b) ON CREATE SET c.weight=1 ON MATCH SET c.weight=c.weight+1 RETURN c.weight"
 
-	fmt.Println(query)
 	resp, err := graph.Query(query)
 	if err != nil {
-		fmt.Println("Placeholder")
+		return
 	}
-	var weight int
+
 	for resp.Next() {
 		r := resp.Record()
 		weightString, _ := r.Get("c.weight")
@@ -157,19 +158,18 @@ func (b *Brain) storeTimeGraph() int {
 	// Move to the permanent automation store
 	if weight > 3 {
 		permG := rg.GraphNew(permGraph, conn)
-		_, err := permG.Query(query)
+		_, err = permG.Query(query)
 		if err != nil {
-			fmt.Println("Placeholder")
+			return
 		}
 
 		// DELETE the relationship
 		query = fmt.Sprintf("MATCH (a:event{deviceId:'%s',state:'%s',device:'%s'}) <-[c:RELATES]-> (b:time{military:'%s'}) ", strconv.Itoa(b.CurrentEvent.ID), b.CurrentEvent.Value, b.CurrentEvent.Type, timeInstanceForEvent)
 		query += "DELETE c"
-		fmt.Println(query)
 		_, err = graph.Query(query)
 		if err != nil {
-			fmt.Println("Placeholder")
+			return
 		}
 	}
-	return weight
+	return
 }

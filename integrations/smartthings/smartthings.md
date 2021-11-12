@@ -2,7 +2,7 @@ package smartthings
 
 import (
 	"encoding/json"
-	"fmt"
+	"log"
 	"io/ioutil"
 )
 
@@ -28,7 +28,7 @@ func (st *SmartThings) GetDevices() (deviceList []DeviceList, err error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(string(contents))
+	log.Println(string(contents))
 	if err := json.Unmarshal(contents, &deviceList); err != nil {
 		return nil, err
 	}
@@ -62,7 +62,7 @@ func (st *SmartThings) GetDeviceInfo(id string) (deviceInfo DeviceInfo, err erro
 	if err != nil {
 		return
 	}
-	fmt.Println(string(contents))
+	log.Println(string(contents))
 
 	err = json.Unmarshal(contents, &deviceInfo)
 	if err != nil {

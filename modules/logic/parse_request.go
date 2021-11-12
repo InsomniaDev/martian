@@ -1,8 +1,6 @@
 package logic
 
 import (
-	"fmt"
-
 	"github.com/gocql/gocql"
 	"github.com/insomniadev/martian/modules/cassandra"
 )
@@ -15,7 +13,7 @@ type RecordRequest struct {
 }
 
 // ParseRequest gets all of the records that match the entities and words and sets the Records variable
-func (rr *RecordRequest) ParseRequest(conn *cassandra.Session, commonWords *[]string, numOfRecords int) {
+func (rr *RecordRequest) ParseRequest(conn *cassandra.Session, commonWords *[]string, numOfRecords int) (err error) {
 	var likelyRecords []string
 
 	// Get three records from the provided words
@@ -31,15 +29,17 @@ func (rr *RecordRequest) ParseRequest(conn *cassandra.Session, commonWords *[]st
 
 	var recordsToReturn []gocql.UUID
 	if len(likelyRecords) > 0 {
+		var uuid gocql.UUID
 		for i := 0; i < numOfRecords && i < len(likelyRecords); i++ {
-			uuid, err := gocql.ParseUUID(likelyRecords[i])
+			uuid, err = gocql.ParseUUID(likelyRecords[i])
 			if err != nil {
-				fmt.Println(err)
+				return err
 			}
 			recordsToReturn = append(recordsToReturn, uuid)
 		}
 	}
 	rr.Records = recordsToReturn
+	return nil
 }
 
 // RetrieveRecords will retrieve the records in the RecordRequest object, numOfRecords will limit returned amount of records
@@ -49,7 +49,7 @@ func (rr *RecordRequest) RetrieveRecords(conn *cassandra.Session, numOfRecords i
 	for i := 0; i < numOfRecords && i < recordLength; i++ {
 		recordsRequired = append(recordsRequired, rr.Records[i])
 	}
-	
+
 	return conn.GetRecords(rr.AccountUuid, recordsRequired)
 }
 

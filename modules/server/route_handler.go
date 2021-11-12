@@ -9,8 +9,10 @@ import (
 
 	"github.com/gocql/gocql"
 	"github.com/gorilla/mux"
+	"github.com/insomniadev/martian/logger"
 	"github.com/insomniadev/martian/modules/cassandra"
 	"github.com/insomniadev/martian/modules/logic"
+	"github.com/sirupsen/logrus"
 )
 
 type MartianBody struct {
@@ -56,15 +58,17 @@ func insertNewRecord(w http.ResponseWriter, r *http.Request, message MartianBody
 	log.Println("we are inserting new record")
 
 	// Remove the "new" keyword
-	message.Record = strings.Join(strings.Fields(message.Record)[1:]," ")
+	message.Record = strings.Join(strings.Fields(message.Record)[1:], " ")
 
 	// Parse the record into a Cassandra record and then set the AccountUuid
 	record := logic.ParseRecordIntoCassandraRecord(message.Record)
 	record.AccountUuid = message.AccountUuid
 
-
 	// Insert the provided record into the Cassandra database
-	inserted := logic.UpsertRecord(&CassandraConnection, record)
+	inserted, err := logic.UpsertRecord(&CassandraConnection, record)
+	if err != nil {
+		logger.Logger().Log(logrus.ErrorLevel, err)
+	}
 	if inserted {
 		log.Println("Inserted new record")
 	} else {
@@ -93,7 +97,10 @@ func updateRecord(w http.ResponseWriter, r *http.Request, message MartianBody) {
 	// TODO: Need to search for the record here and update with the data that already exists
 
 	// Insert the provided record into the Cassandra database
-	inserted := logic.UpsertRecord(&CassandraConnection, record)
+	inserted, err := logic.UpsertRecord(&CassandraConnection, record)
+	if err != nil {
+		logger.Logger().Log(logrus.ErrorLevel, err)
+	}
 	if inserted {
 		log.Println("Inserted new record")
 	} else {
@@ -159,7 +166,7 @@ func retrieveRecord(w http.ResponseWriter, r *http.Request, message MartianBody)
 
 	var response MartianResponse
 	// response.Message = "Consumed: " + message.Record
-	if (len(data) > 0) {
+	if len(data) > 0 {
 		response.Message = data[0].Record
 	} else {
 		response.Message = "Sorry, I'm not prepared to answer that just yet."
