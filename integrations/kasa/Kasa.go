@@ -16,6 +16,7 @@ import (
 
 // Init initializes the instance of kasa for devices on the network
 func (d *Devices) Init(configuration string) {
+	fmt.Println(configuration)
 	json.Unmarshal([]byte(configuration), &d)
 
 	d.Discover()
@@ -128,6 +129,8 @@ func (d *Devices) Discover() {
 				plug.Name = plug.PlugInfo.Alias
 				switch plug.PlugInfo.Model {
 				case "HS105(US)":
+					plug.Type = "plug"
+				case "HS103(US)":
 					plug.Type = "plug"
 				case "HS200(US)":
 					plug.Type = "light"

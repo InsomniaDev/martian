@@ -26,7 +26,6 @@ func subscriptionSubscriber(channel, payload string) {
 
 func main() {
 	// testLocalCache()
-
 	graphql.Graphql()
 
 	// mainBrain.Init()
