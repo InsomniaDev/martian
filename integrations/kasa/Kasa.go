@@ -52,12 +52,6 @@ func (h *KasaDevice) WatchForChanges() {
 	}
 }
 
-// UpdateArea assigns the plug to an area
-func (h *KasaDevice) UpdateArea(areaName string) {
-	UpdateAreaForKasaDevice(h.IPAddress, areaName)
-	h.AreaName = areaName
-}
-
 // PowerOff turns the plug off
 func (h *KasaDevice) PowerOff() error {
 	_, err := h.do(PowerOffCommand, "set_relay_state")

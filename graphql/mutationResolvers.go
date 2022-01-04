@@ -81,18 +81,6 @@ func harmonyStartActivityResolver(params graphql.ResolveParams) (interface{}, er
 	return true, nil
 }
 
-// updateAreaForKasaDevice will update the area for the kasa device to match
-func updateAreaForKasaDevice(params graphql.ResolveParams) (interface{}, error) {
-	argID, _ := params.Args["ipAddress"].(string)
-	areaName, _ := params.Args["areaName"].(string)
-	for i, dev := range Integrations.KasaData.Devices {
-		if dev.IPAddress == argID {
-			Integrations.KasaData.Devices[i].UpdateArea(areaName)
-		}
-	}
-	return true, nil
-}
-
 // kasaTurnOffResolver turns off a kasa device by setting value to zero
 func kasaTurnOffResolver(params graphql.ResolveParams) (interface{}, error) {
 	argString := params.Args["ipAddress"].(string)

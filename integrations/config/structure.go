@@ -2,7 +2,6 @@ package config
 
 // Config is the overall configuration
 type Config struct {
-	RedisData     Redis        `yaml:"redis"`
 	LutronData    LutronConfig `yaml:"lutron"`
 	MyQData       MyQ          `yaml:"myq"`
 	HarmonyData   Harmony      `yaml:"harmony"`
@@ -14,11 +13,6 @@ type Config struct {
 	MenuConfig    []Menu       `yaml:"menu"`
 }
 
-// Redis is the configuration for Redis
-type Redis struct {
-	URL  string `yaml:"url"`
-	Port string `yaml:"port"`
-}
 
 // LutronConfig is the configuration for the Lutron Hub
 type LutronConfig struct {

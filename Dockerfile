@@ -15,9 +15,6 @@ FROM alpine
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=builder /go/src/github.com/insomniadev/martian/martian /martian
 
-# Install redis in container
-RUN apk --update add redis 
-
 RUN mkdir config
 RUN pwd && ls -al
 WORKDIR /

@@ -19,14 +19,6 @@ func (c *Config) LoadFile() {
 	}
 }
 
-// LoadRedis loads the redis configuration from the yaml file
-func LoadRedis() (string, string) {
-	c := Config{}
-	c.LoadFile()
-
-	return c.RedisData.URL, c.RedisData.Port
-}
-
 // LoadLutron loads the lutron configuration from the yaml file
 func LoadLutron() LutronConfig {
 	c := Config{}
