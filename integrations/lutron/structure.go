@@ -6,7 +6,6 @@ import (
 
 	"github.com/graphql-go/graphql"
 	"github.com/insomniadev/martian/database"
-	"github.com/insomniadev/martian/modules/pubsub"
 )
 
 // LDevice type
@@ -46,7 +45,6 @@ type Lutron struct {
 	EditedInventory     []*LDevice `json:"editedDevices,omitempty"`
 	InterfaceInventory  []int      `json:"interfaceDevices,omitempty"`
 	AutomationInventory []int      `json:"automatedDevices,omitempty"`
-	broker              *pubsub.PubSub
 	Changed             bool
 }
 

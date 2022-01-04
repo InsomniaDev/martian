@@ -11,7 +11,6 @@ import (
 	"time"
 
 	"github.com/insomniadev/martian/modules/pubsub"
-	redispub "github.com/insomniadev/martian/modules/redispub"
 )
 
 // custom io scanner splitter
@@ -39,7 +38,6 @@ func lutronSplitter(data []byte, atEOF bool) (advance int, token []byte, err err
 // Connect to the lutron instance and start receiving messages
 func (l *Lutron) Connect() error {
 	conn, err := net.Dial("tcp", l.Config.URL+":"+l.Config.Port)
-	l.broker = pubsub.New(10)
 	if err != nil {
 		return err
 	}
@@ -157,15 +155,14 @@ func (l *Lutron) Connect() error {
 								l.Inventory[index].State = "OFF"
 							}
 						}
-						redispub.Service.Publish("subscriptions", l.Inventory[index])
+						pubsub.Service.Publish("subscriptions", "lutron")
 
 						eventData := fmt.Sprintf("{\"id\":%d,\"type\":\"lutron\",\"value\":\"%s\",\"time\":\"0001-01-01T00:00:00Z\"}", response.Id, fmt.Sprintf("%f", l.Inventory[index].Value))
-						redispub.Service.Publish("brain", string(eventData))
+						pubsub.Service.Publish("brain", string(eventData))
 					}
 				}
 			}
 			// fmt.Printf("publishing %+v\n", response)
-			l.broker.Pub(response, "responses")
 		}
 	}()
 
@@ -212,7 +209,6 @@ func (l *Lutron) Watch(c *LutronMsg) (responses chan *LutronMsg, stop chan bool)
 	watcher.incomming = make(chan interface{}, 5)
 	watcher.Responses = make(chan *LutronMsg, 5)
 	watcher.stop = make(chan bool)
-	l.broker.AddSub(watcher.incomming, "responses")
 	go func() {
 		for {
 			select {
@@ -220,7 +216,6 @@ func (l *Lutron) Watch(c *LutronMsg) (responses chan *LutronMsg, stop chan bool)
 				// match msg
 				watcher.Responses <- msg.(*LutronMsg)
 			case <-watcher.stop:
-				l.broker.Unsub(watcher.incomming, "responses")
 				close(watcher.Responses)
 				return
 			}

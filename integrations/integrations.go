@@ -11,7 +11,6 @@ import (
 	"github.com/insomniadev/martian/integrations/life360"
 	"github.com/insomniadev/martian/integrations/lutron"
 	"github.com/insomniadev/martian/logger"
-	"github.com/insomniadev/martian/modules/pubsub"
 	"github.com/sirupsen/logrus"
 )
 
@@ -25,7 +24,6 @@ type Integrations struct {
 	KasaData     kasa.Devices
 	Life3        life360.Life360
 	Database     database.Database
-	PubSub       *pubsub.PubSub
 	// Zwave       zwave.Zwave
 }
 

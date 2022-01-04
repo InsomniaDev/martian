@@ -10,7 +10,7 @@ import (
 	graphql "github.com/graphql-go/graphql"
 	"github.com/graphql-go/handler"
 	integ "github.com/insomniadev/martian/integrations"
-	"github.com/insomniadev/martian/modules/redispub"
+	"github.com/insomniadev/martian/modules/pubsub"
 	"github.com/rs/cors"
 )
 
@@ -61,7 +61,8 @@ func Graphql() {
 		SubscriptionManager: subscriptionManager,
 	})
 
-	redispub.NewSubscriber("subscriptions", subscriptionSubscriber)
+	go subscriptionHandler()
+
 	// The handler integrates seamlessly with existing HTTP servers
 	http.Handle("/subscriptions", graphqlwsHandler)
 	http.Handle("/graphql", corsHandler)
@@ -74,4 +75,15 @@ func zwavehandler(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	ioutil.ReadAll(r.Body)
 	fmt.Fprintf(w, "Hi there, I love %s!", r.URL.Path[1:])
+}
+
+func subscriptionHandler() {
+	// Create subscription service that will update when changes occur
+	subscriptionBus := make(chan string)
+	pubsub.Service.Subscribe("subscriptions", subscriptionBus)
+
+	for {
+		msg := <-subscriptionBus
+		subscriptionSubscriber("subscriptions", msg)
+	}
 }

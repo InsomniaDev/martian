@@ -11,12 +11,11 @@ import (
 	"time"
 
 	"github.com/insomniadev/martian/database"
-	"github.com/insomniadev/martian/modules/redispub"
+	"github.com/insomniadev/martian/modules/pubsub"
 )
 
 // Init initializes the instance of kasa for devices on the network
 func (d *Devices) Init(configuration string) {
-	fmt.Println(configuration)
 	json.Unmarshal([]byte(configuration), &d)
 
 	d.Discover()
@@ -48,7 +47,7 @@ func (h *KasaDevice) WatchForChanges() {
 		previousState := h.PlugInfo.On
 		h.PowerState()
 		if previousState != h.PlugInfo.On {
-			redispub.Service.Publish("subscriptions", h)
+			pubsub.Service.Publish("subscriptions", "kasa")
 		}
 	}
 }
@@ -74,7 +73,7 @@ func (h *KasaDevice) PowerOff() error {
 	if state != PowerOff {
 		return fmt.Errorf("power off was requested but device stayed on")
 	}
-	redispub.Service.Publish("subscriptions", h)
+	pubsub.Service.Publish("subscriptions", "kasa")
 	return nil
 }
 
@@ -93,7 +92,7 @@ func (h *KasaDevice) PowerOn() error {
 	if state != PowerOn {
 		return fmt.Errorf("power on was requested but device stayed off")
 	}
-	redispub.Service.Publish("subscriptions", h)
+	pubsub.Service.Publish("subscriptions", "kasa")
 	return err
 }
 

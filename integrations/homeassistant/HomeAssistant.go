@@ -9,7 +9,7 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/insomniadev/martian/database"
-	"github.com/insomniadev/martian/modules/redispub"
+	"github.com/insomniadev/martian/modules/pubsub"
 )
 
 var (
@@ -92,7 +92,7 @@ func (h *HomeAssistant) listen() {
 				if h.Devices[i].EntityId == message.Event.Data.EntityID && h.Devices[i].State != message.Event.Data.NewState.State {
 					h.Devices[i].State = message.Event.Data.NewState.State
 
-					redispub.Service.Publish("subscriptions", h.Devices[i].EntityId)
+					pubsub.Service.Publish("subscriptions", h.Devices[i].EntityId)
 				}
 			}
 			// default:

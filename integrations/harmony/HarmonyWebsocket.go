@@ -14,7 +14,7 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/insomniadev/martian/database"
-	"github.com/insomniadev/martian/modules/redispub"
+	"github.com/insomniadev/martian/modules/pubsub"
 )
 
 var (
@@ -180,8 +180,8 @@ func (d *Device) listen() {
 				err = json.Unmarshal(message, &receivedResult)
 				d.CurrentActivity = receivedResult.Data.ActivityID
 				// FIXME: Fix the brain notification
-				redispub.Service.Publish("brain", d.CurrentActivity)
-				redispub.Service.Publish("subscriptions", d.CurrentActivity)
+				pubsub.Service.Publish("brain", d.CurrentActivity)
+				pubsub.Service.Publish("subscriptions", d.CurrentActivity)
 			}
 		}
 	}

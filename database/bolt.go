@@ -1,6 +1,7 @@
 package database
 
 import (
+	"encoding/json"
 	"log"
 
 	bolt "go.etcd.io/bbolt"
@@ -27,6 +28,45 @@ func (d *Database) Init() {
 // GetSubscriptionValues will retrieve all subscription values in the provided bucket
 func (d *Database) GetSubscriptionValues(key string) (value interface{}, err error) {
 	return d.getBucketValue(SubscriptionBucket, key)
+}
+
+// PutSubscriptionValue will retrieve all subscription values in the provided bucket
+func (d *Database) PutSubscriptionValue(key string, value interface{}) (err error) {
+	return d.putBucketValue(SubscriptionBucket, key, value)
+}
+
+// putBucketValue will insert a new integration value into the database
+func (d *Database) putBucketValue(bucket []byte, key string, value interface{}) error {
+	db, err := bolt.Open("./config/martian.db", 0600, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+	err = db.Update(func(tx *bolt.Tx) error {
+		bucket, err := tx.CreateBucketIfNotExists(bucket)
+		if err != nil {
+			log.Fatal(err)
+			return err
+		}
+
+		byteValue, err := json.Marshal(value)
+		if err != nil {
+			log.Fatal(err)
+			return err
+		}
+
+		err = bucket.Put([]byte(key), byteValue)
+		if err != nil {
+			log.Fatal(err)
+			return err
+		}
+		return nil
+	})
+	if err != nil {
+		log.Fatal(err)
+		return err
+	}
+	return nil
 }
 
 // getBucketValue will retrieve the respective integration value from the database

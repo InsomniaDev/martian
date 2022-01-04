@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/insomniadev/martian/modules/redispub"
+	"github.com/insomniadev/martian/modules/pubsub"
 )
 
 func (life *Life360) redirectPolicyFunc(req *http.Request, via []*http.Request) error {
@@ -87,7 +87,7 @@ func (life *Life360) GetMembers() (err error) {
 		for _, member := range life.Members {
 			for _, oldmember := range previousData {
 				if member.FirstName == oldmember.FirstName && (member.Location.Latitude != oldmember.Location.Latitude || member.Location.Longitude != oldmember.Location.Longitude) {
-					redispub.Service.Publish("subscriptions", member)
+					pubsub.Service.Publish("subscriptions", "life360")
 				}
 			}
 		}
