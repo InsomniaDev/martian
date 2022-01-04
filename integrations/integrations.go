@@ -1,7 +1,6 @@
 package integrations
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/insomniadev/martian/database"
@@ -17,35 +16,20 @@ import (
 )
 
 type Integrations struct {
-	Integrations       []string
-	Menu               []area.Area
-	AreaIndexes        []area.Area
-	LutronData         lutron.Lutron
-	HarmonyData        harmony.Device
-	Hass               homeassistant.HomeAssistant
-	KasaData           kasa.Devices
-	Life3              life360.Life360
-	Database           database.Database
-	PubSub             *pubsub.PubSub
-	SubscriptionPubSub chan string
+	Integrations []string
+	Menu         []area.Area
+	AreaIndexes  []area.Area
+	LutronData   lutron.Lutron
+	HarmonyData  harmony.Device
+	Hass         homeassistant.HomeAssistant
+	KasaData     kasa.Devices
+	Life3        life360.Life360
+	Database     database.Database
+	PubSub       *pubsub.PubSub
 	// Zwave       zwave.Zwave
 }
 
 func (i *Integrations) Init() {
-
-	// Create new pubsub method for channeling updates
-	i.PubSub = pubsub.New(10)
-	// Create channel for communication
-	// i.SubscriptionPubSub = make(chan string, 1)
-	i.PubSub.Subscribe("subscriptions", i.SubscriptionPubSub)
-
-	listener := func(name string, ch chan string) {
-		for i := range ch {
-			fmt.Printf("[%s] got %s\n", name, i)
-		}
-	}
-
-	go listener("1", i.SubscriptionPubSub)
 
 	i.Integrations = []string{}
 	// Get all the created integrations
@@ -72,7 +56,7 @@ func (i *Integrations) Init() {
 			i.Menu = area.HarmonyIntegration(i.Menu, i.HarmonyData)
 			i.Integrations = append(i.Integrations, "harmony")
 		case "kasa":
-			i.KasaData.Init(storedIntegrations[k], *i.PubSub)
+			i.KasaData.Init(storedIntegrations[k])
 			i.Menu = area.KasaIntegration(i.Menu, i.KasaData, i.KasaData.InterfaceDevices)
 			i.Integrations = append(i.Integrations, "kasa")
 		case "life360":
