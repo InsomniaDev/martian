@@ -153,7 +153,11 @@ export function KasaIntegration({ integration, refetchData, areaData }) {
 
     const getNameForIp = (ipAddress) => {
         const device = [...integration.value.devices].filter(device => device.ipAddress === ipAddress);
-        return `${device[0].name}--${ipAddress}`;
+        if (device !== undefined && device.length > 0 && device[0].name !== undefined) {
+            return `${device[0].name}--${ipAddress}`;
+        } else {
+            return `${ipAddress}`;
+        }
     }
 
     const clearSelected = () => {

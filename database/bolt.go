@@ -13,7 +13,8 @@ type Database struct {
 }
 
 var (
-	IntegrationBucket = []byte("integration_bucket")
+	IntegrationBucket  = []byte("integration_bucket")
+	SubscriptionBucket = []byte("subscription_bucket")
 )
 
 // func (d *Database) Init() {
@@ -24,6 +25,11 @@ var (
 // 	d.Connection = db
 // 	defer d.Connection.Close()
 // }
+
+// GetSubscriptionValues will retrieve all subscription values in the provided bucket
+func (d *Database) GetSubscriptionValues(key string) (value interface{}, err error) {
+	return d.getIntegrationValue(SubscriptionBucket, key)
+}
 
 // RetrieveAllValuesInBucket will retrieve all of the values in the provided bucket
 func (d *Database) RetrieveAllValuesInBucket(bucket []byte) (value map[string]string, err error) {
@@ -89,8 +95,8 @@ func (d *Database) PutIntegrationValue(key string, value interface{}) error {
 	return nil
 }
 
-// GetIntegrationValue will retrieve the respective integration value from the database
-func (d *Database) GetIntegrationValue(key string) (value interface{}, err error) {
+// getIntegrationValue will retrieve the respective integration value from the database
+func (d *Database) getIntegrationValue(bucket []byte, key string) (value interface{}, err error) {
 
 	db, err := bolt.Open("./config/martian.db", 0600, nil)
 	if err != nil {
@@ -98,7 +104,7 @@ func (d *Database) GetIntegrationValue(key string) (value interface{}, err error
 	}
 	defer db.Close()
 	err = db.View(func(tx *bolt.Tx) error {
-		bucket := tx.Bucket(IntegrationBucket)
+		bucket := tx.Bucket(bucket)
 		if bucket == nil {
 			log.Fatal(err)
 			return err

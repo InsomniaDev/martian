@@ -1,7 +1,8 @@
 // Run a docker container locally
 // docker run -p 6379:6379 -it -d --rm -v /home/adam/Desktop/develop/rusty/data:/data redislabs/redisgraph:edge
 // docker run -d --name redis -p 6379:6379 -v /home/adam/Desktop/develop/rusty/redisdata:/data --restart=unless-stopped redislabs/redisgraph --loadmodule /usr/lib/redis/modules/redisgraph.so --save 60 1
-// docker run -v /home/adam/Desktop/develop/rusty/data:/db --network host redislabs/redisinsight
+// docker run -v /Users/adam/Desktop/temp:/db -p 8001:8001 redislabs/redisinsight:latest redislabs/redisinsight
+// docker run --network host redislabs/redisinsight
 
 // q    `   1`
 
