@@ -157,8 +157,8 @@ func (l *Lutron) Connect() error {
 						}
 						pubsub.Service.Publish("subscriptions", "lutron")
 
-						eventData := fmt.Sprintf("{\"id\":%d,\"type\":\"lutron\",\"value\":\"%s\",\"time\":\"0001-01-01T00:00:00Z\"}", response.Id, fmt.Sprintf("%f", l.Inventory[index].Value))
-						pubsub.Service.Publish("brain", string(eventData))
+						// eventData := fmt.Sprintf("{\"id\":%d,\"type\":\"lutron\",\"value\":\"%s\",\"time\":\"0001-01-01T00:00:00Z\"}", response.Id, fmt.Sprintf("%f", l.Inventory[index].Value))
+						// pubsub.Service.Publish("brain", string(eventData))
 					}
 				}
 			}

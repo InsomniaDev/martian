@@ -4,12 +4,15 @@ import (
 	"log"
 	"time"
 
+	"github.com/insomniadev/martian/brain"
 	"github.com/insomniadev/martian/graphql"
 	"github.com/insomniadev/martian/modules/cache"
 )
 
 func main() {
 	// testLocalCache()
+	brain.Brainiac.SayHello()
+	
 	graphql.Graphql()
 
 	// mainBrain.Init()
