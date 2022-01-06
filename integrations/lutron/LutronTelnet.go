@@ -116,6 +116,7 @@ func (l *Lutron) Connect() error {
 			if response.Cmd == Output {
 				for index, data := range l.Inventory {
 					if data.ID == response.Id {
+						oldValue := l.Inventory[index].Value
 						l.Inventory[index].Value = response.Value
 
 						// Set the value for the field
@@ -157,8 +158,11 @@ func (l *Lutron) Connect() error {
 						}
 						pubsub.Service.Publish("subscriptions", "lutron")
 
-						// eventData := fmt.Sprintf("{\"id\":%d,\"type\":\"lutron\",\"value\":\"%s\",\"time\":\"0001-01-01T00:00:00Z\"}", response.Id, fmt.Sprintf("%f", l.Inventory[index].Value))
-						// pubsub.Service.Publish("brain", string(eventData))
+						if oldValue != response.Value {
+							eventData := fmt.Sprintf("{\"id\":%d,\"type\":\"lutron\",\"value\":\"%s\",\"time\":\"0001-01-01T00:00:00Z\"}", response.Id, fmt.Sprintf("%f", l.Inventory[index].Value))
+							eventMessage := "lutron;" + eventData
+							pubsub.Service.Publish("brain", eventMessage)
+						}
 					}
 				}
 			}

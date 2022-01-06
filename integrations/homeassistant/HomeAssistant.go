@@ -93,6 +93,8 @@ func (h *HomeAssistant) listen() {
 					h.Devices[i].State = message.Event.Data.NewState.State
 
 					pubsub.Service.Publish("subscriptions", h.Devices[i].EntityId)
+					eventMessage := h.Devices[i].EntityId + ";" + h.Devices[i].State
+					pubsub.Service.Publish("brain", eventMessage)
 				}
 			}
 			// default:
