@@ -116,9 +116,9 @@ func (b *Brain) shortTerm() {
 func (b *Brain) processDayMemories() {
 	time.Sleep(24 * time.Hour)
 
-	username := os.Getenv("EMAIL_USERNAME")
-	password := os.Getenv("EMAIL_PASSWORD")
-	recipient := os.Getenv("EMAIL_RECIPIENT")
+	username := os.Getenv("USERNAME")
+	password := os.Getenv("PASSWORD")
+	recipient := os.Getenv("RECIPIENT")
 
 	var emailBody string
 	// need to pull the messages for every hour of the day
