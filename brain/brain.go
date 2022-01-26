@@ -143,7 +143,9 @@ func (b *Brain) processDayMemories() {
 			emailBody += "\n"
 		}
 		emailBody += "\n\n"
-		database.MartianData.DeleteMemoryHourFromDay(strconv.Itoa(i + 1))
+		if err := database.MartianData.DeleteMemoryHourFromDay(strconv.Itoa(i + 1)); err != nil {
+			log.Println("processDayMemories: Failed to delete", err)
+		}
 	}
 
 	// email the report to me so that I can see what it looks like and can appropriately develop
