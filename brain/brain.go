@@ -143,6 +143,7 @@ func (b *Brain) processDayMemories() {
 			emailBody += "\n"
 		}
 		emailBody += "\n\n"
+		database.MartianData.DeleteMemoryHourFromDay(strconv.Itoa(i + 1))
 	}
 
 	// email the report to me so that I can see what it looks like and can appropriately develop
