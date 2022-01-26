@@ -39,15 +39,15 @@ func (d *Database) DeleteMemoryHourFromDay(key string) (err error) {
 
 // RetrieveAllMemories will return all of the memories that are in the bucket
 // CURRENTLY NOT USED
-func (d *Database) RetrieveAllMemories(bucket []byte) (value map[string]string, err error) {
+func (d *Database) RetrieveAllMemories() (value map[string][]byte, err error) {
 	db, err := bolt.Open("./config/martian.db", 0600, nil)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer db.Close()
-	foundIntegrations := make(map[string]string)
+	foundIntegrations := make(map[string][]byte)
 	err = db.View(func(tx *bolt.Tx) error {
-		iter := tx.Bucket(bucket)
+		iter := tx.Bucket(DayMemoryBucket)
 		if iter == nil {
 			return err
 		}
@@ -55,7 +55,7 @@ func (d *Database) RetrieveAllMemories(bucket []byte) (value map[string]string, 
 		c := iter.Cursor()
 
 		for k, v := c.First(); k != nil; k, v = c.Next() {
-			foundIntegrations[string(k)] = string(v)
+			foundIntegrations[string(k)] = v
 		}
 		return nil
 	})
@@ -101,4 +101,3 @@ func (d *Database) InsertMemory(key string, value interface{}) error {
 	}
 	return nil
 }
-

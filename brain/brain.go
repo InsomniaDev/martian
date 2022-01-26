@@ -121,20 +121,22 @@ func (b *Brain) processDayMemories() {
 	recipient := os.Getenv("RECIPIENT")
 
 	var emailBody string
-	// need to pull the messages for every hour of the day
-	for i := 0; i < 24; i++ {
-		// Retrieve the data for the hour
+	// pull all messages for the past 24 hours
+	memories, err := database.MartianData.RetrieveAllMemories()
+	if err != nil {
+		log.Println("processDayMemories: Error returning memories:", err)
+	}
+
+	// go through each memory hour from the last 24 hours
+	for key, memory := range memories {
+		// convert data into struct
 		var hourEventsRemembered []longTermStore
-		resp, err := database.MartianData.GetDayMemoryByHour(strconv.Itoa(i + 1))
-		if err != nil {
-			log.Println("processDayMemories: Failed to return hour key for the nightly memory process:", err)
-		}
-		if err := json.Unmarshal(resp, &hourEventsRemembered); err != nil {
+		if err := json.Unmarshal(memory, &hourEventsRemembered); err != nil {
 			log.Println("processDayMemories: Error getting short term source from the brain", err)
 		}
 
 		// assemble data for the hour
-		emailBody += "Hour: " + strconv.Itoa(i+1) + "\n\n"
+		emailBody += "Hour: " + key + "\n\n"
 		for _, memoryRemembered := range hourEventsRemembered {
 			emailBody += memoryRemembered.eventId + ":" + memoryRemembered.eventStatus
 			for _, memorySequence := range memoryRemembered.sequentialEvents {
@@ -143,7 +145,9 @@ func (b *Brain) processDayMemories() {
 			emailBody += "\n"
 		}
 		emailBody += "\n\n"
-		if err := database.MartianData.DeleteMemoryHourFromDay(strconv.Itoa(i + 1)); err != nil {
+
+		// delete the hour of data from the database so that it isn't processed again
+		if err := database.MartianData.DeleteMemoryHourFromDay(key); err != nil {
 			log.Println("processDayMemories: Failed to delete", err)
 		}
 	}
