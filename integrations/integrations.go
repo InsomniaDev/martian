@@ -29,6 +29,7 @@ type Integrations struct {
 
 func (i *Integrations) Init() {
 
+	i.Database = database.MartianData
 	i.Integrations = []string{}
 	// Get all the created integrations
 	storedIntegrations, err := i.Database.RetrieveAllValuesInBucket(database.IntegrationBucket)

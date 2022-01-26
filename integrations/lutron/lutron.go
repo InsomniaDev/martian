@@ -61,8 +61,8 @@ func (h *Lutron) UpdateSelectedDevices(selectedDevices []int, addDevices bool, a
 	} else {
 		h.InterfaceInventory = checkIfDeviceIsInList(h.Inventory, h.InterfaceInventory, selectedDevices, addDevices)
 	}
-	var db database.Database
-	err := db.PutIntegrationValue("lutron", h)
+	
+	err := database.MartianData.PutIntegrationValue("lutron", h)
 	if err != nil {
 		log.Println(err)
 	}
@@ -131,8 +131,7 @@ func (k *Lutron) EditDeviceConfiguration(device LDevice, removeEdit bool) error 
 	}
 
 	// Save in the database
-	var db database.Database
-	err := db.PutIntegrationValue("lutron", k)
+	err := database.MartianData.PutIntegrationValue("lutron", k)
 	if err != nil {
 		log.Println(err)
 	}

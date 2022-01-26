@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/graphql-go/graphql"
+	"github.com/insomniadev/martian/database"
 	"github.com/insomniadev/martian/integrations/area"
 	"github.com/insomniadev/martian/integrations/harmony"
 	"github.com/insomniadev/martian/integrations/homeassistant"
@@ -196,7 +197,7 @@ func updateIntegration(params graphql.ResolveParams) (interface{}, error) {
 		if err != nil {
 			return false, err
 		}
-		Integrations.Database.PutIntegrationValue(integrationType, lutron)
+		database.MartianData.PutIntegrationValue(integrationType, lutron)
 		newIntegration = true
 	case "harmony":
 		// var harmony harmony.Device
@@ -204,7 +205,7 @@ func updateIntegration(params graphql.ResolveParams) (interface{}, error) {
 		// if err != nil {
 		// 	return false, err
 		// }
-		Integrations.Database.PutIntegrationValue(integrationType, "")
+		database.MartianData.PutIntegrationValue(integrationType, "")
 		newIntegration = true
 	case "kasa":
 		currentDevices := len(Integrations.KasaData.Devices)
@@ -215,14 +216,14 @@ func updateIntegration(params graphql.ResolveParams) (interface{}, error) {
 		}
 		if ipAddress.IpAddressCidr != Integrations.KasaData.IpAddressCidr {
 			Integrations.KasaData.IpAddressCidr = ipAddress.IpAddressCidr
-			Integrations.Database.PutIntegrationValue(integrationType, Integrations.KasaData)
+			database.MartianData.PutIntegrationValue(integrationType, Integrations.KasaData)
 		}
 		Integrations.KasaData.Discover()
 		if len(Integrations.KasaData.Devices) > currentDevices {
-			Integrations.Database.PutIntegrationValue(integrationType, Integrations.KasaData)
+			database.MartianData.PutIntegrationValue(integrationType, Integrations.KasaData)
 		} else {
 			// TODO: Need to fix this piece, it is constantly assigning it as "", even though there are new ones
-			Integrations.Database.PutIntegrationValue(integrationType, "")
+			database.MartianData.PutIntegrationValue(integrationType, "")
 		}
 		newIntegration = true
 	case "life360":
@@ -234,7 +235,7 @@ func updateIntegration(params graphql.ResolveParams) (interface{}, error) {
 		if err != nil {
 			return false, err
 		}
-		Integrations.Database.PutIntegrationValue(integrationType, hass)
+		database.MartianData.PutIntegrationValue(integrationType, hass)
 		newIntegration = true
 	default:
 		log.Println("This integration doesn't exist yet", integrationType)

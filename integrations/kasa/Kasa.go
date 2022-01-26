@@ -33,8 +33,8 @@ func (d *Devices) ChangeAreaForKasaDevice(ipAddress, area string) error {
 			d.Devices[i].AreaName = area
 		}
 	}
-	var db database.Database
-	err := db.PutIntegrationValue("kasa", d)
+	
+	err := database.MartianData.PutIntegrationValue("kasa", d)
 	if err != nil {
 		return err
 	}
@@ -150,8 +150,7 @@ func (d *Devices) Discover() {
 	wg.Wait()
 
 	// Insert into the database again with all devices
-	// var db database.Database
-	// err = db.PutIntegrationValue("kasa", d)
+	// err = database.MartianData.PutIntegrationValue("kasa", d)
 	// if err != nil {
 	// 	log.Println(err)
 	// }
@@ -174,8 +173,8 @@ func (h *Devices) UpdateSelectedDevices(selectedDevices []string, addDevices boo
 	} else {
 		h.InterfaceDevices = checkIfDeviceIsInList(h.Devices, h.InterfaceDevices, selectedDevices, addDevices)
 	}
-	var db database.Database
-	err := db.PutIntegrationValue("kasa", h)
+	
+	err := database.MartianData.PutIntegrationValue("kasa", h)
 	if err != nil {
 		log.Println(err)
 	}
@@ -244,8 +243,7 @@ func (k *Devices) EditDeviceConfiguration(device KasaDevice, removeEdit bool) er
 	}
 
 	// Save in the database
-	var db database.Database
-	err := db.PutIntegrationValue("kasa", k)
+	err := database.MartianData.PutIntegrationValue("kasa", k)
 	if err != nil {
 		log.Println(err)
 	}

@@ -32,8 +32,7 @@ func (d *Device) Init(configuration string) error {
 	}
 
 	d.connect()
-	var db database.Database
-	err := db.PutIntegrationValue("harmony", d)
+	err := database.MartianData.PutIntegrationValue("harmony", d)
 	if err != nil {
 		return err
 	}
@@ -173,8 +172,7 @@ func (d *Device) listen() {
 				}
 				d.Activities = activitiesRecorded
 
-				var db database.Database
-				db.PutIntegrationValue("harmony", d)
+				database.MartianData.PutIntegrationValue("harmony", d)
 			} else if receivedMessage.Type == "connect.stateDigest?notify" {
 				receivedResult := StateDigestNotify{}
 				err = json.Unmarshal(message, &receivedResult)
@@ -240,8 +238,7 @@ func (d *Device) EditDeviceConfiguration(device Device, removeEdit bool) {
 	d.AreaName = device.AreaName
 
 	// Save in the database
-	var db database.Database
-	err := db.PutIntegrationValue("harmony", d)
+	err := database.MartianData.PutIntegrationValue("harmony", d)
 	if err != nil {
 		log.Println(err)
 	}

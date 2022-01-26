@@ -10,13 +10,13 @@ import (
 
 // RetrieveAllValuesInBucket will retrieve all of the values in the provided bucket
 func (d *Database) RetrieveAllValuesInBucket(bucket []byte) (value map[string]string, err error) {
-	db, err := bolt.Open("./config/martian.db", 0600, nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer db.Close()
+	// db, err := bolt.Open("./config/martian.db", 0600, nil)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// defer db.Close()
 	foundIntegrations := make(map[string]string)
-	err = db.View(func(tx *bolt.Tx) error {
+	err = d.Connection.View(func(tx *bolt.Tx) error {
 		iter := tx.Bucket(bucket)
 		if iter == nil {
 			return err
@@ -40,12 +40,12 @@ func (d *Database) RetrieveAllValuesInBucket(bucket []byte) (value map[string]st
 
 // PutIntegrationValue will insert a new integration value into the database
 func (d *Database) PutIntegrationValue(key string, value interface{}) error {
-	db, err := bolt.Open("./config/martian.db", 0600, nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer db.Close()
-	err = db.Update(func(tx *bolt.Tx) error {
+	// db, err := bolt.Open("./config/martian.db", 0600, nil)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// defer db.Close()
+	err := d.Connection.Update(func(tx *bolt.Tx) error {
 		bucket, err := tx.CreateBucketIfNotExists(IntegrationBucket)
 		if err != nil {
 			log.Fatal(err)
@@ -75,13 +75,13 @@ func (d *Database) PutIntegrationValue(key string, value interface{}) error {
 // DeleteIntegrationValue will retrieve the respective integration value from the database
 func (d *Database) DeleteIntegrationValue(key string) (err error) {
 
-	db, err := bolt.Open("./config/martian.db", 0600, nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer db.Close()
+	// db, err := bolt.Open("./config/martian.db", 0600, nil)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// defer db.Close()
 
-	db.Update(func(tx *bolt.Tx) error {
+	d.Connection.Update(func(tx *bolt.Tx) error {
 		b, err := tx.CreateBucketIfNotExists(IntegrationBucket)
 		if err != nil {
 			return fmt.Errorf("create bucket: %s", err)

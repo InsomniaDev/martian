@@ -219,8 +219,8 @@ func (h *HomeAssistant) UpdateSelectedDevices(selectedDevices []string, addDevic
 	} else {
 		h.InterfaceDevices = checkIfDeviceIsInList(h.Devices, h.InterfaceDevices, selectedDevices, addDevices)
 	}
-	var db database.Database
-	err := db.PutIntegrationValue("hass", h)
+
+	err := database.MartianData.PutIntegrationValue("hass", h)
 	if err != nil {
 		log.Println(err)
 	}
@@ -301,8 +301,7 @@ func (h *HomeAssistant) EditDeviceConfiguration(device HomeAssistantDevice, remo
 	}
 
 	// Save in the database
-	var db database.Database
-	err := db.PutIntegrationValue("hass", h)
+	err := database.MartianData.PutIntegrationValue("hass", h)
 	if err != nil {
 		log.Println(err)
 	}

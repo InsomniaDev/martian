@@ -2,6 +2,7 @@ package database
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 
 	bolt "go.etcd.io/bbolt"
@@ -25,17 +26,16 @@ func init() {
 		log.Fatal(err)
 	}
 	MartianData.Connection = db
-	defer MartianData.Connection.Close()
 }
 
-func (d *Database) Init() {
-	db, err := bolt.Open("./config/martian.db", 0600, nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-	d.Connection = db
-	defer d.Connection.Close()
-}
+// func (d *Database) Init() {
+// 	db, err := bolt.Open("./config/martian.db", 0600, nil)
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	d.Connection = db
+// 	defer d.Connection.Close()
+// }
 
 // GetSubscriptionValues will retrieve all subscription values in the provided bucket
 func (d *Database) GetSubscriptionValues(key string) (value []byte, err error) {
@@ -49,12 +49,12 @@ func (d *Database) PutSubscriptionValue(key string, value []byte) (err error) {
 
 // putBucketValue will insert a new integration value into the database
 func (d *Database) putBucketValue(bucket []byte, key string, value interface{}) error {
-	db, err := bolt.Open("./config/martian.db", 0600, nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer db.Close()
-	err = db.Update(func(tx *bolt.Tx) error {
+	// db, err := bolt.Open("./config/martian.db", 0600, nil)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// defer db.Close()
+	err := d.Connection.Update(func(tx *bolt.Tx) error {
 		bucket, err := tx.CreateBucketIfNotExists(bucket)
 		if err != nil {
 			log.Fatal(err)
@@ -86,7 +86,7 @@ func (d *Database) getBucketValue(bucket []byte, key string) (value []byte, err 
 	err = d.Connection.View(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket(bucket)
 		if bucket == nil {
-			log.Fatal(err)
+			fmt.Println(err)
 			return err
 		}
 
@@ -95,7 +95,7 @@ func (d *Database) getBucketValue(bucket []byte, key string) (value []byte, err 
 	})
 
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
 		return nil, err
 	}
 	return value, nil

@@ -42,8 +42,8 @@ func InsertAreaIndex(areas []Area, areaIndex Area) ([]Area, error) {
 	if !found {
 		areas = append(areas, areaIndex)
 	}
-	var db database.Database
-	err := db.PutIntegrationValue("area", storedAreas)
+	
+	err := database.MartianData.PutIntegrationValue("area", storedAreas)
 	if err != nil {
 		return nil, err
 	}

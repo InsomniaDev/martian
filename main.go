@@ -1,18 +1,19 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"time"
 
-	"github.com/insomniadev/martian/brain"
 	"github.com/insomniadev/martian/graphql"
 	"github.com/insomniadev/martian/modules/cache"
 )
 
 func main() {
+	fmt.Println("Martian is starting up")
 	// testLocalCache()
-	brain.Brainiac.SayHello()
-	
+	// brain.Brainiac.SayHello()
+
 	graphql.Graphql()
 
 	// mainBrain.Init()
@@ -22,6 +23,7 @@ func main() {
 }
 
 func testLocalCache() {
+
 	localCache := cache.LocalCache{}
 	localCache.Init()
 
