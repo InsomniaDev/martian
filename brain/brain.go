@@ -2,7 +2,6 @@ package brain
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/smtp"
 	"os"
@@ -67,7 +66,6 @@ func init() {
 func (b *Brain) brainWave(id, status string) {
 	// TODO: Add more logic here, just append for now
 	b.memoryEvent = append(b.memoryEvent, event{eventId: id, eventStatus: status, eventTime: time.Now(), eventTimeExpiration: time.Now().Add(timeDifference)})
-	fmt.Println("I remember that", id, status)
 }
 
 // shortTerm checks to see if the current timestamp is greater than the eventTimeExpiration
