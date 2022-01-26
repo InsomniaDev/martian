@@ -180,7 +180,7 @@ func (d *Device) listen() {
 				err = json.Unmarshal(message, &receivedResult)
 				d.CurrentActivity = receivedResult.Data.ActivityID
 				// FIXME: Fix the brain notification
-				formattedString := "harmony;" + d.CurrentActivity
+				formattedString := "harmony;;harmony;;" + d.CurrentActivity
 				pubsub.Service.Publish("brain", formattedString)
 				pubsub.Service.Publish("subscriptions", d.CurrentActivity)
 			}

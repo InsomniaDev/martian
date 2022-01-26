@@ -7,6 +7,8 @@ import (
 	bolt "go.etcd.io/bbolt"
 )
 
+var MartianData Database
+
 type Database struct {
 	Connection *bolt.DB
 }
@@ -14,7 +16,17 @@ type Database struct {
 var (
 	IntegrationBucket  = []byte("integration_bucket")
 	SubscriptionBucket = []byte("subscription_bucket")
+	DayMemoryBucket    = []byte("day_memory_bucket")
 )
+
+func init() {
+	db, err := bolt.Open("./config/martian.db", 0600, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+	MartianData.Connection = db
+	defer MartianData.Connection.Close()
+}
 
 func (d *Database) Init() {
 	db, err := bolt.Open("./config/martian.db", 0600, nil)
@@ -26,12 +38,12 @@ func (d *Database) Init() {
 }
 
 // GetSubscriptionValues will retrieve all subscription values in the provided bucket
-func (d *Database) GetSubscriptionValues(key string) (value interface{}, err error) {
+func (d *Database) GetSubscriptionValues(key string) (value []byte, err error) {
 	return d.getBucketValue(SubscriptionBucket, key)
 }
 
 // PutSubscriptionValue will retrieve all subscription values in the provided bucket
-func (d *Database) PutSubscriptionValue(key string, value interface{}) (err error) {
+func (d *Database) PutSubscriptionValue(key string, value []byte) (err error) {
 	return d.putBucketValue(SubscriptionBucket, key, value)
 }
 
@@ -70,7 +82,7 @@ func (d *Database) putBucketValue(bucket []byte, key string, value interface{}) 
 }
 
 // getBucketValue will retrieve the respective integration value from the database
-func (d *Database) getBucketValue(bucket []byte, key string) (value interface{}, err error) {
+func (d *Database) getBucketValue(bucket []byte, key string) (value []byte, err error) {
 	err = d.Connection.View(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket(bucket)
 		if bucket == nil {

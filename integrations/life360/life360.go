@@ -89,7 +89,7 @@ func (life *Life360) GetMembers() (err error) {
 				if member.FirstName == oldmember.FirstName && (member.Location.Latitude != oldmember.Location.Latitude || member.Location.Longitude != oldmember.Location.Longitude) {
 					pubsub.Service.Publish("subscriptions", "life360")
 
-					eventMessage := "life360;" + member.Location.Latitude + "--" + member.Location.Longitude
+					eventMessage := "life360;;" + member.FirstName + ";;" + member.Location.Latitude + "--" + member.Location.Longitude
 					pubsub.Service.Publish("brain", eventMessage)
 				}
 			}

@@ -160,7 +160,7 @@ func (l *Lutron) Connect() error {
 
 						if oldValue != response.Value {
 							eventData := fmt.Sprintf("{\"id\":%d,\"type\":\"lutron\",\"value\":\"%s\",\"time\":\"0001-01-01T00:00:00Z\"}", response.Id, fmt.Sprintf("%f", l.Inventory[index].Value))
-							eventMessage := "lutron;" + eventData
+							eventMessage := "lutron;;lutron;;" + eventData
 							pubsub.Service.Publish("brain", eventMessage)
 						}
 					}

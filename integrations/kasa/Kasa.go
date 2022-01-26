@@ -49,7 +49,7 @@ func (h *KasaDevice) WatchForChanges() {
 		h.PowerState()
 		if previousState != h.PlugInfo.On {
 			pubsub.Service.Publish("subscriptions", "kasa")
-			eventMessage := h.PlugInfo.Alias + ";" + strconv.FormatBool(h.PlugInfo.On)
+			eventMessage := "kasa;;" + h.PlugInfo.Alias + ";;" + strconv.FormatBool(h.PlugInfo.On)
 			pubsub.Service.Publish("brain", eventMessage)
 		}
 	}
@@ -71,7 +71,7 @@ func (h *KasaDevice) PowerOff() error {
 		return fmt.Errorf("power off was requested but device stayed on")
 	}
 	pubsub.Service.Publish("subscriptions", "kasa")
-	eventMessage := h.PlugInfo.Alias + ";" + strconv.FormatBool(h.PlugInfo.On)
+	eventMessage := "kasa;;" + h.PlugInfo.Alias + ";;" + strconv.FormatBool(h.PlugInfo.On)
 	pubsub.Service.Publish("brain", eventMessage)
 	return nil
 }
@@ -92,7 +92,7 @@ func (h *KasaDevice) PowerOn() error {
 		return fmt.Errorf("power on was requested but device stayed off")
 	}
 	pubsub.Service.Publish("subscriptions", "kasa")
-	eventMessage := h.PlugInfo.Alias + ";" + strconv.FormatBool(h.PlugInfo.On)
+	eventMessage := "kasa;;" + h.PlugInfo.Alias + ";;" + strconv.FormatBool(h.PlugInfo.On)
 	pubsub.Service.Publish("brain", eventMessage)
 	return err
 }
