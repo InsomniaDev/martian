@@ -99,7 +99,9 @@ func (b *Brain) shortTerm() {
 				// Grab all of the remembered events from this memory store
 				var hourEventsRemembered []longTermStore
 				if err := json.Unmarshal(resp, &hourEventsRemembered); err != nil {
-					log.Error("Error getting short term source from the brain", err)
+					log.WithFields(log.Fields{
+						"resp":string(resp),
+					}).Error("Error getting short term source from the brain ", err)
 				}
 
 				// Store away all of the events for the hour here
