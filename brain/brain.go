@@ -2,12 +2,13 @@ package brain
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/smtp"
 	"os"
 	"strconv"
 	"strings"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/insomniadev/martian/database"
 	"github.com/insomniadev/martian/modules/pubsub"
@@ -39,7 +40,7 @@ var (
 )
 
 func (b *Brain) SayHello() {
-	fmt.Println("Hello")
+	log.Info("The Brain is ALIVE - Hello!")
 }
 
 func init() {
@@ -66,7 +67,7 @@ func init() {
 func (b *Brain) brainWave(id, status string) {
 	// TODO: Add more logic here, just append for now
 	b.memoryEvent = append(b.memoryEvent, event{eventId: id, eventStatus: status, eventTime: time.Now(), eventTimeExpiration: time.Now().Add(timeDifference)})
-	fmt.Println("stored event", id, status)
+	log.Debug("stored event", id, status)
 }
 
 // shortTerm checks to see if the current timestamp is greater than the eventTimeExpiration
@@ -92,13 +93,13 @@ func (b *Brain) shortTerm() {
 				remember := longTermStore{hourOfOccurrence: hourOfOccurrence, eventTime: b.memoryEvent[i].eventTime, eventId: b.memoryEvent[i].eventId, eventStatus: b.memoryEvent[i].eventStatus, sequentialEvents: sequentialEvents}
 				resp, err := database.MartianData.GetDayMemoryByHour(strconv.Itoa(hourOfOccurrence))
 				if err != nil {
-					fmt.Println("Failure to pull memory from short term collection", err)
+					log.Error("Failure to pull memory from short term collection", err)
 				}
 
 				// Grab all of the remembered events from this memory store
 				var hourEventsRemembered []longTermStore
 				if err := json.Unmarshal(resp, &hourEventsRemembered); err != nil {
-					fmt.Println("Error getting short term source from the brain", err)
+					log.Error("Error getting short term source from the brain", err)
 				}
 
 				// Store away all of the events for the hour here
@@ -123,7 +124,7 @@ func (b *Brain) processDayMemories() {
 	// pull all messages for the past 24 hours
 	memories, err := database.MartianData.RetrieveAllMemories()
 	if err != nil {
-		fmt.Println("processDayMemories: Error returning memories:", err)
+		log.Error("processDayMemories: Error returning memories:", err)
 	}
 
 	// go through each memory hour from the last 24 hours
@@ -131,7 +132,7 @@ func (b *Brain) processDayMemories() {
 		// convert data into struct
 		var hourEventsRemembered []longTermStore
 		if err := json.Unmarshal(memory, &hourEventsRemembered); err != nil {
-			fmt.Println("processDayMemories: Error getting short term source from the brain", err)
+			log.Error("processDayMemories: Error getting short term source from the brain", err)
 		}
 
 		// assemble data for the hour
@@ -147,7 +148,7 @@ func (b *Brain) processDayMemories() {
 
 		// delete the hour of data from the database so that it isn't processed again
 		if err := database.MartianData.DeleteMemoryHourFromDay(key); err != nil {
-			fmt.Println("processDayMemories: Failed to delete", err)
+			log.Error("processDayMemories: Failed to delete", err)
 		}
 	}
 
@@ -171,7 +172,7 @@ func (b *Brain) processDayMemories() {
 		err := smtp.SendMail(host, auth, "username", toList, body)
 
 		if err != nil {
-			fmt.Println(err)
+			log.Error(err)
 		}
 	}
 	go b.processDayMemories()

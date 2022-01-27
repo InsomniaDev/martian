@@ -5,11 +5,12 @@ package kasa
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net"
 	"strconv"
 	"sync"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/insomniadev/martian/database"
 	"github.com/insomniadev/martian/modules/pubsub"
@@ -33,7 +34,7 @@ func (d *Devices) ChangeAreaForKasaDevice(ipAddress, area string) error {
 			d.Devices[i].AreaName = area
 		}
 	}
-	
+
 	err := database.MartianData.PutIntegrationValue("kasa", d)
 	if err != nil {
 		return err
@@ -152,7 +153,7 @@ func (d *Devices) Discover() {
 	// Insert into the database again with all devices
 	// err = database.MartianData.PutIntegrationValue("kasa", d)
 	// if err != nil {
-	// 	log.Println(err)
+	// 	log.Warn(err)
 	// }
 }
 func inc(ip net.IP) {
@@ -173,10 +174,10 @@ func (h *Devices) UpdateSelectedDevices(selectedDevices []string, addDevices boo
 	} else {
 		h.InterfaceDevices = checkIfDeviceIsInList(h.Devices, h.InterfaceDevices, selectedDevices, addDevices)
 	}
-	
+
 	err := database.MartianData.PutIntegrationValue("kasa", h)
 	if err != nil {
-		log.Println(err)
+		log.Warn(err)
 	}
 
 	return nil
@@ -245,7 +246,7 @@ func (k *Devices) EditDeviceConfiguration(device KasaDevice, removeEdit bool) er
 	// Save in the database
 	err := database.MartianData.PutIntegrationValue("kasa", k)
 	if err != nil {
-		log.Println(err)
+		log.Warn(err)
 	}
 
 	// Let's repopulate with the correct device state

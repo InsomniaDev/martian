@@ -2,9 +2,8 @@ package database
 
 import (
 	"encoding/json"
-	"fmt"
-	"log"
 
+	log "github.com/sirupsen/logrus"
 	bolt "go.etcd.io/bbolt"
 )
 
@@ -28,15 +27,6 @@ func init() {
 	MartianData.Connection = db
 }
 
-// func (d *Database) Init() {
-// 	db, err := bolt.Open("./config/martian.db", 0600, nil)
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	d.Connection = db
-// 	defer d.Connection.Close()
-// }
-
 // GetSubscriptionValues will retrieve all subscription values in the provided bucket
 func (d *Database) GetSubscriptionValues(key string) (value []byte, err error) {
 	return d.getBucketValue(SubscriptionBucket, key)
@@ -49,11 +39,6 @@ func (d *Database) PutSubscriptionValue(key string, value []byte) (err error) {
 
 // putBucketValue will insert a new integration value into the database
 func (d *Database) putBucketValue(bucket []byte, key string, value interface{}) error {
-	// db, err := bolt.Open("./config/martian.db", 0600, nil)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// defer db.Close()
 	err := d.Connection.Update(func(tx *bolt.Tx) error {
 		bucket, err := tx.CreateBucketIfNotExists(bucket)
 		if err != nil {
@@ -86,7 +71,7 @@ func (d *Database) getBucketValue(bucket []byte, key string) (value []byte, err 
 	err = d.Connection.View(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket(bucket)
 		if bucket == nil {
-			fmt.Println(err)
+			log.Error(err)
 			return err
 		}
 
@@ -95,7 +80,7 @@ func (d *Database) getBucketValue(bucket []byte, key string) (value []byte, err 
 	})
 
 	if err != nil {
-		fmt.Println(err)
+		log.Error(err)
 		return nil, err
 	}
 	return value, nil

@@ -1,8 +1,9 @@
 package graphql
 
 import (
-	"log"
 	"strings"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/graphql-go/graphql"
 	"github.com/insomniadev/martian/integrations/area"
@@ -96,12 +97,12 @@ func menuConfiguration(params graphql.ResolveParams) (interface{}, error) {
 		case "kasa":
 			Integrations.Menu = area.KasaIntegration(Integrations.Menu, Integrations.KasaData, Integrations.KasaData.InterfaceDevices)
 		case "life360":
-			log.Println("Not implemented")
+			log.Info("Not implemented")
 		case "hass":
 			// TODO: Need to update this and implement it to display on the screen and update the devices accordingly
-			log.Println("Not implemented")
+			log.Info("Not implemented")
 		default:
-			log.Println("This integration doesn't exist yet", k)
+			log.Info("This integration doesn't exist yet", k)
 		}
 	}
 
@@ -125,7 +126,7 @@ func integrationResolver(params graphql.ResolveParams) (interface{}, error) {
 		case "harmony":
 			integration.Harmony = Integrations.HarmonyData
 		default:
-			log.Println("This integration doesn't exist yet", k)
+			log.Info("This integration doesn't exist yet", k)
 		}
 	}
 

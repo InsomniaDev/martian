@@ -2,9 +2,10 @@ package lutron
 
 import (
 	"encoding/json"
-	"log"
 	"os"
 	"strings"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/insomniadev/martian/database"
 )
@@ -61,10 +62,10 @@ func (h *Lutron) UpdateSelectedDevices(selectedDevices []int, addDevices bool, a
 	} else {
 		h.InterfaceInventory = checkIfDeviceIsInList(h.Inventory, h.InterfaceInventory, selectedDevices, addDevices)
 	}
-	
+
 	err := database.MartianData.PutIntegrationValue("lutron", h)
 	if err != nil {
-		log.Println(err)
+		log.Warn(err)
 	}
 
 	return nil
@@ -133,7 +134,7 @@ func (k *Lutron) EditDeviceConfiguration(device LDevice, removeEdit bool) error 
 	// Save in the database
 	err := database.MartianData.PutIntegrationValue("lutron", k)
 	if err != nil {
-		log.Println(err)
+		log.Warn(err)
 	}
 
 	return nil

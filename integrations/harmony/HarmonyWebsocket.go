@@ -4,13 +4,14 @@ import (
 	"bytes"
 	"encoding/json"
 	"io/ioutil"
-	"log"
 	"net"
 	"net/http"
 	"net/url"
 	"strconv"
 	"sync"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/gorilla/websocket"
 	"github.com/insomniadev/martian/database"
@@ -130,7 +131,7 @@ func (d *Device) listen() {
 		time.Sleep(1 * time.Second)
 		_, message, err := d.Connection.ReadMessage()
 		if err != nil {
-			log.Println("harmony read:", err.Error())
+			log.Warn("harmony read:", err.Error())
 			time.Sleep(30 * time.Second) // Wait for thirty seconds
 			go d.connect()               // Start a new process to connect
 			return                       // exit out of this current listening loop
@@ -218,7 +219,7 @@ func (d *Device) SendCommand(command string, commandType string, deviceID string
 func (d *Device) sendCommandToHub(action Command) {
 	actionJSON, err := json.Marshal(action)
 	if err != nil {
-		log.Println("Harmony Command Error:", err)
+		log.Warn("Harmony Command Error:", err)
 	}
 	message := `{"hubId":` + strconv.Itoa(d.ActiveRemoteID) + `,"timeout":30, "hbus":{"cmd":"vnd.logitech.harmony/vnd.logitech.harmony.engine?holdAction","id":4,"params":{"status":"pressrelease","timestamp":"0","verb":"render","action":"` + string(actionJSON) + `"}}}`
 	d.WriteMessage(message)
@@ -228,7 +229,7 @@ func (d *Device) sendCommandToHub(action Command) {
 func (d *Device) WriteMessage(message string) {
 	err := d.Connection.WriteMessage(websocket.TextMessage, []byte(message))
 	if err != nil {
-		log.Println("harmony write:", err)
+		log.Warn("harmony write:", err)
 	}
 }
 
@@ -240,6 +241,6 @@ func (d *Device) EditDeviceConfiguration(device Device, removeEdit bool) {
 	// Save in the database
 	err := database.MartianData.PutIntegrationValue("harmony", d)
 	if err != nil {
-		log.Println(err)
+		log.Warn(err)
 	}
 }

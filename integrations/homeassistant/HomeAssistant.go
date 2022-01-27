@@ -2,10 +2,11 @@ package homeassistant
 
 import (
 	"encoding/json"
-	"log"
 	"strconv"
 	"strings"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/gorilla/websocket"
 	"github.com/insomniadev/martian/database"
@@ -63,7 +64,7 @@ func (h *HomeAssistant) listen() {
 	for {
 		_, incoming, err := h.Connection.ReadMessage()
 		if err != nil {
-			log.Println("homeassistant read:", err.Error())
+			log.Warn("homeassistant read:", err.Error())
 			time.Sleep(30 * time.Second) // Wait for thirty seconds
 			go h.connect()               // Start a new process to connect
 			return                       // exit out of this current listening loop
@@ -71,7 +72,7 @@ func (h *HomeAssistant) listen() {
 		var message Event
 		err = json.Unmarshal(incoming, &message)
 		if err != nil {
-			println(err)
+			log.Warn(err)
 		}
 		switch message.Type {
 		case "auth_required":
@@ -79,7 +80,7 @@ func (h *HomeAssistant) listen() {
 			authEvent, err := json.Marshal(authMessage)
 			println(string(authEvent))
 			if err != nil {
-				println(err)
+				log.Warn(err)
 			}
 			h.Connection.WriteMessage(1, authEvent)
 		case "auth_ok":
@@ -158,12 +159,9 @@ func (h *HomeAssistant) CallService(device HomeAssistantDevice, activate bool) {
 	}
 	serviceJson := `{"id":` + strconv.Itoa(callServiceId) + `,"type":"call_service","domain":"` + device.Type + `","service":"` + setValue + `","service_data":{"entity_id":"` + device.EntityId + `"}}`
 
-	// TODO: We don't need this print statement here once we are done with Hass implementation
-	println(serviceJson)
-
 	err := h.Connection.WriteMessage(websocket.TextMessage, []byte(serviceJson))
 	if err != nil {
-		log.Println("hass write:", err)
+		log.Warn("hass write:", err)
 	}
 	callServiceId = callServiceId + 1
 }
@@ -172,10 +170,9 @@ func (h *HomeAssistant) CallService(device HomeAssistantDevice, activate bool) {
 func (h *HomeAssistant) subscribeEvents() {
 	subscription := `{"id":` + strconv.Itoa(subscribeEventsId) + `,"type":"` + subscribeEventsType + `","event_type":"state_changed"}`
 
-	println(subscription)
 	err := h.Connection.WriteMessage(websocket.TextMessage, []byte(subscription))
 	if err != nil {
-		log.Println("hass write:", err)
+		log.Warn("hass write:", err)
 	}
 }
 
@@ -183,30 +180,27 @@ func (h *HomeAssistant) subscribeEvents() {
 func (h *HomeAssistant) getStates() {
 	States := `{"id":` + strconv.Itoa(getStatesId) + `,"type":"` + getStatesType + `"}`
 
-	println(States)
 	err := h.Connection.WriteMessage(websocket.TextMessage, []byte(States))
 	if err != nil {
-		log.Println("hass write:", err)
+		log.Warn("hass write:", err)
 	}
 }
 
 func (h *HomeAssistant) getConfig() {
 	config := `{"id":` + strconv.Itoa(getConfigId) + `,"type":"` + getConfigType + `"}`
 
-	println(config)
 	err := h.Connection.WriteMessage(websocket.TextMessage, []byte(config))
 	if err != nil {
-		log.Println("hass write:", err)
+		log.Warn("hass write:", err)
 	}
 }
 
 func (h *HomeAssistant) getServices() {
 	Services := `{"id":` + strconv.Itoa(getServicesId) + `,"type":"` + getServicesType + `"}`
 
-	println(Services)
 	err := h.Connection.WriteMessage(websocket.TextMessage, []byte(Services))
 	if err != nil {
-		log.Println("hass write:", err)
+		log.Warn("hass write:", err)
 	}
 }
 
@@ -222,7 +216,7 @@ func (h *HomeAssistant) UpdateSelectedDevices(selectedDevices []string, addDevic
 
 	err := database.MartianData.PutIntegrationValue("hass", h)
 	if err != nil {
-		log.Println(err)
+		log.Warn(err)
 	}
 
 	return nil
@@ -303,7 +297,7 @@ func (h *HomeAssistant) EditDeviceConfiguration(device HomeAssistantDevice, remo
 	// Save in the database
 	err := database.MartianData.PutIntegrationValue("hass", h)
 	if err != nil {
-		log.Println(err)
+		log.Warn(err)
 	}
 
 	// Let's repopulate with the correct device state

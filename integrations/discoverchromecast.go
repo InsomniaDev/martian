@@ -1,12 +1,12 @@
 package integrations
 
 import (
-	"fmt"
 	"io/ioutil"
-	"log"
 	"net"
 	"strings"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/hashicorp/mdns"
 )
@@ -47,7 +47,7 @@ func (e CastEntry) GetName() string {
 }
 
 func (e CastEntry) GetAddr() string {
-	return fmt.Sprintf("%s", e.AddrV4)
+	return string(e.AddrV4)
 }
 
 func (e CastEntry) GetPort() int {

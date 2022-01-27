@@ -2,9 +2,10 @@ package graphql
 
 import (
 	"encoding/json"
-	"log"
 	"strconv"
 	"strings"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/graphql-go/graphql"
 	"github.com/insomniadev/martian/database"
@@ -227,7 +228,7 @@ func updateIntegration(params graphql.ResolveParams) (interface{}, error) {
 		}
 		newIntegration = true
 	case "life360":
-		log.Println("Not implemented")
+		log.Info("Not implemented")
 	case "hass":
 		// Will pass in {"url":"","token":""}
 		var hass homeassistant.HomeAssistant
@@ -238,7 +239,7 @@ func updateIntegration(params graphql.ResolveParams) (interface{}, error) {
 		database.MartianData.PutIntegrationValue(integrationType, hass)
 		newIntegration = true
 	default:
-		log.Println("This integration doesn't exist yet", integrationType)
+		log.Info("This integration doesn't exist yet", integrationType)
 	}
 
 	if newIntegration {

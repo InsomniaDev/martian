@@ -1,7 +1,7 @@
 package integrations
 
 import (
-	"log"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/insomniadev/martian/database"
 	"github.com/insomniadev/martian/integrations/area"
@@ -10,8 +10,6 @@ import (
 	"github.com/insomniadev/martian/integrations/kasa"
 	"github.com/insomniadev/martian/integrations/life360"
 	"github.com/insomniadev/martian/integrations/lutron"
-	"github.com/insomniadev/martian/logger"
-	"github.com/sirupsen/logrus"
 )
 
 type Integrations struct {
@@ -35,7 +33,7 @@ func (i *Integrations) Init() {
 	storedIntegrations, err := i.Database.RetrieveAllValuesInBucket(database.IntegrationBucket)
 	if err != nil {
 		// TODO: Change this away from being a panic
-		log.Println(err)
+		log.Warn(err)
 		// panic(err)
 	}
 
@@ -46,7 +44,7 @@ func (i *Integrations) Init() {
 		case "lutron":
 			i.LutronData, err = lutron.Init(storedIntegrations[k])
 			if err != nil {
-				logger.Logger().Log(logrus.ErrorLevel, err)
+				log.Warn(err)
 			}
 			i.Menu = area.LutronIntegration(i.Menu, i.LutronData.Inventory, i.LutronData.InterfaceInventory)
 			i.Integrations = append(i.Integrations, "lutron")
@@ -66,12 +64,12 @@ func (i *Integrations) Init() {
 			go i.Hass.Init(storedIntegrations[k])
 			i.Integrations = append(i.Integrations, "hass")
 		default:
-			log.Println("This integration doesn't exist yet", k)
+			log.Info("This integration doesn't exist yet", k)
 		}
 	}
 	// Cycle through the integrations
 	if len(i.AreaIndexes) > 0 {
-		log.Println("Devices have been found")
+		log.Info("Devices have been found")
 		i.Menu = area.CheckIndexForAreas(i.Menu, i.AreaIndexes)
 	}
 

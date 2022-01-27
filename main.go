@@ -1,18 +1,23 @@
 package main
 
 import (
-	"fmt"
-	"log"
+	"os"
 	"time"
 
+	"github.com/insomniadev/martian/brain"
 	"github.com/insomniadev/martian/graphql"
 	"github.com/insomniadev/martian/modules/cache"
+	log "github.com/sirupsen/logrus"
 )
 
 func main() {
-	fmt.Println("Martian is starting up")
+	// log.SetFormatter(&log.JSONFormatter{})
+	log.SetOutput(os.Stdout)
+	log.SetLevel(log.InfoLevel)
+
+	log.Info("Martian is starting up")
 	// testLocalCache()
-	// brain.Brainiac.SayHello()
+	brain.Brainiac.SayHello()
 
 	graphql.Graphql()
 
@@ -38,8 +43,8 @@ func testLocalCache() {
 
 	value, wasRetrieved := localCache.Get("new")
 	if !wasRetrieved {
-		log.Println("value not found")
+		log.Info("value not found")
 	} else {
-		log.Println("the found value: " + value.(something).value)
+		log.Info("the found value: " + value.(something).value)
 	}
 }

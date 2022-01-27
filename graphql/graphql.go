@@ -1,7 +1,6 @@
 package graphql
 
 import (
-	"fmt"
 	"io/ioutil"
 	"net/http"
 
@@ -74,7 +73,6 @@ func Graphql() {
 func zwavehandler(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	ioutil.ReadAll(r.Body)
-	fmt.Fprintf(w, "Hi there, I love %s!", r.URL.Path[1:])
 }
 
 func subscriptionHandler() {

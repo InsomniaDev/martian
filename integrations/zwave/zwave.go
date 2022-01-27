@@ -1,7 +1,7 @@
 package zwave
 
 import (
-	"log"
+	log "github.com/sirupsen/logrus"
 )
 
 func placeholder() {
@@ -47,7 +47,7 @@ func placeholder() {
 // }
 
 func doSomethingWithMessage(payload []byte) {
-	log.Println(string(payload))
+	log.Info(string(payload))
 }
 
 // Format required to be able to publish to a mqtt topic

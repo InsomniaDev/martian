@@ -3,12 +3,13 @@ package lutron
 import (
 	"bufio"
 	"fmt"
-	"log"
 	"net"
 	"regexp"
 	"strconv"
 	"strings"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/insomniadev/martian/modules/pubsub"
 )
@@ -49,15 +50,15 @@ func (l *Lutron) Connect() error {
 	log.Printf("Local Address : %s \n", l.conn.LocalAddr().String())
 	log.Printf("Remote Address : %s \n", l.conn.RemoteAddr().String())
 	message, _ := loginReader.ReadString(':')
-	fmt.Print("Message from server: " + message + "\n")
+	log.Info("Message from server: " + message + "\n")
 	// send to socket
 	fmt.Fprintf(conn, l.Config.Username+"\n")
 	// listen for reply
 	message, _ = loginReader.ReadString(':')
-	fmt.Print("Message from server: " + message + "\n")
+	log.Info("Message from server: " + message + "\n")
 	fmt.Fprintf(l.conn, l.Config.Password+"\n")
 	message, _ = loginReader.ReadString('>')
-	fmt.Print("prompt ready: " + message + "\n")
+	log.Info("prompt ready: " + message + "\n")
 	// TODO set up scanner on l.conn
 	scanner := bufio.NewScanner(l.conn)
 	scanner.Split(lutronSplitter)
@@ -105,12 +106,12 @@ func (l *Lutron) Connect() error {
 			response.Id, err = strconv.Atoi(lutronItems["id"])
 			response.Action, err = strconv.Atoi(lutronItems["action"])
 			if err != nil {
-				log.Println(err.Error())
+				log.Warn(err.Error())
 			}
 			response.Type = Response
 			response.Value, _ = strconv.ParseFloat(lutronItems["value"], 64)
 			if err != nil {
-				log.Println(err.Error())
+				log.Warn(err.Error())
 			}
 
 			if response.Cmd == Output {

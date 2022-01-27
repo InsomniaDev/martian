@@ -1,9 +1,8 @@
 package integrations
 
 import (
-	"fmt"
-
 	"github.com/evalphobia/google-home-client-go/googlehome"
+	log "github.com/sirupsen/logrus"
 )
 
 type GoogleHome struct {
@@ -14,9 +13,9 @@ type GoogleHome struct {
 
 func (gh *GoogleHome) Discover() error {
 	dnsEntries := FindCastDNSEntries()
-	fmt.Printf("Found %d cast devices\n", len(dnsEntries))
+	log.Printf("Found %d cast devices\n", len(dnsEntries))
 	for i, d := range dnsEntries {
-		fmt.Printf("%d) device=%q device_name=%q address=\"%s:%d\" status=%q uuid=%q\n", i+1, d.Device, d.DeviceName, d.AddrV4, d.Port, d.Status, d.UUID)
+		log.Printf("%d) device=%q device_name=%q address=\"%s:%d\" status=%q uuid=%q\n", i+1, d.Device, d.DeviceName, d.AddrV4, d.Port, d.Status, d.UUID)
 	}
 	return nil
 }
