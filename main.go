@@ -11,7 +11,10 @@ import (
 )
 
 func main() {
-	// log.SetFormatter(&log.JSONFormatter{})
+	customFormatter := new(log.TextFormatter)
+	customFormatter.TimestampFormat = "2006-01-02 15:04:05"
+	customFormatter.FullTimestamp = true
+	log.SetFormatter(customFormatter)
 	log.SetOutput(os.Stdout)
 	log.SetLevel(log.InfoLevel)
 
