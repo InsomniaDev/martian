@@ -15,23 +15,23 @@ import (
 )
 
 type Brain struct {
-	memoryEvent    []event
-	longTermMemory []longTermStore
+	MemoryEvent    []event         `json:"memoryEvent"`
+	LongTermMemory []longTermStore `json:"longTermMemory"`
 }
 
 type event struct {
-	eventTime           time.Time
-	eventTimeExpiration time.Time
-	eventId             string
-	eventStatus         string
+	EventTime           time.Time `json:"eventTime"`
+	EventTimeExpiration time.Time `json:"eventTimeExpiration"`
+	EventId             string    `json:"eventId"`
+	EventStatus         string    `json:"eventStatus"`
 }
 
 type longTermStore struct {
-	hourOfOccurrence int
-	eventTime        time.Time
-	eventId          string
-	eventStatus      string
-	sequentialEvents []event
+	HourOfOccurrence int       `json:"hourOfOccurrence"`
+	EventTime        time.Time `json:"eventTime"`
+	EventId          string    `json:"eventId"`
+	EventStatus      string    `json:"eventStatus"`
+	SequentialEvents []event   `json:"sequentialEvents"`
 }
 
 var (
@@ -66,7 +66,7 @@ func init() {
 // brainWave will add events into the brain with a populated eventTimeExpiration
 func (b *Brain) brainWave(id, status string) {
 	// TODO: Add more logic here, just append for now
-	b.memoryEvent = append(b.memoryEvent, event{eventId: id, eventStatus: status, eventTime: time.Now(), eventTimeExpiration: time.Now().Add(timeDifference)})
+	b.MemoryEvent = append(b.MemoryEvent, event{EventId: id, EventStatus: status, EventTime: time.Now(), EventTimeExpiration: time.Now().Add(timeDifference)})
 	log.Debug("stored event:", id, status)
 }
 
@@ -76,21 +76,21 @@ func (b *Brain) shortTerm() {
 	for {
 		currentTime := time.Now()
 		var memoryEvents []event
-		for i := range b.memoryEvent {
-			if currentTime.Before(b.memoryEvent[i].eventTimeExpiration) {
-				memoryEvents = append(memoryEvents, b.memoryEvent[i])
+		for i := range b.MemoryEvent {
+			if currentTime.Before(b.MemoryEvent[i].EventTimeExpiration) {
+				memoryEvents = append(memoryEvents, b.MemoryEvent[i])
 			} else {
 				// get the hour timestamp for the event
-				hourOfOccurrence, _, _ := b.memoryEvent[i].eventTime.Clock()
+				hourOfOccurrence, _, _ := b.MemoryEvent[i].EventTime.Clock()
 
 				// go through the rest of the array after the memory event that we are on so that we are only storing the sequential events
 				var sequentialEvents []event
-				for a := i + 1; a < len(b.memoryEvent); a++ {
-					sequentialEvents = append(sequentialEvents, b.memoryEvent[a])
+				for a := i + 1; a < len(b.MemoryEvent); a++ {
+					sequentialEvents = append(sequentialEvents, b.MemoryEvent[a])
 				}
 
 				// create an entry to remember
-				remember := longTermStore{hourOfOccurrence: hourOfOccurrence, eventTime: b.memoryEvent[i].eventTime, eventId: b.memoryEvent[i].eventId, eventStatus: b.memoryEvent[i].eventStatus, sequentialEvents: sequentialEvents}
+				remember := longTermStore{HourOfOccurrence: hourOfOccurrence, EventTime: b.MemoryEvent[i].EventTime, EventId: b.MemoryEvent[i].EventId, EventStatus: b.MemoryEvent[i].EventStatus, SequentialEvents: sequentialEvents}
 				resp, err := database.MartianData.GetDayMemoryByHour(strconv.Itoa(hourOfOccurrence))
 				if err != nil {
 					log.Error("Failure to pull memory from short term collection", err)
@@ -111,7 +111,7 @@ func (b *Brain) shortTerm() {
 				database.MartianData.InsertMemory(strconv.Itoa(hourOfOccurrence), hourEventsRemembered)
 			}
 		}
-		b.memoryEvent = memoryEvents
+		b.MemoryEvent = memoryEvents
 		time.Sleep(1 * time.Minute)
 	}
 }
@@ -144,9 +144,9 @@ func (b *Brain) processDayMemories() {
 		// assemble data for the hour
 		emailBody += "Hour: " + key + "\n\n"
 		for _, memoryRemembered := range hourEventsRemembered {
-			emailBody += memoryRemembered.eventId + ":" + memoryRemembered.eventStatus
-			for _, memorySequence := range memoryRemembered.sequentialEvents {
-				emailBody += " -> " + memorySequence.eventId + ":" + memorySequence.eventStatus
+			emailBody += memoryRemembered.EventId + ":" + memoryRemembered.EventStatus
+			for _, memorySequence := range memoryRemembered.SequentialEvents {
+				emailBody += " -> " + memorySequence.EventId + ":" + memorySequence.EventStatus
 			}
 			emailBody += "\n"
 		}
