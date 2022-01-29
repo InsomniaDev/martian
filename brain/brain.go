@@ -20,6 +20,7 @@ type Brain struct {
 }
 
 type event struct {
+	EventType           string    `json:"eventType"`
 	EventTime           time.Time `json:"eventTime"`
 	EventTimeExpiration time.Time `json:"eventTimeExpiration"`
 	EventId             string    `json:"eventId"`
@@ -28,6 +29,7 @@ type event struct {
 
 type longTermStore struct {
 	HourOfOccurrence int       `json:"hourOfOccurrence"`
+	EventType        string    `json:"eventType"`
 	EventTime        time.Time `json:"eventTime"`
 	EventId          string    `json:"eventId"`
 	EventStatus      string    `json:"eventStatus"`
@@ -50,7 +52,7 @@ func init() {
 		for {
 			msg := <-subscriptionBus
 			message := strings.Split(msg, ";")
-			Brainiac.brainWave(message[0], message[1])
+			Brainiac.brainWave(message[0], message[1], message[2])
 		}
 	}
 	pubsub.Service.Subscribe("brain", subscriptionBus)
@@ -64,10 +66,10 @@ func init() {
 }
 
 // brainWave will add events into the brain with a populated eventTimeExpiration
-func (b *Brain) brainWave(id, status string) {
+func (b *Brain) brainWave(integrationType, id, status string) {
 	// TODO: Add more logic here, just append for now
-	b.MemoryEvent = append(b.MemoryEvent, event{EventId: id, EventStatus: status, EventTime: time.Now(), EventTimeExpiration: time.Now().Add(timeDifference)})
-	log.Debug("stored event:", id, status)
+	b.MemoryEvent = append(b.MemoryEvent, event{EventType: integrationType, EventId: id, EventStatus: status, EventTime: time.Now(), EventTimeExpiration: time.Now().Add(timeDifference)})
+	log.Debug("stored event:", integrationType, id, status)
 }
 
 // shortTerm checks to see if the current timestamp is greater than the eventTimeExpiration
@@ -90,7 +92,7 @@ func (b *Brain) shortTerm() {
 				}
 
 				// create an entry to remember
-				remember := longTermStore{HourOfOccurrence: hourOfOccurrence, EventTime: b.MemoryEvent[i].EventTime, EventId: b.MemoryEvent[i].EventId, EventStatus: b.MemoryEvent[i].EventStatus, SequentialEvents: sequentialEvents}
+				remember := longTermStore{HourOfOccurrence: hourOfOccurrence, EventTime: b.MemoryEvent[i].EventTime, EventId: b.MemoryEvent[i].EventId, EventStatus: b.MemoryEvent[i].EventStatus, EventType: b.MemoryEvent[i].EventType, SequentialEvents: sequentialEvents}
 				resp, err := database.MartianData.GetDayMemoryByHour(strconv.Itoa(hourOfOccurrence))
 				if err != nil {
 					log.Error("Failure to pull memory from short term collection", err)
@@ -106,8 +108,6 @@ func (b *Brain) shortTerm() {
 
 				// Store away all of the events for the hour here
 				hourEventsRemembered = append(hourEventsRemembered, remember)
-				whatis, _ := json.Marshal(hourEventsRemembered)
-				log.Println(hourEventsRemembered, string(whatis))
 				database.MartianData.InsertMemory(strconv.Itoa(hourOfOccurrence), hourEventsRemembered)
 			}
 		}
