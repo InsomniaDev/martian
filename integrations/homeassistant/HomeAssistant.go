@@ -94,8 +94,14 @@ func (h *HomeAssistant) listen() {
 					h.Devices[i].State = message.Event.Data.NewState.State
 
 					pubsub.Service.Publish("subscriptions", h.Devices[i].EntityId)
-					eventMessage := "hass;;" + h.Devices[i].EntityId + ";;" + h.Devices[i].State
-					pubsub.Service.Publish("brain", eventMessage)
+
+					// Check if this is in the automated devices list prior to adding to a memory
+					for x := range h.AutomatedDevices {
+						if h.AutomatedDevices[x] == message.Event.Data.EntityID {
+							eventMessage := "hass;;" + h.Devices[i].EntityId + ";;" + h.Devices[i].State
+							pubsub.Service.Publish("brain", eventMessage)
+						}
+					}
 				}
 			}
 			// default:
