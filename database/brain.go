@@ -66,7 +66,7 @@ func (d *Database) InsertMemory(key string, value interface{}) error {
 		}
 
 		byteValue, err := json.Marshal(value)
-		log.Println("stored,", string(byteValue))
+		// log.Println("stored,", string(byteValue))
 		if err != nil {
 			log.Fatal(err)
 			return err
