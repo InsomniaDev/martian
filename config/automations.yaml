@@ -1,0 +1,10 @@
+automations:
+  - type: "action"
+    actionDevice:
+      id: "1"
+      type: "hubitat"
+      state: "off"
+    reactionDevice:
+      id: "1"
+      type: "hubitat"
+      state: "on"

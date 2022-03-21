@@ -52,7 +52,7 @@ func init() {
 		for {
 			msg := <-subscriptionBus
 			log.Debug("Received message: ",msg)
-			message := strings.Split(msg, ";")
+			message := strings.Split(msg, ";;")
 			Brainiac.brainWave(message[0], message[1], message[2])
 		}
 	}
