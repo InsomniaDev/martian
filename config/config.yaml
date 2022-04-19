@@ -1,3 +1,6 @@
+hubitat:
+    url: "http://192.168.1.131"
+    accessKey: "bfd56b33-a58b-4fcd-afc8-0d72e41525ac"
 homeAssistant:
     url: "192.168.1.19:8123"
     token: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIxOTQ1MzBlMmZiY2U0MjJiODgyNjVkYjc2N2NhYzJjNyIsImlhdCI6MTYyMzgxMjc2OCwiZXhwIjoxOTM5MTcyNzY4fQ.bzKTV01SG1euLtUQ1vRWlCzkyiSKXp1rJhPW82bWPDE"

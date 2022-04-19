@@ -7,6 +7,7 @@ import (
 	"github.com/insomniadev/martian/integrations/area"
 	"github.com/insomniadev/martian/integrations/harmony"
 	"github.com/insomniadev/martian/integrations/homeassistant"
+	"github.com/insomniadev/martian/integrations/hubitat"
 	"github.com/insomniadev/martian/integrations/kasa"
 	"github.com/insomniadev/martian/integrations/life360"
 	"github.com/insomniadev/martian/integrations/lutron"
@@ -22,6 +23,7 @@ type Integrations struct {
 	KasaData     kasa.Devices
 	Life3        life360.Life360
 	Database     database.Database
+	Hubitat      hubitat.HubitatData
 	// Zwave       zwave.Zwave
 }
 
@@ -63,6 +65,9 @@ func (i *Integrations) Init() {
 		case "hass":
 			go i.Hass.Init(storedIntegrations[k])
 			i.Integrations = append(i.Integrations, "hass")
+		case "hubitat":
+			go i.Hubitat.Init(storedIntegrations[k])
+			i.Integrations = append(i.Integrations, "hubitat")
 		default:
 			log.Info("This integration doesn't exist yet", k)
 		}

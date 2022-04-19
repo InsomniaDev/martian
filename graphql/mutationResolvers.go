@@ -238,6 +238,18 @@ func updateIntegration(params graphql.ResolveParams) (interface{}, error) {
 		}
 		database.MartianData.PutIntegrationValue(integrationType, hass)
 		newIntegration = true
+	case "hubitat":
+		type HubConfig struct {
+			URL string "json:`url`"
+			Key string "json:`accessKey`"
+		}
+		var hubConfig HubConfig
+		err := json.Unmarshal([]byte(integrationValue), &hubConfig)
+		if err != nil {
+			return false, err
+		}
+		database.MartianData.PutIntegrationValue(integrationType, hubConfig)
+		newIntegration = true
 	default:
 		log.Info("This integration doesn't exist yet", integrationType)
 	}

@@ -11,8 +11,8 @@ type Config struct {
 	ZwaveData     Zwave        `yaml:"zwave"`
 	HomeAssistant Hass         `yaml:"homeAssistant"`
 	MenuConfig    []Menu       `yaml:"menu"`
+	Hubitat       Hubitat      `yaml:"hubitat"`
 }
-
 
 // LutronConfig is the configuration for the Lutron Hub
 type LutronConfig struct {
@@ -61,6 +61,11 @@ type Zwave struct {
 type Hass struct {
 	URL   string `yaml:"url"`
 	Token string `yaml:"token"`
+}
+
+type Hubitat struct {
+	AccessKey string `yaml:"accessKey"`
+	URL       string `yaml:"url"`
 }
 
 // Menu is the setup for the configuration to display on the Web UI

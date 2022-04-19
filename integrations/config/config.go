@@ -89,3 +89,10 @@ func LoadHomeAssistant() Hass {
 	c.LoadFile()
 	return c.HomeAssistant
 }
+
+// LoadHubitat loads up the set hubitat configuration
+func LoadHubitat() (accessKey string, URL string) {
+	c := Config{}
+	c.LoadFile()
+	return c.Hubitat.AccessKey, c.Hubitat.URL
+}
