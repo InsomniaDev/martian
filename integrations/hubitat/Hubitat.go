@@ -17,8 +17,10 @@ package hubitat
 import (
 	"encoding/json"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/insomniadev/martian/integrations/config"
 )
@@ -34,8 +36,19 @@ func init() {
 }
 
 func (h *HubitatData) Init(configuration string) {
-	json.Unmarshal([]byte(configuration), h.Config)
+	err := json.Unmarshal([]byte(configuration), &h.Config)
+	if err != nil {
+		log.Println(err)
+	}
 
+	// cycle through and constantly check for any updates to the devices
+	go func() {
+		for {
+			// check every second for an update
+			time.Sleep(1 * time.Second)
+			h.getAllDeviceStatus()
+		}
+	}()
 	// run the configuration piece here
 }
 
