@@ -1,0 +1,9 @@
+# Copy this file and change the name to config.yaml
+
+hubitat:
+    url: "http://<< IP ADDRESS >>/apps/api/35/devices/"
+    accessKey: "<< ACCESS KEY >>"
+life360:
+  username: "<< EMAIL >>"
+  password: "<< PASSWORD >>"
+  authenticationToken: "<< AUTHENTICATION TOKEN >>"

@@ -1,0 +1,4 @@
+/martian
+config/martian.db
+config/config.yaml
+scripts/*
