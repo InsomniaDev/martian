@@ -15,3 +15,5 @@ martian is also capable of learning energy efficiency settings:
 - Continuous tuning
   - The energy efficiency timeframe will be decreased daily to save energy
 
+## Licensing
+martian is an open source product licensed under GPLv3.
